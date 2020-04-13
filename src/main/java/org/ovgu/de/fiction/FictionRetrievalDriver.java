@@ -25,7 +25,7 @@ public class FictionRetrievalDriver {
 		long start = System.currentTimeMillis();
 
 		/* 1> Extract content from Gutenberg corpus - one time */
-		//ContentExtractor.generateContentFromAllEpubs();
+		ContentExtractor.generateContentFromAllEpubs();
 		System.out.println("Time taken for generating content (min)-" + (System.currentTimeMillis() - start) / (1000 * 60));
 
 		start = System.currentTimeMillis();
@@ -54,7 +54,6 @@ public class FictionRetrievalDriver {
 		TopKResults topKResults = FictionRetrievalSearch.findRelevantBooks(qryBookNum, FEATURE_CSV_FILE, 
 				FRConstants.SIMI_PENALISE_BY_CHUNK_NUMS, FRConstants.SIMI_ROLLUP_BY_ADDTN, 
 				FRConstants.SIMI_EXCLUDE_TTR_NUMCHARS,FRConstants.TOP_K_RESULTS,FRConstants.SIMILARITY_L2);
-		
 		
 		/* * 5> Perform some machine learning over the results
 		 
