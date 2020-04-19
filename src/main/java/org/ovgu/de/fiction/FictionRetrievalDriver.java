@@ -30,7 +30,7 @@ public class FictionRetrievalDriver {
 
 		start = System.currentTimeMillis();
 		/* 2> Generate features from the extracted content - one time */
-		//List<BookDetails> features = generateOtherFeatureForAll();
+		List<BookDetails> features = generateOtherFeatureForAll();
 		System.out.println("Time taken for feature extraction and chunk generation (min)-" + (System.currentTimeMillis() - start) / (1000 * 60));
 		start = System.currentTimeMillis();
 
