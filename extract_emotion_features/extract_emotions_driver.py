@@ -1,7 +1,9 @@
 import extract_emotions_file_utils
 import extract_emotions_feature_utils
 import os
+import sys
 import time
+import argparse
 
 class ComplexNumber:
     def __init__(self,r = 0,i = 0):
@@ -14,7 +16,7 @@ class ComplexNumber:
 class Driver:
     
     def __init__(self, feature_file_path = "/Users/surajshashidhar/git/fiction/bkp/Features_Extracted.csv", 
-    book_file_path = "/Users/surajshashidhar/git/fiction/Short_epubs_extracted_bkp", 
+    book_file_path = "/Users/surajshashidhar/git/fiction/Short_epubs_extracted", 
     emoticon_file_path = "/Users/surajshashidhar/Desktop/ovgu/semester_2/XAI_project/reasearched_code_and_data/english_emotions.txt",
     feature_fields = [22], language = "en", encoding='utf-8',
     book_start_percentage = 0.1, book_end_percentage = 0.1,
@@ -29,7 +31,7 @@ class Driver:
         self.book_end_percentage = book_end_percentage
         self.similarity_file_path = os.path.join(os.getcwd(), "simialrity_feature.csv")
         self.similarity_type = similarity_type
-        self.new_feature_file_path = "/Users/surajshashidhar/git/fiction/Short_epubs_extracted_bkp/new_Features_Extracted.csv"
+        self.new_feature_file_path = "/Users/surajshashidhar/git/fiction/Short_epubs_extracted/new_Features_Extracted.csv"
 
     
     def run_extraction(self):
@@ -68,7 +70,38 @@ class Driver:
 
 
 if __name__ == "__main__":
+    ap = argparse.ArgumentParser()
+
+    # Add the arguments to the parser and parse the arguments from command line
+    ap.add_argument( "--feature_file_path", required=True, help=" feature_file_path")
+    ap.add_argument("--book_file_path", required=True, help="book_file_path")
+    ap.add_argument( "--emoticon_file_path", required=True, help=" emoticon_file_path")
+    ap.add_argument("--feature_fields", required=True, help="feature_fields")
+    ap.add_argument( "--language", required=True, help=" language")
+    ap.add_argument("--encoding", required=True, help="encoding")
+    ap.add_argument( "--book_start_percentage", required=True, help=" book_start_percentage")
+    ap.add_argument("--book_end_percentage", required=True, help="book_end_percentage")
+    ap.add_argument( "--similarity_type", required=True, help=" similarity_type")
+    ap.add_argument("--new_feature_file_path", required=True, help="new_feature_file_path")
+
+    args = vars(ap.parse_args())
+
+    feature_file_path = args["feature_file_path"]
+    book_file_path = args["book_file_path"]
+    emoticon_file_path = args["emoticon_file_path"]
+    feature_fields = [int(args["feature_fields"])]
+    language = args["language"]
+    encoding = args["encoding"]
+    book_start_percentage = float(args["book_start_percentage"])
+    book_end_percentage = float(args["book_end_percentage"])
+    similarity_type = args["similarity_type"]
+    new_feature_file_path = args["new_feature_file_path"]
+
     start_time = time.time()
-    driver_obj = Driver()
+
+    driver_obj = Driver(feature_file_path, book_file_path, emoticon_file_path, feature_fields, \
+        language, encoding, book_start_percentage, book_end_percentage, similarity_type, new_feature_file_path)
+    
     driver_obj.run_extraction()
     print("--- %s seconds ---" % (time.time() - start_time))
+    sys.exit(0)
