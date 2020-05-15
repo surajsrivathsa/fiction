@@ -62,6 +62,8 @@ public class ConvDetails {
 		return convocount;
 	}
 	
+	//calculate quoted word count
+	
 	public int quotedwordcount(List<Word> wordList) {
 		int i, wc =0, flag = 0 ;
 		for(i = 0; i < wordList.size(); i++) {
