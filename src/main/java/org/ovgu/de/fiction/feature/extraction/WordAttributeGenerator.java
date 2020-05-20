@@ -1,5 +1,6 @@
 package org.ovgu.de.fiction.feature.extraction;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,14 +57,25 @@ public class WordAttributeGenerator {
 	 * @return = List of "Word" objects, each object has original token, POS tag, lemma, NER as
 	 *         elements
 	 * @author Suhita, Modified by Sayantan for # of characters
+	 * @throws IOException 
 	 */
 	public Concept generateWordAttributes(Path path) {
 
 		FeatureExtractorUtility feu = new FeatureExtractorUtility();
 		Concept cncpt = new Concept();
+		String fileName1 = path.toString().replace(FRConstants.REP_FN, FRConstants.NONE).replace(FRConstants.CONTENT_FILE, FRConstants.NONE);
+		String x = "";
+		try {
+			x = FRGeneralUtils.getMetadata(fileName1).getLanguage();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("language"+x);
+		//System.exit(0);
 		Annotation document = new Annotation(FRFileOperationUtils.readFile(path.toString()));
 
-		StanfordPipeline.getPipeline(null).annotate(document);
+		StanfordPipeline.getPipeline(null, x).annotate(document);
 		List<CoreMap> sentences = document.get(CoreAnnotations.SentencesAnnotation.class);
 		List<Word> tokenList = new ArrayList<>();
 		Map<String, Integer> charMap = new HashMap<>();// a new object per new
@@ -89,7 +101,7 @@ public class WordAttributeGenerator {
 				String pos = cl.get(CoreAnnotations.PartOfSpeechAnnotation.class);
 				String ner = cl.get(CoreAnnotations.NamedEntityTagAnnotation.class);
 				String lemma = cl.get(CoreAnnotations.LemmaAnnotation.class).toLowerCase();
-				//System.out.println(original + " " + ner + " " + charName);
+				//System.out.println(original + " " + ner + " " + pos + " "+ lemma);
 				/*
 				 * logic 2: check if ner is "P", then further check next 2 element in sentence , ex.
 				 * Tom Cruise, Mr. Tom Cruise if yes, then concatenate all two or three tokens i.e.

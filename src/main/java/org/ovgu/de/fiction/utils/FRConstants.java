@@ -18,7 +18,9 @@ public interface FRConstants {
 	public static final String CHUNK_SIZE_FOR_TTR = "chunk.ttr.size";
 	public static final String OUT_FOLDER_TOKENS = "folder.out.chunks";
 	public static final String STOPWORD_FICTION = "stopword.fiction";
-
+	
+	public static final String REP_FN = "C:\\OvGU_DKe\\Project\\GutenbergDataset\\Short_epubs_extracted\\";
+	
 	/* regex */
 	public static final String REGEX_ALL_PUNCTUATION = "[\\s\"\\.\\,\\?\\!\\:\\;\\'-]";
 	public static final String CHARACTER_NOISE = "[\"\\.\\,\\?\\!\\:\\;\\'-]";
@@ -33,8 +35,11 @@ public interface FRConstants {
 	public static final String S_TAG = "<s>";
 
 	/* Stanford api related */
-	public static final String STNFRD_LEMMA_ANNOTATIONS = "tokenize,ssplit,pos,lemma,ner"; // "tokenize,ssplit,pos,lemma,ner";
+	public static final String STNFRD_LEMMA_ANNOTATIONS_EN = "tokenize,ssplit,pos,lemma,ner"; // "tokenize,ssplit,pos,lemma,ner";
+	
+	public static final String STNFRD_LEMMA_ANNOTATIONS_DE = "tokenize,ssplit,pos,lemma,ner"; // "tokenize,ssplit,pos,lemma,ner";
 
+	
 	public static final String STNFRD_SENTI_ANNOTATIONS = "tokenize,ssplit,pos,depparse,parse,sentiment";
 
 	public static final String STNFRD_ANNOTATOR = "annotators";
@@ -94,6 +99,8 @@ public interface FRConstants {
 	public static final String CHUNK_FILE = "-chunk.html";
 
 	public static final String TO = "to";
+	
+	public static final String ZU = "zu";
 
 	public static final String DOUBLE_QUOTES = "``";
 
@@ -118,24 +125,46 @@ public interface FRConstants {
 	public static final String INTERJECTION = "UH";
 
 	public static final String COME = "come";
-
+	
+	public static final String KOMMEN= "kommen";
+	
 	public static final String THERE_EX = "EX ";
 
 	public static final String NEXT = "next";
+	
+	public static final String NEBEN = "neben";
 
 	public static final String OF = "of";
+	
+	public static final String AN = "an";
+	
+	public static final String AUF = "auf";
 
 	public static final String FRONT = "front";
+	
+	public static final String VOR = "vor";
+
+	public static final String DEM = "dem";
+	
+	public static final String DEN = "den";
+	
+	public static final String DER = "der";
 
 	public static final String IN = "in";
+	
+	public static final String IM = "im";
 
 	public static final String PREPOSITION = "IN";
 
 	public static final String POSSESIV_P = "PRP$";
 
 	public static final String SHE = "she";
+	
+	public static final String SIE = "sie";
 
 	public static final String HE = "he";
+	
+	public static final String ER = "er";
 
 	public static final String PERSONAL_P = "PRP";
 

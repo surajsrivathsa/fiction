@@ -49,7 +49,7 @@ public class ChunkDetailsGenerator {
 	private int BOOK_NO;
 	private int NUM_OF_CHARS_PER_BOOK = -1;
 	private String CONTENT_EXTRCT_FOLDER;
-	StanfordCoreNLP SENTI_PIPELINE;
+	StanfordCoreNLP SENTI_PIPELINE_EN, SENTI_PIPELINE_DE;
 	private int max = 0, sum = 0;
 	private double ratio = 0.0;
 	private double dialogratio = 0.0;
@@ -66,8 +66,8 @@ public class ChunkDetailsGenerator {
 		BOOK_NO = 0;
 		TIME = System.currentTimeMillis();
 
-		SENTI_PIPELINE = StanfordPipeline.getPipeline(FRConstants.STNFRD_SENTI_ANNOTATIONS);
-
+		SENTI_PIPELINE_EN = StanfordPipeline.getPipeline(FRConstants.STNFRD_SENTI_ANNOTATIONS,"");
+		SENTI_PIPELINE_DE = StanfordPipeline.getPipeline(FRConstants.STNFRD_SENTI_ANNOTATIONS,"");
 	}
 
 	/**
@@ -124,17 +124,17 @@ public class ChunkDetailsGenerator {
 		/*for (Entry<String,String> c : bigcharMap.entrySet()) {
 			LOG.info(c.getKey()+" "+c.getValue());
 			
-		}
-		*/
+		}*/
+		
 		String eol = System.getProperty("line.separator");
 
-		try (Writer writer = new FileWriter("C:\\OvGU_DKe\\Project\\GutenbergDataset\\Short_tokens\\charmap.csv")) {
+		try (Writer writer = new FileWriter("C:\\OvGU_DKe\\Project\\GutenbergDataset\\Short_tokens\\charmap_B3.csv")) {
 		  for (Map.Entry<String, String> entry : bigcharMap.entrySet()) {
 		    writer.append(entry.getKey())
 		          .append(',')
 		          .append(entry.getValue())
 		          .append(eol);
-		  }
+		  }//pg19225
 		} catch (IOException ex) {
 		  ex.printStackTrace(System.err);
 		}
@@ -195,7 +195,7 @@ public class ChunkDetailsGenerator {
 		LOG.info(max + " " + sum + " " + ratio);
 		List<Word> wordList = cncpt.getWords();
 		int numOfSntncPerBook  = cncpt.getNumOfSentencesPerBook();
-		
+		LOG.info("dialog ratio = "+dialogratio);
 		ConvDetails conv = new ConvDetails();
 		dialogratio = conv.convRatio(wordList);
 		
@@ -276,7 +276,7 @@ public class ChunkDetailsGenerator {
 			for (int index = 0; index < chunkSize; index++) {// loop_over_tokens_of_a_given_chunk
 				Word token = wordList.get(wordcntr);
 				String l = token.getLemma();
-
+				//System.out.println(token + " " + l);
 				if (l.equals(FRConstants.P_TAG)) {
 					paragraphCount++;
 					wordcntr++;
@@ -295,7 +295,7 @@ public class ChunkDetailsGenerator {
 					
 					if (sentenceSbf.toString().length()>0 && randNum<FRConstants.RANDOM_SENTENCES_SENTIM_MID_VAL && randomSntnCount<totalNumOfRandomSntnPerChunk) { // making_a_random_choice_here
 						// calculateSenti as=>
-						annotation = SENTI_PIPELINE.process(sentenceSbf.toString());
+						annotation = SENTI_PIPELINE_EN.process(sentenceSbf.toString());
 						int score = 2; // Default as Neutral. 1 = Negative, 2 =
 						// Neutral, 3 = Positive
 						for (CoreMap sentence : annotation.get(CoreAnnotations.SentencesAnnotation.class))// ideally
@@ -347,33 +347,56 @@ public class ChunkDetailsGenerator {
 				/* calculate pos stats */
 				if (token.getPos().equals(FRConstants.PERSONAL_P)) {
 					personalPronounCount++;
-					if (l.equals(FRConstants.HE))
+					if (l.equals(FRConstants.HE) || l.equals(FRConstants.ER))
 						malePrpPosPronounCount++;
-					else if (l.equals(FRConstants.SHE))
+					else if (l.equals(FRConstants.SHE) || l.equals(FRConstants.SIE))
 						femalePrpPosPronounCount++;
 
 				} else if (token.getPos().equals(FRConstants.POSSESIV_P)) {
 					possPronounCount++;
-					if (l.equals(FRConstants.HE))
+					if (l.equals(FRConstants.HE) || l.equals(FRConstants.ER))
 						malePrpPosPronounCount++;
-					else if (l.equals(FRConstants.SHE))
+					else if (l.equals(FRConstants.SHE) || l.equals(FRConstants.SIE))
 						femalePrpPosPronounCount++;
 
-				} else if (token.getPos().equals(FRConstants.PREPOSITION)) {
+				}
+				/*
+				else if (l.equals(FRConstants.ER))
+					malePrpPosPronounCount++;
+				else if(l.equals(FRConstants.SIE))
+					femalePrpPosPronounCount++;
+				*/
+				
+				
+				
+				
+				else if (token.getPos().equals(FRConstants.PREPOSITION)) {
 					if (LOCATIVE_PREPOSITION_LIST.contains(l))
 						locativePrepositionCount++;
-					if (l.equals(FRConstants.IN)) {
+					if (l.equals(FRConstants.IN) || l.equals(FRConstants.IM)) {
 						int temp = wordcntr;
 						if ((l.equals(FRConstants.IN) && wordList.get(++temp).getLemma().equals(FRConstants.FRONT)
 								&& wordList.get(++temp).getLemma().equals(FRConstants.OF)))
 							locativePrepositionCount++;
 					}
+					if (l.equals(FRConstants.VOR)) {
+						int temp = wordcntr;
+						if ((l.equals(FRConstants.VOR) && (wordList.get(++temp).getLemma().equals(FRConstants.DEM)
+								|| wordList.get(temp).getLemma().equals(FRConstants.DEN) || wordList.get(temp).getLemma().equals(FRConstants.DER))))
+							locativePrepositionCount++;
+					}
+					
 
 				} else if (l.equals(FRConstants.NEXT)) {
 					int temp = wordcntr;
 					if (l.equals(FRConstants.NEXT) && wordList.get(++temp).getLemma().equals(FRConstants.TO))
 						locativePrepositionCount++;
-				} else if (token.getPos().equals(FRConstants.THERE_EX) || token.getLemma().equals(FRConstants.COME))
+				} else if (l.equals(FRConstants.NEBEN)) {
+					int temp = wordcntr;
+					if (l.equals(FRConstants.NEBEN) && (wordList.get(++temp).getLemma().equals(FRConstants.DEN) || 
+							wordList.get(temp).getLemma().equals(FRConstants.DEM) || wordList.get(temp).getLemma().equals(FRConstants.DER)))
+						locativePrepositionCount++;
+				} else if (token.getPos().equals(FRConstants.THERE_EX) || token.getLemma().equals(FRConstants.COME) || token.getLemma().equals(FRConstants.KOMMEN))
 					locativePrepositionCount++;
 				else if (token.getPos().equals(FRConstants.INTERJECTION))
 					intrjctnCount++;
@@ -398,7 +421,7 @@ public class ChunkDetailsGenerator {
 				wordCountPerSntnc++;
 			}
 			addToWordCountMap(raw, wordCountPerSntncMap, wordCountPerSntnc);
-
+			//System.out.println("counts = " + 	malePrpPosPronounCount + " " + femalePrpPosPronounCount + raw.size());
 			Chunk chunk = new Chunk();
 			chunk.setChunkNo(chunkNo);
 			// String chunkFileName = OUT_FOLDER_TOKENS + fileName + "-" +
@@ -476,7 +499,7 @@ public class ChunkDetailsGenerator {
 				if (batchCtr == 0 && wordcntr < (TTR_CHUNK_SIZE - remainder)) // tokens
 																				 // to
 																				 // be
-																				 // appended
+																				 // appendedpg18679
 																				 // to
 																				 // the
 																				 // last

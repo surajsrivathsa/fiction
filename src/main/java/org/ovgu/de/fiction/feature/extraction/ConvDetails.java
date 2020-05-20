@@ -40,15 +40,16 @@ public class ConvDetails {
 	public int calcConv(List<Word> wordList) {
 		int convocount = 0, i = 0;
 		for(i = 0; i < wordList.size(); i++) {
-			if(wordList.get(i).getOriginal().equals("\"")) {
+			if(wordList.get(i).getOriginal().equals("\"") || wordList.get(i).getOriginal().equals("»")) {
 				for(int m = i-7; m <= i+7 ; m++)
 					{
 					//flag++;
 					if( m >=0 && m < wordList.size())
 					{
-						System.out.println("word = " + wordList.get(m).getNer() +"   " + wordList.get(m).getOriginal());
-						if( isNull(wordList.get(m).getNer()) == 0  && (wordList.get(m).getNer().equals("PERSON") || wordList.get(m).getOriginal().equals("he")
-								|| wordList.get(m).getOriginal().equals("she"))) 
+						//System.out.println("word = " + wordList.get(m).getNer() +"   " + wordList.get(m).getOriginal());
+						if( isNull(wordList.get(m).getNer()) == 0  && (wordList.get(m).getNer().equals("PERSON")
+								|| wordList.get(m).getLemma().equals("he")
+								|| wordList.get(m).getLemma().equals("she"))) 
 							{
 							convocount++;
 							m = i + 8;
@@ -67,7 +68,7 @@ public class ConvDetails {
 	public int quotedwordcount(List<Word> wordList) {
 		int i, wc =0, flag = 0 ;
 		for(i = 0; i < wordList.size(); i++) {
-			if(wordList.get(i).getOriginal().equals("\"")) 
+			if(wordList.get(i).getOriginal().equals("\"") || wordList.get(i).getOriginal().equals("»") || wordList.get(i).getOriginal().equals("«")) 
 			{
 				flag ++;
 				//wc++;
@@ -105,11 +106,11 @@ public class ConvDetails {
 	
 	public double convRatio(List<Word> wordList) {
 		//double ratio = 0.0;
-		//int m1 = calcConv(wordList);
+		int m1 = calcConv(wordList);
 		int m2 = quotedwordcount(wordList);
 		int m3 = wordcount(wordList);
 		
-		
+		//System.out.println("dialog count = "+ m1 + "ratio=" + (double)m2/m3);
 		return ((double)m2/m3);
 	}
 	
