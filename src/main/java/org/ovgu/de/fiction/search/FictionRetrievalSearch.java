@@ -188,10 +188,23 @@ public class FictionRetrievalSearch {
 						     for(Map.Entry<String, double[]> temp_chunk: chunk_map.entrySet()){
 						    	 	 global_feature[1] = temp_chunk.getValue()[FRConstants.TTR_21]*FRConstants.FEATURE_WEIGHT_LESS;
 						    	 	 global_feature[2] = temp_chunk.getValue()[FRConstants.NUM_CHARS_20]*FRConstants.FEATURE_WEIGHT_LEAST;
+						    	 	 global_feature[3] = temp_chunk.getValue()[22];
+						    	 	 global_feature[4] = temp_chunk.getValue()[23];
+						    	 	 global_feature[5] = temp_chunk.getValue()[24];
+						    	 	 global_feature[6] = temp_chunk.getValue()[25];
+						    	 	 global_feature[7] = temp_chunk.getValue()[26];
+						    	 	 global_feature[8] = temp_chunk.getValue()[27];						    	 
+						    	 	 
+						    	 			
 						     }
 						   
 					   }
+
 				   }
+				System.out.println("Before FOR");
+				System.out.println("===============");
+				for (int i=0; i<9; i++)
+					System.out.println(global_feature[i]);
 				if(!global_books.getValue().equals(qryBookId))// dont_add_query_vector_which_is_specially_created
 				global_corpus.put(global_books.getValue(),global_feature);
 			}

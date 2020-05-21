@@ -32,6 +32,13 @@ public interface FRConstants {
 	public static final String SIMILARITY_TYPE = "similarity_type";
 	public static final String NEW_FEATURE_FILE_LOCATION = "new_feature_file_path";
 	
+	// adding for feature1 python program
+	public static final String FEATURE1_FILE_LOCATION = "feature1_file_path";
+	public static final String BOOK1_FILE_PATH = "book1_file_path";
+	public static final String ENCODING1 = "encoding1";
+	public static final String MASTER_FILE_PATH = "master_file_path";
+	public static final String NEW_FEATURE1_FILE_LOCATION = "new_feature1_file_path";
+	
 	/* regex */
 	public static final String REGEX_ALL_PUNCTUATION = "[\\s\"\\.\\,\\?\\!\\:\\;\\'-]";
 	public static final String CHARACTER_NOISE = "[\"\\.\\,\\?\\!\\:\\;\\'-]";
@@ -172,8 +179,8 @@ public interface FRConstants {
 	public static final String SIMI_EXCLUDE_TTR_NUMCHARS="EX";
 
 	public static final double SIMILARITY_CUTOFF = 0.70;
-	public static final int FEATURE_NUMBER = 22;
-	public static final int FEATURE_NUMBER_GLOBAL = 3;
+	public static final int FEATURE_NUMBER = 28;
+	public static final int FEATURE_NUMBER_GLOBAL = 9;
 	public static final double FEATURE_WEIGHT_MORE = 0.85;
 	public static final double FEATURE_WEIGHT_LESS = 0.10;
 	public static final double FEATURE_WEIGHT_LEAST = 0.05;
@@ -196,7 +203,7 @@ public interface FRConstants {
 	public static final int TOP_K_RESULTS = 25;
 
 	/* feature related */
-	public static final int LEAVE_LAST_K_ELEMENTS_OF_FEATURE = 2; //exclude 2 global elements (TTR, NUM_Chars) from
+	public static final int LEAVE_LAST_K_ELEMENTS_OF_FEATURE = 8; //exclude 2 global elements (TTR, NUM_Chars) from
 	
 	public static final int TTR_21 = 21;
 	
