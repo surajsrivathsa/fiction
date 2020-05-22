@@ -13,7 +13,9 @@ public class BookDetails implements Serializable {
 
 	/**
 	 * 
-	 */
+	 *///
+	
+	
 	private static final long serialVersionUID = -5335435328859228630L;
 	private String bookId;
 	private List<Chunk> chunks;

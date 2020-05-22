@@ -91,7 +91,7 @@ public class FRGeneralUtils {
 
 	public static Metadata getMetadata(String fileName) throws IOException {
 		EpubReader epubReader = new EpubReader();
-		String EPUB_FOLDER = FRGeneralUtils.getPropertyVal(FRConstants.EPUB_FOLDER);
+		String EPUB_FOLDER = FRGeneralUtils.getPropertyVal(FRConstants.EPUB_PATH);
 		Book book = epubReader.readEpub(new FileInputStream(EPUB_FOLDER + "/" + fileName + FRConstants.EPUB_EXTN));
 		return book.getMetadata();
 	}

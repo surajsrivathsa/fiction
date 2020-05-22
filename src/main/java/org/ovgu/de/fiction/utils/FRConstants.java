@@ -18,20 +18,7 @@ public interface FRConstants {
 	public static final String CHUNK_SIZE_FOR_TTR = "chunk.ttr.size";
 	public static final String OUT_FOLDER_TOKENS = "folder.out.chunks";
 	public static final String STOPWORD_FICTION = "stopword.fiction";
-	
-	// adding for python program
-	public static final String PYTHON_ENVIRONMENT_NAME = "python.environment.name";
-	public static final String FEATURE_FILE_LOCATION = "feature_file_path";
-	public static final String BOOK_FILE_PATH = "book_file_path";
-	public static final String EMOTICON_FILE_PATH = "emoticon_file_path";
-	public static final String FEATURE_FIELDS = "feature_fields";
-	public static final String LANGUAGE = "language";
-	public static final String ENCODING = "encoding";
-	public static final String BOOK_START_PERCENTAGE = "book_start_percentage";
-	public static final String BOOK_END_PERCENTAGE = "book_end_percentage";
-	public static final String SIMILARITY_TYPE = "similarity_type";
-	public static final String NEW_FEATURE_FILE_LOCATION = "new_feature_file_path";
-	
+
 	/* regex */
 	public static final String REGEX_ALL_PUNCTUATION = "[\\s\"\\.\\,\\?\\!\\:\\;\\'-]";
 	public static final String CHARACTER_NOISE = "[\"\\.\\,\\?\\!\\:\\;\\'-]";
@@ -241,6 +228,13 @@ public interface FRConstants {
 	public static final int FEMALE_PR_1 = 1;
 	
 	public static final int PARAGRAPH_COUNT_0 = 0;
+	
+	// web
+
+	public static final String TOP_K = "topk.count";
+	public static final String GENRE_CSV = "genre.csv.loc";
+	public static final String EPUB_PATH ="web.ctx.path"; 
+	public static final String EVENT_HEADER = "Genre,Book-ID,SelectedBook-ID";
 	
 
 }
