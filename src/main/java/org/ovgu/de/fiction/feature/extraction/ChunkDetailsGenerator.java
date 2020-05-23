@@ -98,7 +98,7 @@ public class ChunkDetailsGenerator {
 																	 // object/vector
 				book.setAverageTTR(feu.getAverageTTR(getEqualChunksFromFile(getTokensFromAllChunks(book.getChunks()))));
 				book.setNumOfChars(NUM_OF_CHARS_PER_BOOK == 0 ? 1 : NUM_OF_CHARS_PER_BOOK);
-				System.out.println("xd"+max+" " +NUM_OF_CHARS_PER_BOOK+ " " +ratio);
+				//System.out.println("xd"+max+" " +NUM_OF_CHARS_PER_BOOK+ " " +ratio);
 				book.setmax(max);
 				book.setratio(ratio);
 				book.setdialogratio(dialogratio);
@@ -124,11 +124,11 @@ public class ChunkDetailsGenerator {
 		/*for (Entry<String,String> c : bigcharMap.entrySet()) {
 			LOG.info(c.getKey()+" "+c.getValue());
 			
-		}*/
+		}
 		
 		String eol = System.getProperty("line.separator");
 
-		try (Writer writer = new FileWriter("C:\\OvGU_DKe\\Project\\GutenbergDataset\\Short_tokens\\charmap_B3.csv")) {
+		try (Writer writer = new FileWriter("C:\\OvGU_DKe\\Project\\GutenbergDataset\\Short_tokens\\charmap.csv")) {
 		  for (Map.Entry<String, String> entry : bigcharMap.entrySet()) {
 		    writer.append(entry.getKey())
 		          .append(',')
@@ -138,7 +138,7 @@ public class ChunkDetailsGenerator {
 		} catch (IOException ex) {
 		  ex.printStackTrace(System.err);
 		}
-		
+		*/
 		return books;
 	}
 
@@ -157,9 +157,9 @@ public class ChunkDetailsGenerator {
 		//String filename = path.replace("[^\\\\]+(?=$)","");
 		int m= fileName.lastIndexOf('\\');
 		String filename = fileName.substring(m+1);
-		System.out.println(filename);
+		//System.out.println(filename);
 		book.setBookId(filename);
-		System.out.println(fileName);
+		System.out.println("Current file is: " +fileName);
 		int batchNumber;
 		max = 0;
 		sum = 0;
@@ -192,13 +192,13 @@ public class ChunkDetailsGenerator {
 		    	max = entry.getValue();
 		 });
 		ratio = (double)max/sum;
-		LOG.info(max + " " + sum + " " + ratio);
+		LOG.info("Count of highest occurring character:" + max + "; Total character counts: " + sum + "; Main character presence ratio: " + ratio);
 		List<Word> wordList = cncpt.getWords();
 		int numOfSntncPerBook  = cncpt.getNumOfSentencesPerBook();
-		LOG.info("dialog ratio = "+dialogratio);
+		
 		ConvDetails conv = new ConvDetails();
 		dialogratio = conv.convRatio(wordList);
-		
+		LOG.info("Dialog Ratio = "+dialogratio);
 		
 		// String fileName =
 		// Paths.get(path).getFileName().toString().replace(Constants.CONTENT_FILE, Constants.NONE);
@@ -345,14 +345,14 @@ public class ChunkDetailsGenerator {
 					properWordCount++;
 				}
 				/* calculate pos stats */
-				if (token.getPos().equals(FRConstants.PERSONAL_P)) {
+				if (token.getPos().equals(FRConstants.PERSONAL_P) || token.getPos().equals(FRConstants.PERSONAL_P_DE)) {
 					personalPronounCount++;
 					if (l.equals(FRConstants.HE) || l.equals(FRConstants.ER))
 						malePrpPosPronounCount++;
 					else if (l.equals(FRConstants.SHE) || l.equals(FRConstants.SIE))
 						femalePrpPosPronounCount++;
 
-				} else if (token.getPos().equals(FRConstants.POSSESIV_P)) {
+				} else if (token.getPos().equals(FRConstants.POSSESIV_P) || token.getPos().equals(FRConstants.POSSESIV_P_DE)) {
 					possPronounCount++;
 					if (l.equals(FRConstants.HE) || l.equals(FRConstants.ER))
 						malePrpPosPronounCount++;
@@ -370,10 +370,10 @@ public class ChunkDetailsGenerator {
 				
 				
 				
-				else if (token.getPos().equals(FRConstants.PREPOSITION)) {
+				else if (token.getPos().equals(FRConstants.PREPOSITION) || token.getPos().equals(FRConstants.PREPOSITION_DE)) {
 					if (LOCATIVE_PREPOSITION_LIST.contains(l))
 						locativePrepositionCount++;
-					if (l.equals(FRConstants.IN) || l.equals(FRConstants.IM)) {
+					if (l.equals(FRConstants.IN)) {
 						int temp = wordcntr;
 						if ((l.equals(FRConstants.IN) && wordList.get(++temp).getLemma().equals(FRConstants.FRONT)
 								&& wordList.get(++temp).getLemma().equals(FRConstants.OF)))
@@ -400,7 +400,7 @@ public class ChunkDetailsGenerator {
 					locativePrepositionCount++;
 				else if (token.getPos().equals(FRConstants.INTERJECTION))
 					intrjctnCount++;
-				else if (token.getPos().equals(FRConstants.COORD_CONJUNCTION))
+				else if (token.getPos().equals(FRConstants.COORD_CONJUNCTION) || token.getPos().equals(FRConstants.COORD_CONJUNCTION_DE))
 					coordConj++;
 				else if (token.getLemma().equals(FRConstants.COMMA))
 					commaCount++;
@@ -421,7 +421,7 @@ public class ChunkDetailsGenerator {
 				wordCountPerSntnc++;
 			}
 			addToWordCountMap(raw, wordCountPerSntncMap, wordCountPerSntnc);
-			//System.out.println("counts = " + 	malePrpPosPronounCount + " " + femalePrpPosPronounCount + raw.size());
+			//System.out.println("counts = " + 	malePrpPosPronounCount + "female = " + femalePrpPosPronounCount +"pper" + personalPronounCount);
 			Chunk chunk = new Chunk();
 			chunk.setChunkNo(chunkNo);
 			// String chunkFileName = OUT_FOLDER_TOKENS + fileName + "-" +

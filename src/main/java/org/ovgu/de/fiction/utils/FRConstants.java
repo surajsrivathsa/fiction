@@ -121,7 +121,9 @@ public interface FRConstants {
 	public static final String FILE_HEADER_RES_CSV = "bookId_RowNum,F0,F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11,F12,F13,F14,F15,F16,F17,F18,F19,F20,F21,Class";
 	
 	public static final String COORD_CONJUNCTION = "CC";
-
+	
+	public static final String COORD_CONJUNCTION_DE = "KON";
+	
 	public static final String INTERJECTION = "UH";
 
 	public static final String COME = "come";
@@ -155,8 +157,12 @@ public interface FRConstants {
 	public static final String IM = "im";
 
 	public static final String PREPOSITION = "IN";
+	
+	public static final String PREPOSITION_DE = "APPR";
 
 	public static final String POSSESIV_P = "PRP$";
+	
+	public static final String POSSESIV_P_DE = "PPOSAT";
 
 	public static final String SHE = "she";
 	
@@ -168,7 +174,11 @@ public interface FRConstants {
 
 	public static final String PERSONAL_P = "PRP";
 
+	public static final String PERSONAL_P_DE = "PPER";
+	
 	public static final String NER_CHARACTER = "PERSON";
+	
+	public static final String NER_CHARACTER_DE = "I-PER";
 	
 	public static final String MISC_CHAR = "MISC";
 

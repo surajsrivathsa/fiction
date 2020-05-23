@@ -71,7 +71,7 @@ public class WordAttributeGenerator {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("language"+x);
+		System.out.println("Language: "+x);
 		//System.exit(0);
 		Annotation document = new Annotation(FRFileOperationUtils.readFile(path.toString()));
 
@@ -108,13 +108,13 @@ public class WordAttributeGenerator {
 				 * "Mr" +"Tom" + "Cruise" into a single token the single concatenated token is added
 				 * to a Map , where key is number of times "Mr. Tom Cruise" appears
 				 */
-				if ((ner.equals(FRConstants.NER_CHARACTER) )  && !original.matches(FRConstants.CHARACTER_STOPWORD_REGEX)) {
+				if ((ner.equals(FRConstants.NER_CHARACTER) || ner.equals(FRConstants.NER_CHARACTER_DE))  && !original.matches(FRConstants.CHARACTER_STOPWORD_REGEX)) {
 					
 					if (charName.length() == 0)
 						charName.append(original.toLowerCase());
 					else
 						charName.append(FRConstants.SPACE).append(original.toLowerCase());
-				} else if (!ner.equals(FRConstants.NER_CHARACTER) && charName.length() != 0) {
+				} else if (!(ner.equals(FRConstants.NER_CHARACTER) || ner.equals(FRConstants.NER_CHARACTER_DE)) && charName.length() != 0) {
 
 					// calculate for character
 					numOfSyllables = FRGeneralUtils.countSyllables(charName.toString().toLowerCase());

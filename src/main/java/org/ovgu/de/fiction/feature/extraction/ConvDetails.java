@@ -68,18 +68,19 @@ public class ConvDetails {
 	public int quotedwordcount(List<Word> wordList) {
 		int i, wc =0, flag = 0 ;
 		for(i = 0; i < wordList.size(); i++) {
-			if(wordList.get(i).getOriginal().equals("\"") || wordList.get(i).getOriginal().equals("»") || wordList.get(i).getOriginal().equals("«")) 
+			if(wordList.get(i).getOriginal().equals("\"") || wordList.get(i).getOriginal().equals("»") || wordList.get(i).getOriginal().equals("«")
+					|| wordList.get(i).getOriginal().equals("'") ) 
 			{
 				flag ++;
 				//wc++;
 			}
-			if(flag % 2 != 0  && flag != 0 && !wordList.get(i).getOriginal().equals("'")
+			if(flag % 2 != 0  && flag != 0 
 					&& !wordList.get(i).getOriginal().equals(",")
 					&& !wordList.get(i).getOriginal().equals(".")
 					&& !wordList.get(i).getOriginal().equals("<s>")
 					&& !wordList.get(i).getOriginal().equals("<p>")
 					&& !wordList.get(i).getOriginal().equals(";")
-					&& !wordList.get(i).getOriginal().equals("'"))
+					&& !wordList.get(i).getOriginal().equals("'s"))
 				wc++;
 		}
 		return wc;

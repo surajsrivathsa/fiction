@@ -105,6 +105,14 @@ public class FRGeneralUtils {
 		prepList.add("beside");
 		prepList.add("near");
 		prepList.add("towards");
+		prepList.add("ab");
+		prepList.add("aus");
+		prepList.add("bei");
+		prepList.add("gegenüber");
+		prepList.add("nach");
+		prepList.add("seit");
+		prepList.add("von");
+		
 		return prepList;
 	}
 	
