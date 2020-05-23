@@ -23,6 +23,9 @@ BSP=$8
 BEP=$9
 SIMILARITY_TYPE="${10}"
 NEW_FEATURE_FILE_PATH="${11}"
+BOOK_LIST_FILE_PATH="${12}"
+LOGGING_FLAG="${13}"
+PYTHON_CODE_FILE_PATH="${14}"
 
 
 echo "Printing the parameters passed to shell"
@@ -39,7 +42,7 @@ echo "Activating python environment: $ENVIRONMENT_NAME"
 source activate $ENVIRONMENT_NAME
 
 echo "Running python program driver file"
-python /Users/surajshashidhar/git/fiction/extract_emotion_features/extract_emotions_driver.py --feature_file_path $FEATURE_FILE_PATH --book_file_path $BOOK_FILE_PATH --emoticon_file_path $BOOK_FILE_PATH --emoticon_file_path $EMOTICON_FILE_PATH --feature_fields $FEATURE_FIELDS --language $LANGUAGE --encoding $ENCODING --book_start_percentage $BSP --book_end_percentage $BEP --similarity_type $SIMILARITY_TYPE --new_feature_file_path $NEW_FEATURE_FILE_PATH
+python $PYTHON_CODE_FILE_PATH --feature_file_path $FEATURE_FILE_PATH --book_file_path $BOOK_FILE_PATH --emoticon_file_path $BOOK_FILE_PATH --emoticon_file_path $EMOTICON_FILE_PATH --feature_fields $FEATURE_FIELDS --language $LANGUAGE --encoding $ENCODING --book_start_percentage $BSP --book_end_percentage $BEP --similarity_type $SIMILARITY_TYPE --new_feature_file_path $NEW_FEATURE_FILE_PATH --book_list_file_path $BOOK_LIST_FILE_PATH --logging_flag $LOGGING_FLAG
 
 status=$?
 

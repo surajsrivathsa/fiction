@@ -20,6 +20,8 @@ public interface FRConstants {
 	public static final String STOPWORD_FICTION = "stopword.fiction";
 	
 	// adding for python program
+	public static final String SCRIPT_TYPE = "script.type";
+	public static final String SCRIPT_NAME = "script.name";
 	public static final String PYTHON_ENVIRONMENT_NAME = "python.environment.name";
 	public static final String FEATURE_FILE_LOCATION = "feature_file_path";
 	public static final String BOOK_FILE_PATH = "book_file_path";
@@ -31,6 +33,11 @@ public interface FRConstants {
 	public static final String BOOK_END_PERCENTAGE = "book_end_percentage";
 	public static final String SIMILARITY_TYPE = "similarity_type";
 	public static final String NEW_FEATURE_FILE_LOCATION = "new_feature_file_path";
+	public static final String BOOK_LIST_FILE_PATH = "book_list_file_path";
+	public static final String LOGGING_FLAG = "logging_flag";
+	public static final String PYTHON_CODE_FILE_PATH = "python_code_file_path";
+	
+	
 	
 	/* regex */
 	public static final String REGEX_ALL_PUNCTUATION = "[\\s\"\\.\\,\\?\\!\\:\\;\\'-]";

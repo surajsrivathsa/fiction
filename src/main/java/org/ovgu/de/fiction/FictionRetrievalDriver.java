@@ -26,14 +26,14 @@ public class FictionRetrievalDriver {
 	public static void main(String[] args) throws Exception {
 
 		long start = System.currentTimeMillis();
-		
+		//System.out.println("Hello world");
 
 		/* 1> Extract content from Gutenberg corpus - one time */
 		
-		ContentExtractor.generateContentFromAllEpubs();
-		System.out.println("Time taken for generating content (min)-" + (System.currentTimeMillis() - start) / (1000 * 60));
+		//ContentExtractor.generateContentFromAllEpubs();
+		//System.out.println("Time taken for generating content (min)-" + (System.currentTimeMillis() - start) / (1000 * 60));
 
-		start = System.currentTimeMillis();
+		//start = System.currentTimeMillis();
 		
 		
 		/* 2> Generate features from the extracted content - one time */
@@ -58,9 +58,9 @@ public class FictionRetrievalDriver {
 		 * @Suraj: Adding feature 3 extraction program calling from java to python
 		 */
 		
-		//extract_Feature3();
+		extract_Feature3();
 		
-		
+		//System.out.println("Hello world");
 		/* 4> Query */
 		/* Commenting below block as i needed to extract only html output. Un comment when required
 		String qryBookNum = "pg1400DickensGreatExp"; 
@@ -105,8 +105,9 @@ public class FictionRetrievalDriver {
 	}
 
 	public static void extract_Feature3() throws ExecuteException, IOException, InterruptedException {
-		 CommandLine cmdLine = new CommandLine("sh");
-		 cmdLine.addArgument("run_python_jobs.sh");
+		System.out.println("hh");//FRGeneralUtils.getPropertyVal(FRConstants.SCRIPT_TYPE)
+		 CommandLine cmdLine = new CommandLine(FRGeneralUtils.getPropertyVal(FRConstants.SCRIPT_TYPE));
+		 cmdLine.addArgument(FRGeneralUtils.getPropertyVal(FRConstants.SCRIPT_NAME));
 		 cmdLine.addArgument(FRGeneralUtils.getPropertyVal(FRConstants.PYTHON_ENVIRONMENT_NAME));
 		 cmdLine.addArgument(FRGeneralUtils.getPropertyVal(FRConstants.FEATURE_FILE_LOCATION));
 		 cmdLine.addArgument(FRGeneralUtils.getPropertyVal(FRConstants.BOOK_FILE_PATH));
@@ -118,18 +119,32 @@ public class FictionRetrievalDriver {
 		 cmdLine.addArgument(FRGeneralUtils.getPropertyVal(FRConstants.BOOK_END_PERCENTAGE));
 		 cmdLine.addArgument(FRGeneralUtils.getPropertyVal(FRConstants.SIMILARITY_TYPE));
 		 cmdLine.addArgument(FRGeneralUtils.getPropertyVal(FRConstants.NEW_FEATURE_FILE_LOCATION));
+		 cmdLine.addArgument(FRGeneralUtils.getPropertyVal(FRConstants.BOOK_LIST_FILE_PATH));
+		 cmdLine.addArgument(FRGeneralUtils.getPropertyVal(FRConstants.LOGGING_FLAG));
+		 cmdLine.addArgument(FRGeneralUtils.getPropertyVal(FRConstants.PYTHON_CODE_FILE_PATH));
 		 DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
 
 		 // ExecuteWatchdog watchdog = new ExecuteWatchdog(60*1000);
 		 Executor executor = new DefaultExecutor();
 		
-		 executor.setExitValue(1);
+		 //executor.setExitValue(1);
 		 //executor.setWatchdog(watchdog);
-		 executor.execute(cmdLine, resultHandler);
-
+		 //executor.execute(cmdLine, resultHandler);
+		 int exitvalue = executor.execute(cmdLine);
+		 if(exitvalue == 0)
+		 {
+			 System.out.println("Exiting java program after successfully running python script");
+			 System.exit(0);
+		 }
+		 else
+		 {
+			 System.out.println("Java: Problem while running shell script, got exit status as: " + exitvalue);
+			 System.exit(1);
+		 }
+			 
 		 // some time later the result handler callback was invoked so we
 		 // can safely request the exit value
-		 resultHandler.waitFor();	 
+		 // resultHandler.waitFor();	 
 	}
 	
 	/*String line = "sh";
