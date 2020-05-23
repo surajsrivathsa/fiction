@@ -14,3 +14,6 @@ Instructions to run the code for extraction of existing features along with Feat
   a.	log4j.appender.file.File - The path where the log file will be stored.
 5.	Place your desired source epub files in the folder.in.epub folder
 6.	Run the code by right clicking on the ‘FictionRetrievalDriver.java’ file in the Project Explorer in Eclipse and select ‘Run As’ -> ‘Java Application’.
+
+
+Once the program is successfully executed, the extracted feature file will be present in the specified location. The columns for the new features : 'main character presence' and 'dialog interaction ratio' are columns F20 and F21 respectively. 
