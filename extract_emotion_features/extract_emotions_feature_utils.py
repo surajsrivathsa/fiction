@@ -224,13 +224,18 @@ class EmotionUtils:
 
     Description: A single sentence token list is its input, each token is looked up in NRC emotion dictionary.
     Emotion of each token is aggregated at sentence level and finally one emotion vector is returned. If no values are fount in
-    NRC dictionary then we return default value
+    NRC dictionary then we return default value/
+
+    Problems: We encountered some problems while setting default_emotions to constants.DEFAULT_EMOTIONS we saw lot of errors
+    where we got all feature vectors with almost same values, hence similarity > 0.95 for all books.
+    This was due to pass by reference. Hence we hardcoded it to the actual value
 
     Extension: Adding new language doesn't change this function. Although you need to change the emotion dict in other function
     to add emotions of other language
     """
 
     def get_emotion_per_sentence(self, sen_val, emoticon_dict):
+        # Hardcoding this to avoid an issue with similarity calculation, check the problem statement above in comments
         default_emotions = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         sentence_emotions = constants.SENTENCE_EMOTIONS
         for v in sen_val:
