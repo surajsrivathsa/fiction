@@ -5,8 +5,8 @@ import pandas as pd
 import time
 
 # File path and name constants
-FILE_PATH_SIMILARITY = os.path.join(os.getcwd(), "simialrity_feature_b10.csv")
-FILE_PATH_LOG = os.path.join(os.getcwd(), 'SIMFIC_2.0_Feature3_b10.log')
+FILE_PATH_SIMILARITY = os.path.join(os.getcwd(), "simialrity_feature.csv")
+FILE_PATH_LOG = os.path.join(os.getcwd(), 'SIMFIC_2.0_Feature3.log')
 FILE_MODE = "w"
 
 # To change logging level(WARNING, ERROR, CRITICAL) to other than INFO use other integer values mentioned in https://www.loggly.com/ultimate-guide/python-logging-basics/
