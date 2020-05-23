@@ -34,7 +34,7 @@ class EmotionUtils:
     """
     fnc: initilaize_nlp_pipeline
     Input: None
-    Output: None.
+    Output: None....
 
     Description: Initilaizes english and german language SPACY NLP pipeline,
     We have disabled NER and POS parser as these take lot of time to parse and are not required for our purpose.
