@@ -58,7 +58,7 @@ public class FictionRetrievalDriver {
 		 * @Suraj: Adding feature 3 extraction program calling from java to python
 		 */
 		
-		extract_Feature3();
+		//extract_Feature3();
 		
 		
 		/* 4> Query */
