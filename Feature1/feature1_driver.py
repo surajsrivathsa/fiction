@@ -1,7 +1,7 @@
 import feature1_file_utils
 import feature1_genre_utils
 import argparse
-import os
+import sys
 
 class Driver:
     
@@ -50,4 +50,4 @@ if __name__ == "__main__":
     driver_obj = Driver(feature_file_path,book_file_path,master_file_path,new_feature_file_path,encoding)
     print("Calling book vecs")
     driver_obj.get_book_vec()
-    os._exit(0)
+    sys.exit(0)
