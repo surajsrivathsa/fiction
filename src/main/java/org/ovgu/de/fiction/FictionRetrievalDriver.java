@@ -57,8 +57,14 @@ public class FictionRetrievalDriver {
 		/*
 		 * @Suraj: Adding feature 3 extraction program calling from java to python
 		 */
+		if(FRGeneralUtils.getPropertyVal(FRConstants.IS_WINDOWS) == "Yes")
+		{
+			extract_Feature3_windows();
+		}
+		else {
+			extract_Feature3_linux();
+		}
 		
-		extract_Feature3();
 		
 		//System.out.println("Hello world");
 		/* 4> Query */
@@ -104,9 +110,48 @@ public class FictionRetrievalDriver {
 		return books;
 	}
 
-	public static void extract_Feature3() throws ExecuteException, IOException, InterruptedException {
+	
+	public static void extract_Feature3_windows() throws IOException {
+		// String python_parameters = "--feature_file_path C:\\OvGU_DKe\\Project\\GutenbergDataset\\Features_Extracted_English.csv --book_file_path C:\\OvGU_DKe\\Project\\GutenbergDataset\\Short_epubs_extracted\\ --emoticon_file_path C:\\Users\\rambo\\git\\fiction\\all_language_emotions.csv --feature_fields 24 --language en --encoding utf-8 --new_feature_file_path C:\\OvGU_DKe\\Project\\GutenbergDataset\\Short_epubs_extracted\\new_Features_Extracted.csv --book_list_file_path C:\\Users\\rambo\\git\\fiction\\Final_Booklist.xlsx --logging_flag True";
+        String python_parameters = " --feature_file_path " + FRGeneralUtils.getPropertyVal(FRConstants.FEATURE_FILE_LOCATION) + 
+        		" --book_file_path " + FRGeneralUtils.getPropertyVal(FRConstants.BOOK_FILE_PATH);
+        python_parameters = python_parameters + " --emoticon_file_path " + FRGeneralUtils.getPropertyVal(FRConstants.EMOTICON_FILE_PATH) + " --feature_fields " +  
+        		FRGeneralUtils.getPropertyVal(FRConstants.FEATURE_FIELDS) + " --language " + "\"en\"" +  " --encoding "+ "\"utf-8\"" ;
+        python_parameters = python_parameters + " --new_feature_file_path " + FRGeneralUtils.getPropertyVal(FRConstants.NEW_FEATURE_FILE_LOCATION) + 
+        		" --book_list_file_path " + FRGeneralUtils.getPropertyVal(FRConstants.BOOK_LIST_FILE_PATH) + " --logging_flag " + FRGeneralUtils.getPropertyVal(FRConstants.LOGGING_FLAG);
+		
+        System.out.println(python_parameters);
+        System.out.println();
+        Process p = Runtime.getRuntime().exec("python C:\\Users\\rambo\\git\\fiction\\extract_emotion_features\\extract_emotions_driver.py " + python_parameters);
+        
+        BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+        StringBuffer response = new StringBuffer();
+        StringBuffer errorStr = new StringBuffer();
+        boolean alreadyWaited = false;
+        String res ="";
+        while (p.isAlive()) {
+                if(alreadyWaited) {
+                    String temp;
+                    while ((temp = stdInput.readLine()) != null) {
+                    	response.append("\n");
+                       response.append(temp);
+                        
+                    }
+                    String errTemp;
+                    while ((errTemp = stdError.readLine()) != null) {
+                        errorStr.append(errTemp);
+                    }  
+                    res=response.toString();
+                }
+                alreadyWaited = true;
+                System.out.println(response.toString() + errorStr.toString());  
+        }
+	}
+	public static void extract_Feature3_linux() throws ExecuteException, IOException, InterruptedException {
 		System.out.println("hh");//FRGeneralUtils.getPropertyVal(FRConstants.SCRIPT_TYPE)
 		 CommandLine cmdLine = new CommandLine(FRGeneralUtils.getPropertyVal(FRConstants.SCRIPT_TYPE));
+		 //cmdLine.addArgument("/c");
 		 cmdLine.addArgument(FRGeneralUtils.getPropertyVal(FRConstants.SCRIPT_NAME));
 		 cmdLine.addArgument(FRGeneralUtils.getPropertyVal(FRConstants.PYTHON_ENVIRONMENT_NAME));
 		 cmdLine.addArgument(FRGeneralUtils.getPropertyVal(FRConstants.FEATURE_FILE_LOCATION));
@@ -126,7 +171,7 @@ public class FictionRetrievalDriver {
 
 		 // ExecuteWatchdog watchdog = new ExecuteWatchdog(60*1000);
 		 Executor executor = new DefaultExecutor();
-		
+		 System.out.println(cmdLine);
 		 //executor.setExitValue(1);
 		 //executor.setWatchdog(watchdog);
 		 //executor.execute(cmdLine, resultHandler);
