@@ -4,7 +4,7 @@ Core Java  Application for Processioning, Feature Extraction and Query functiona
 Instructions to run the code for extraction of existing features along with Feature 2:
 
 1.	Clone the code from the branch named ‘feature2’ in the repository surajsrivathsa/fiction.
-2.	Build maven project from the file pom.xml
+2.	Build maven project by right clicking the file pom.xml > Run As > Maven Build and specify the goal as 'clean install'.
 3.	Replace the paths for the following folders in the ‘config.properties’ file :
   a.	folder.in.epub– The path to the folder where the source epubs files are present.
   b.	folder.out.content – The path to the folder where the HTML content of the epub files will be extracted.
