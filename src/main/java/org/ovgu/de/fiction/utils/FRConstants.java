@@ -39,6 +39,7 @@ public interface FRConstants {
 	public static final String ENCODING1 = "encoding1";
 	public static final String MASTER_FILE_PATH = "master_file_path";
 	public static final String NEW_FEATURE1_FILE_LOCATION = "new_feature1_file_path";
+	public static final String PYTHON_ENVIRON = "my_environ";
 	
 	/* regex */
 	public static final String REGEX_ALL_PUNCTUATION = "[\\s\"\\.\\,\\?\\!\\:\\;\\'-]";

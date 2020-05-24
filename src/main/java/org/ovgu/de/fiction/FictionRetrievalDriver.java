@@ -138,22 +138,23 @@ public class FictionRetrievalDriver {
 		 String arg3 = FRGeneralUtils.getPropertyVal(FRConstants.MASTER_FILE_PATH);
 		 String arg4 = FRGeneralUtils.getPropertyVal(FRConstants.ENCODING1);
 		 String arg5 = FRGeneralUtils.getPropertyVal(FRConstants.NEW_FEATURE1_FILE_LOCATION);
-		String[] command = {"cmd.exe","/C","start",arg0, arg1, arg2,arg3, arg4,arg5};
+		 String arg6 = FRGeneralUtils.getPropertyVal(FRConstants.PYTHON_ENVIRON);
+		String[] command = {arg0, arg1, arg2,arg3, arg4,arg5,arg6};
 		ProcessBuilder builder = new ProcessBuilder(command);
 		System.out.println("" + builder.command());
 		Process p = builder.start();
-		builder.redirectErrorStream(true); 
-		System.out.println(builder.redirectErrorStream()); 
 		BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream())); 
 		String s = null; 
 	    while ((s = stdInput.readLine()) != null) 
 		{ 
 		 System.out.println(s); 
 		} 
-		int exitCode = p.waitFor();
-		String str1 = Integer.toString(exitCode);
-		System.out.println("Script executed successfully" + str1);
-
+		//int exitCode = p.waitFor();
+		//String str1 = Integer.toString(exitCode);
+	    if (p.waitFor()!=0) 
+	    	System.out.println("Script execution failed " + p.waitFor());
+	    else
+	    	System.out.println("Script executed successfully " + p.waitFor());
 	}
 	
 	/*String line = "sh";
