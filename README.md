@@ -22,4 +22,5 @@ While running the code from our end, since we did not have the computing resourc
 
 # Note - 
 1.Due to the way NUM_OF_CHARS and TTR features are normalized, we are aware that these two columns have currently been extracted incorrectly. However, once the program is run for all books at once, this will be handled automatically.
+
 2. In order to run the code for branches 'feature1' and 'feature3' please have a look at the documents named 'Feature 1 Run Instructions.pdf' and 'Feature 3 Run Document.pdf'/.docx respectively.
