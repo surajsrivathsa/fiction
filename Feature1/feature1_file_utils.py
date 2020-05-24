@@ -138,21 +138,25 @@ class FileUtils:
 
     def write_feature_file(self,chunk_vector_df):
     #Write the features to a new feature file
-        feat_file = pd.read_csv(self.feature_file_path)
-        files = feat_file["bookId-chunkNo"]
-        filename_pattern = re.compile(self.FEATURE_FILENAME_PARSE_REGEX)
-        names= []
-        for file_name in files:
-            arr = filename_pattern.search(file_name)
-            names.append(arr.group(1) + arr.group(2))
-        feat_file['filenames']=names
-        merged_df = feat_file.merge(chunk_vector_df,left_on='filenames',right_on = chunk_vector_df.index)
-        merged_df.index = merged_df['bookId-chunkNo']
-        merged_df = merged_df.drop("bookId-chunkNo",axis = 1)
-        merged_df = merged_df.drop("filenames",axis = 1)
-        print(self.new_feature_file_path)
-        merged_df.to_csv(self.new_feature_file_path)
-        return merged_df
+        try:
+            feat_file = pd.read_csv(self.feature_file_path)
+            files = feat_file["bookId-chunkNo"]
+            filename_pattern = re.compile(self.FEATURE_FILENAME_PARSE_REGEX)
+            names= []
+            for file_name in files:
+                arr = filename_pattern.search(file_name)
+                names.append(arr.group(1) + arr.group(2))
+            feat_file['filenames']=names
+            merged_df = feat_file.merge(chunk_vector_df,left_on='filenames',right_on = chunk_vector_df.index)
+            merged_df.index = merged_df['bookId-chunkNo']
+            merged_df = merged_df.drop("bookId-chunkNo",axis = 1)
+            merged_df = merged_df.drop("filenames",axis = 1)
+            print(self.new_feature_file_path)
+            merged_df.to_csv(self.new_feature_file_path)
+            return merged_df
+        except:
+            print("File already present with the same name. Please delete the file and try again")
+            sys.exit(1)
 
 
 

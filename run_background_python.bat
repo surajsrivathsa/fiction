@@ -14,6 +14,7 @@ set MASTER_FILE_PATH=%3
 set ENCODING=%4
 set NEW_FEATURE_FILE_PATH=%5
 set MY_ENVIRON=%6
+set MY_PYTHON_PATH=%7
 
 
 
@@ -24,7 +25,7 @@ echo Activating the environment
 call activate %MY_ENVIRON%
 
 echo Running python program driver file
-python C:\\Users\\Chandan\\git\\fiction\\Feature1\\feature1_driver.py --feature_file_path %FEATURE_FILE_PATH% --book_file_path %BOOK_FILE_PATH%  --master_file_path %MASTER_FILE_PATH% --encoding %ENCODING% --new_feature_file_path %NEW_FEATURE_FILE_PATH%
+python %MY_PYTHON_PATH% --feature_file_path %FEATURE_FILE_PATH% --book_file_path %BOOK_FILE_PATH%  --master_file_path %MASTER_FILE_PATH% --encoding %ENCODING% --new_feature_file_path %NEW_FEATURE_FILE_PATH%
 
 if %ERRORLEVEL% EQU 0 ( 
 exit %ERRORLEVEL%) else ( 

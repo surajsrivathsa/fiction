@@ -139,7 +139,8 @@ public class FictionRetrievalDriver {
 		 String arg4 = FRGeneralUtils.getPropertyVal(FRConstants.ENCODING1);
 		 String arg5 = FRGeneralUtils.getPropertyVal(FRConstants.NEW_FEATURE1_FILE_LOCATION);
 		 String arg6 = FRGeneralUtils.getPropertyVal(FRConstants.PYTHON_ENVIRON);
-		String[] command = {arg0, arg1, arg2,arg3, arg4,arg5,arg6};
+		 String arg7 = FRGeneralUtils.getPropertyVal(FRConstants.PYTHON_CODE_PATH);
+		String[] command = {arg0, arg1, arg2,arg3, arg4,arg5,arg6,arg7};
 		ProcessBuilder builder = new ProcessBuilder(command);
 		System.out.println("" + builder.command());
 		Process p = builder.start();
