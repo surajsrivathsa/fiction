@@ -4,6 +4,8 @@ import itertools
 import pandas as pd
 from nltk.tokenize import word_tokenize
 import feature1_file_utils
+import warnings
+warnings.filterwarnings("ignore")
 
 class GenreUtils:
     def __init__(self, book_file_path,chunk_size, master_file_path, encoding='utf-8'):
@@ -66,6 +68,7 @@ class GenreUtils:
             pca = PCA(n_components=2)
             result = pca.fit_transform(all_chunk_vecs)
             book_vecs[file_name] = list(itertools.chain(*result))
+            print("Retrieved Book Vecs for Book: " + file_name)
         new_book_vec = pd.DataFrame(book_vecs)
         chunk_vector_df = new_book_vec.T
         chunk_vector_df.columns = self.get_feature_names()

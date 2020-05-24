@@ -29,7 +29,7 @@ public class FictionRetrievalDriver {
 		
 
 		/* 1> Extract content from Gutenberg corpus - one time */
-		
+		/*
 		ContentExtractor.generateContentFromAllEpubs();
 		System.out.println("Time taken for generating content (min)-" + (System.currentTimeMillis() - start) / (1000 * 60));
 
@@ -37,7 +37,7 @@ public class FictionRetrievalDriver {
 		
 		
 		/* 2> Generate features from the extracted content - one time */
-		
+		/*
 		List<BookDetails> features = generateOtherFeatureForAll();
 		System.out.println("Time taken for feature extraction and chunk generation (min)-" + (System.currentTimeMillis() - start) / (1000 * 60));
 		start = System.currentTimeMillis();
@@ -46,7 +46,7 @@ public class FictionRetrievalDriver {
 
 		/* 3> Write features to CSV - one time */
 		
-
+/*
 		FeatureExtractorUtility.writeFeaturesToCsv(features);
 		 start = System.currentTimeMillis();
 		System.out.println("Time taken for writing to CSV (min)-" + (System.currentTimeMillis() - start) / (1000 * 60));
@@ -61,7 +61,7 @@ public class FictionRetrievalDriver {
 		extract_Feature1();
 		
 		/* 4> Query */
-		String qryBookNum = "pg1400DickensGreatExp"; 
+	/*	String qryBookNum = "pg1400DickensGreatExp"; 
 		
 		//pg11CarolAlice,  pg1400DickensGreatExp,pg766DickensDavidCopfld
 		// pg2701HermanMobyDick,pg537DoyleTerrorTales
@@ -132,13 +132,13 @@ public class FictionRetrievalDriver {
 
 		/* CommandLine cmdLine = new CommandLine("bat");
 		 cmdLine.addArgument("run_background_python.bat");*/
-
+		 String arg0 = FRGeneralUtils.getPropertyVal(FRConstants.FEATURE1_BASH_LOCATION); 
 		 String arg1 = FRGeneralUtils.getPropertyVal(FRConstants.FEATURE1_FILE_LOCATION);
 		 String arg2 = FRGeneralUtils.getPropertyVal(FRConstants.BOOK1_FILE_PATH);
 		 String arg3 = FRGeneralUtils.getPropertyVal(FRConstants.MASTER_FILE_PATH);
 		 String arg4 = FRGeneralUtils.getPropertyVal(FRConstants.ENCODING1);
 		 String arg5 = FRGeneralUtils.getPropertyVal(FRConstants.NEW_FEATURE1_FILE_LOCATION);
-		String[] command = {"cmd.exe","/C","start","C:\\Users\\Chandan\\git\\fiction\\run_background_python.bat", arg1, arg2,arg3, arg4,arg5};
+		String[] command = {"cmd.exe","/C","start",arg0, arg1, arg2,arg3, arg4,arg5};
 		ProcessBuilder builder = new ProcessBuilder(command);
 		System.out.println("" + builder.command());
 		Process p = builder.start();

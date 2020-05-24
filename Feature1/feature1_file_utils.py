@@ -17,7 +17,7 @@ class FileUtils:
         self.HTML_FILE_EXTENSION = ".html"
         self.EMPTY = ""
         self.lang_file = {}
-        new_file = pd.read_csv(self.master_file_path)
+        new_file = pd.read_csv(self.master_file_path,encoding= 'unicode_escape')
         #Dictionary of books along with its language
         for bid in new_file.bid:
             self.lang_file[bid] = new_file[new_file.bid == bid].blang.to_list()
@@ -71,7 +71,7 @@ class FileUtils:
         new_list = []
         new_sent = ""
         for sentence in books:
-            sentence = BeautifulSoup(sentence)
+            sentence = BeautifulSoup(sentence,features="lxml")
             introduction_doc = nlp(sentence.text)
             tokens = [token.text for token in introduction_doc]
             words = [w.lower() for w in tokens]
@@ -94,6 +94,7 @@ class FileUtils:
             words,new_list = self.Perform_preprocess(books[file_name],lang[0])
             data_pre_sentences[file_name].append(new_list)
             data_pre_words[file_name].append(words)
+            print("BOOK: "+ file_name+ " processed " + "LANG: " + lang[0])
         return (data_pre_sentences,data_pre_words)
 
     
@@ -107,7 +108,7 @@ class FileUtils:
     def write_feature_file(self,chunk_vector_df):
     #Write the features to a new feature file
         feat_file = pd.read_csv(self.feature_file_path)
-        files = feat_file['bookId-chunkNo']
+        files = feat_file["bookId-chunkNo"]
         filename_pattern = re.compile(self.FEATURE_FILENAME_PARSE_REGEX)
         names= []
         for file_name in files:
@@ -119,7 +120,6 @@ class FileUtils:
         merged_df = merged_df.drop("bookId-chunkNo",axis = 1)
         merged_df = merged_df.drop("filenames",axis = 1)
         print(self.new_feature_file_path)
-        print(merged_df)
         merged_df.to_csv(self.new_feature_file_path)
         return merged_df
 

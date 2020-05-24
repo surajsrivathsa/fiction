@@ -33,6 +33,7 @@ public interface FRConstants {
 	public static final String NEW_FEATURE_FILE_LOCATION = "new_feature_file_path";
 	
 	// adding for feature1 python program
+	public static final String FEATURE1_BASH_LOCATION = "feature1_bash_path";
 	public static final String FEATURE1_FILE_LOCATION = "feature1_file_path";
 	public static final String BOOK1_FILE_PATH = "book1_file_path";
 	public static final String ENCODING1 = "encoding1";
