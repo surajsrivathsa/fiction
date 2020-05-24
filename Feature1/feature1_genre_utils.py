@@ -18,7 +18,7 @@ class GenreUtils:
         self.feature_size = chunk_size * 2
 
     def split_chunks(self, books, size, name):
-        #Splitting the book into chunks
+    #Splitting the book into chunks
         book={}
         cuts1 = len(books[0])/size
         cuts1 = round(cuts1)
@@ -34,13 +34,15 @@ class GenreUtils:
 
     
     def gen_word2vec(self, info):
-        #Function to create Word2Vec vectors
+    #Function to create Word2Vec vectors
         model = Word2Vec(window = self.window_size,size = self.vector_size,sg=1,min_count=1)
         model.build_vocab(info)
         model.train(info, total_examples = model.corpus_count, epochs=self.num_epoch)
         return model
+
     
     def chunk_vector_gen(self, words_books, sentence_books):
+    #Generate chunk vectors for all the books
         book_vecs = {}
         for file_name in words_books:
             book_vecs[file_name] = []
@@ -69,8 +71,10 @@ class GenreUtils:
         chunk_vector_df.columns = self.get_feature_names()
         print(chunk_vector_df)
         return chunk_vector_df
+        
 
     def get_feature_names(self):
+    #Name the new feature columns
         f_vals = []
         for nums in range(self.start_feature,self.start_feature+self.feature_size,1):
             f_vals.append('F'+ str(nums))

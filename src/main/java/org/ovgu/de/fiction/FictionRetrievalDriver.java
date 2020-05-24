@@ -61,7 +61,7 @@ public class FictionRetrievalDriver {
 		extract_Feature1();
 		
 		/* 4> Query */
-		String qryBookNum = "pg1400"; 
+		String qryBookNum = "pg1400DickensGreatExp"; 
 		
 		//pg11CarolAlice,  pg1400DickensGreatExp,pg766DickensDavidCopfld
 		// pg2701HermanMobyDick,pg537DoyleTerrorTales
