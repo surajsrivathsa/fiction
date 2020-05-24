@@ -1,7 +1,7 @@
-# fiction
+# SIMFIC 2.0 Milestone 2 - Team D
 Core Java  Application for Processioning, Feature Extraction and Query functionalities using terminal
 
-Instructions to run the code for extraction of existing features along with Feature 2:
+# Instructions to run the code for extraction of existing features along with Feature 2:
 
 1.	Clone the code from the branch named ‘feature2’ in the repository surajsrivathsa/fiction.
 2.	Build maven project by right clicking the file pom.xml > Run As > Maven Build and specify the goal as 'clean install'.
@@ -20,4 +20,6 @@ Once the program is successfully executed, the extracted feature file will be pr
 
 While running the code from our end, since we did not have the computing resources needed for the entire list of roughly 1700 books, the program was run on 6 batches of around 300 books each. For an 8 GB i5 processor system, each batch took around 4 hours. The final feature file is the file named 'Features_Extracted_English.csv'.
 
-Note - Due to the way NUM_OF_CHARS and TTR features are normalized, we are aware that these two columns have currently been extracted incorrectly. However, once the program is run for all books at once, this will be handled automatically.
+# Note - 
+1.Due to the way NUM_OF_CHARS and TTR features are normalized, we are aware that these two columns have currently been extracted incorrectly. However, once the program is run for all books at once, this will be handled automatically.
+2. In order to run the code for branches 'feature1' and 'feature3' please have a look at the documents named 'Feature 1 Run Instructions.pdf' and 'Feature 3 Run Document.pdf'/.docx respectively.
