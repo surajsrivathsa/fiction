@@ -40,14 +40,12 @@ public class SearchServices {
 
 	
 	
-	public BookList displayBook(String queryBookId) throws Exception {
+	public BookList displayBook(String queryBookId, String topK) throws Exception {
 		List<BookUI> simBooks = new ArrayList<BookUI>();
 		BookList bookList = new BookList();
 	
 		TIME= System.currentTimeMillis();
 		if (queryBookId == null || queryBookId.trim().equals("")) {
-			FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_ERROR, null, "Please select a Genre"));
 			return bookList;
 		}
 
@@ -61,7 +59,7 @@ public class SearchServices {
 
 			Map<String, Map<String, String>> stats_Of_results = new HashMap<>();
 
-			int TOP_K = Integer.parseInt(FRGeneralUtils.getPropertyVal("topk.count"));
+			int TOP_K = Integer.parseInt(topK);
 			TopKResults topKResults = FictionRetrievalSearch.findRelevantBooks(queryBookId, FEATURE_CSV_FILE,
 						FRConstants.SIMI_PENALISE_BY_NOTHING, FRConstants.SIMI_ROLLUP_BY_ADDTN,
 						FRConstants.SIMI_EXCLUDE_TTR_NUMCHARS, TOP_K, similarity);
@@ -110,7 +108,7 @@ public class SearchServices {
 					book.setAuthor(authName);
 					book.setRank(rank);
 					StringBuffer sbf = new StringBuffer(FRGeneralUtils.getPropertyVal(WEB_CONTEXT_PATH));
-					sbf.append("epub/").append(bookId).append(".epub");
+					sbf.append(bookId).append(".epub");
 					book.setEpubPath(sbf.toString());
 					book.setScore(String.valueOf(res.getKey()));
 					book.setSummary(summary);					
