@@ -24,7 +24,6 @@ hs_err_pid*
 
 # ignore epubs and html
 *.html
-*.epub
 *.xlsx
 *.classpath
 .DS_Store
