@@ -8,10 +8,6 @@ import java.util.*;
 
 
 
-import javax.faces.application.FacesMessage;
-
-import javax.faces.context.FacesContext;
-
 import org.apache.log4j.Logger;
 import org.ovgu.de.fiction.model.BookList;
 import org.ovgu.de.fiction.model.BookUI;
