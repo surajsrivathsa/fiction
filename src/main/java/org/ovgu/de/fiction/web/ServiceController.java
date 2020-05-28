@@ -43,5 +43,11 @@ public class ServiceController {
 		return userEvent;
 	}
 	
+	@RequestMapping(path = "/hello", method = RequestMethod.GET, produces = "application/json")
+	public String Hello() {
+		String text = "Hello Java";
+		return text;
+	}
+	
 
 }
