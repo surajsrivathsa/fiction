@@ -3,11 +3,10 @@ package org.ovgu.de.fiction.web;
 import java.util.*;
 
 
-import org.maltparser.core.helper.HashSet;
+
 import org.ovgu.de.fiction.model.BookList;
 import org.ovgu.de.fiction.model.BookUI;
 import org.ovgu.de.fiction.model.TopKResults;
-import org.ovgu.de.fiction.preprocess.ContentExtractor;
 import org.ovgu.de.fiction.search.FictionRetrievalSearch;
 import org.ovgu.de.fiction.search.InterpretSearchResults;
 import org.ovgu.de.fiction.utils.*;

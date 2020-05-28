@@ -3,11 +3,11 @@ package org.ovgu.de.fiction;
 import java.io.IOException;
 import java.util.List;
 
-import org.ovgu.de.fiction.feature.extraction.ChunkDetailsGenerator;
+//import org.ovgu.de.fiction.feature.extraction.ChunkDetailsGenerator;
 import org.ovgu.de.fiction.feature.extraction.FeatureExtractorUtility;
 import org.ovgu.de.fiction.model.BookDetails;
 import org.ovgu.de.fiction.model.TopKResults;
-import org.ovgu.de.fiction.preprocess.ContentExtractor;
+//import org.ovgu.de.fiction.preprocess.ContentExtractor;
 import org.ovgu.de.fiction.search.FictionRetrievalSearch;
 import org.ovgu.de.fiction.search.InterpretSearchResults;
 import org.ovgu.de.fiction.utils.FRConstants;
@@ -40,13 +40,13 @@ public class FictionRetrievalDriver extends SpringBootServletInitializer {
 		SpringApplication.run(FictionRetrievalDriver.class, args);
 
 		/* 1> Extract content from Gutenberg corpus - one time */
-		ContentExtractor.generateContentFromAllEpubs();
+		//ContentExtractor.generateContentFromAllEpubs();
 		System.out.println(
 				"Time taken for generating content (min)-" + (System.currentTimeMillis() - start) / (1000 * 60));
 
 		start = System.currentTimeMillis();
 		/* 2> Generate features from the extracted content - one time */
-		List<BookDetails> features = generateOtherFeatureForAll();
+		//List<BookDetails> features = generateOtherFeatureForAll();
 		System.out.println("Time taken for feature extraction and chunk generation (min)-"
 				+ (System.currentTimeMillis() - start) / (1000 * 60));
 		start = System.currentTimeMillis();
@@ -86,10 +86,10 @@ public class FictionRetrievalDriver extends SpringBootServletInitializer {
 
 	}
 
-	public static List<BookDetails> generateOtherFeatureForAll() throws IOException {
-		ChunkDetailsGenerator chunkImpl = new ChunkDetailsGenerator();
-		List<BookDetails> books = chunkImpl.getChunksFromAllFiles();
-		return books;
-	}
+	//public static List<BookDetails> generateOtherFeatureForAll() throws IOException {
+		//ChunkDetailsGenerator chunkImpl = new ChunkDetailsGenerator();
+		//List<BookDetails> books = chunkImpl.getChunksFromAllFiles();
+		//return books;
+//	}
 
 }

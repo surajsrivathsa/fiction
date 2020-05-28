@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 import org.ovgu.de.fiction.model.BookList;
 import org.ovgu.de.fiction.model.BookUI;
 import org.ovgu.de.fiction.model.TopKResults;
-import org.ovgu.de.fiction.preprocess.ContentExtractor;
+//import org.ovgu.de.fiction.preprocess.ContentExtractor;
 import org.ovgu.de.fiction.search.FictionRetrievalSearch;
 import org.ovgu.de.fiction.search.InterpretSearchResults;
 import org.ovgu.de.fiction.utils.FRConstants;
@@ -30,7 +30,7 @@ public class SearchServices {
 	private static final String WEB_CONTEXT_PATH = "web.ctx.path";
 	private static final String USER_CLICK_EVENT_PATH = "user.event.path";
 	private static long TIME;
-	final static Logger LOG = Logger.getLogger(ContentExtractor.class);
+	//final static Logger LOG = Logger.getLogger(ContentExtractor.class);
 	private Map<String, List<String>> data = new HashMap<String, List<String>>();
 
 
@@ -112,7 +112,7 @@ public class SearchServices {
 				}
 				bookList.setbookUI(simBooks);
 
-				LOG.debug("books added " + simBooks.size());
+				//LOG.debug("books added " + simBooks.size());
 
 				if (stats_Of_results.size() > 0) {
 					Map<String, String> reduced_features = new HashMap<>();
