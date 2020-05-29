@@ -106,7 +106,7 @@ public class FRWebUtils {
 		}
 		StringBuffer reducedFe = new StringBuffer();
 		for (String s : ftrSet) {
-			reducedFe.append(s).append(" ,");
+			reducedFe.append(s).append(", ");
 		}
 		reducedFe.deleteCharAt(reducedFe.length() - 1);
 		return reducedFe.toString();
