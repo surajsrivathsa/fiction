@@ -198,10 +198,11 @@ class EmotionUtils:
         for pgid, lst in books_text_dict.items():
             text = lst[0]
             lang = lst[1]
+            bname = lst[2]
             sentence_dict, partition_idx = self.get_sentencetokens_and_remove_stopwords(text, lang)
             if(sentence_dict):
                 print("Sentences extracted for {} having language {}".format(pgid, lang))
-                books_sentences_dict[pgid] = [sentence_dict, partition_idx]
+                books_sentences_dict[pgid] = [sentence_dict, partition_idx, bname]
 
                 if(self.logging_flag):
                     self.log.info("Sentences extracted for {} having language {}".format(pgid, lang))
@@ -280,14 +281,15 @@ class EmotionUtils:
         
         for book_key,lst in books_sentences_dict.items(): 
             sentences = lst[0]
-            partition_idx = lst[1]       
+            partition_idx = lst[1]  
+            bname = lst[2]     
             sentence_emotions_dict = {}
             for sen_key, sen_val in sentences.items():
                 
                 emotion_per_sentence_list = self.get_emotion_per_sentence(sen_val, emoticon_dict)
                 sentence_emotions_dict[sen_key] = emotion_per_sentence_list
             
-            books_emotions_dict[book_key] = [sentence_emotions_dict, partition_idx]
+            books_emotions_dict[book_key] = [sentence_emotions_dict, partition_idx, bname]
         
         return books_emotions_dict;
 
@@ -317,6 +319,7 @@ class EmotionUtils:
         for key, lst in books_emotions_dict.items():
             emo_dict = lst[0]
             partition_idx = lst[1]
+            bname = lst[2]
             
             book_start_feature_vector = self.book_start_feature_vector_init
             book_end_feature_vector = self.book_end_feature_vector_init
@@ -361,18 +364,18 @@ class EmotionUtils:
                     self.log.info("sum of vector are {} , {}".format(sum_book_start_feature_vector, sum_book_end_feature_vector))
                 # To handle scenarios where none of the sentences in a book has any emotion and everything is zero
                 # Hence the sum would be zero this causes zero/zero divide by rror in next step, hence just set it to one to get 0/1 in such cases
-                if(sum_book_start_feature_vector == 0):
+                if(sum_book_start_feature_vector == constants.ZERO):
                     sum_book_start_feature_vector = 1
                 
-                if(sum_book_end_feature_vector == 0):
+                if(sum_book_end_feature_vector == constants.ZERO):
                     sum_book_end_feature_vector = 1
                 # Scale vectors by empericasl value of 10
-                book_start_feature_vector = [x * 10.0/ sum_book_start_feature_vector for x in book_start_feature_vector]
-                book_end_feature_vector = [x * 10.0/ sum_book_end_feature_vector for x in book_end_feature_vector]
+                book_start_feature_vector = [x * constants.EMPERICAL_MULTIPLIER/ sum_book_start_feature_vector for x in book_start_feature_vector]
+                book_end_feature_vector = [x * constants.EMPERICAL_MULTIPLIER/ sum_book_end_feature_vector for x in book_end_feature_vector]
                 
-                books_feature_vectors[key] = [book_start_feature_vector, book_end_feature_vector]
+                books_feature_vectors[key] = [book_start_feature_vector, book_end_feature_vector, bname]
                 print()
-                print("Book: {} || Book start vector: {}, Book end vector: {}".format(key, book_start_feature_vector, book_end_feature_vector))
+                print("Book: {} || {} || Book start vector: {}, Book end vector: {}".format(key, bname, book_start_feature_vector, book_end_feature_vector))
 
                 if(self.logging_flag):
                     self.log.info("Book: {} || Book start vector: {}, Book end vector: {}".format(key, book_start_feature_vector, book_end_feature_vector))

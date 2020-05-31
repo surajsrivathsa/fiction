@@ -95,6 +95,8 @@ public class FRSimilarityUtils {
 	 * @category - Input: Corpus plus the chunks of a corpus
 	 */
 
+	
+
 	public Map<Double, String> getSingleNaiveSimilarity(Map<String, Map<String, double[]>> books, String qryBookId,
 			Entry<String, double[]> query, String simType, int topKRes, int LEAVE_LAST_K_ELEMENTS_OF_FEATURE) throws IOException {
 
@@ -114,12 +116,13 @@ public class FRSimilarityUtils {
 		double norm_qry = 0.0;
 
 		// find normalised qry vector value ONLY once
+		//sqrt(x^2 + Y^2 + Z^2)
 		double[] queryFeature = query.getValue();
 		for (int j = 0; j < queryFeature.length-LEAVE_LAST_K_ELEMENTS_OF_FEATURE; j++) { //this_loop_excludes_last_2_elements_of_feature_vector
 			norm_qry = norm_qry + (queryFeature[j] * queryFeature[j]);
 		}
 		norm_qry = Math.sqrt(norm_qry);
-
+		
 		double norm_book = 0.0;
 
 		for (Entry<String, Map<String, double[]>> book : books.entrySet()) {
@@ -162,9 +165,8 @@ public class FRSimilarityUtils {
 		}
 
 		// below is just for sorting from multimap
-		for (
-
-		Map.Entry<Double, String> all_sim_vals : multimap.entries()) {
+		for (Map.Entry<Double, String> all_sim_vals : multimap.entries()) {
+			//@suraj what happens if there are two keys of same double value,
 			Double d1 = all_sim_vals.getKey(); // cosine sim value, L1, L2
 			String book = !results.containsKey(d1) ? all_sim_vals.getValue() : results.get(d1) + " " + all_sim_vals.getValue();
 			results.put(d1, book); // this is a reverse sorted tree , by decreasing relevance rank,
@@ -173,7 +175,7 @@ public class FRSimilarityUtils {
 			// 0.451-> book9, book89 -> lowest
 		}
 
-		// get top K results from sorted Results Map
+		// get top K results from sorted Results Map(each key or similarity can have multiple books, hence we end up with  more than required
 		int topkCount = 0;
 		for (Map.Entry<Double, String> topRes_staging : results.entrySet()) {
 			if (topkCount < topkRequested)
@@ -190,6 +192,7 @@ public class FRSimilarityUtils {
 	/**
 	 * 
 	 * @param corpus
+
 	 * @param queryBookId
 	 * @param topkRequested
 	 * @param simType
@@ -198,6 +201,9 @@ public class FRSimilarityUtils {
 	 * @author Sayantan
 	 * @category - Difference with 'getSingleNaiveSimilarity' is that, here it just accepts corpus and a single qry string (*NOT* the chunks of a book)
 	 */
+	
+	/*@suraj: Used for global feature + local feature querting*/
+	
 	public SortedMap<Double, String> getSingleNaiveSimilarityDummy(Map<String, double[]> corpus, String queryBookId, int topkRequested, String simType) throws IOException {
         // usually SortedMap - TreeMap would have sorted in low to high number value, but we use 'Collections.reverseOrder()'
 		SortedMap<Double, String> results = new TreeMap<Double, String>(Collections.reverseOrder());
@@ -216,14 +222,15 @@ public class FRSimilarityUtils {
 		}
 		norm_qry = Math.sqrt(norm_qry);
 		
+		//@suraj: Taking unit vector as for distance measures scale becomes important
+		
 		double norm_book  = 0.0;
-		
-		
-		
+				
 		for(Map.Entry<String, double[]> corpus_input : corpus.entrySet()){
 			
 			if(!queryBookId.equals(corpus_input.getKey()))
 			{ // check all vectors, except Query itself! which is also  present!
+				//@suraj - then how are we getting query book in output?
 			book_vector = corpus_input.getValue();
 			dist_meas_values = 0.0 ; //reset dot product or L1/L2 value for each new book of a corpus
 			norm_book = 0.0;

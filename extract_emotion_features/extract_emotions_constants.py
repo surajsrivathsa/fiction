@@ -5,9 +5,10 @@ import pandas as pd
 import time
 
 # File path and name constants
-FILE_PATH_SIMILARITY = os.path.join(os.getcwd(), "simialrity_feature.csv")
+FILE_PATH_SIMILARITY = os.path.join(os.getcwd(), "simialrity_feature_1emp_20pcnt.csv")
 FILE_PATH_LOG = os.path.join(os.getcwd(), 'SIMFIC_2.0_Feature3.log')
 FILE_MODE = "w"
+FILE_PATH_FEATURES = os.path.join(os.getcwd(), "feature3_vectors_1emp_20pcnt.csv")
 
 # To change logging level(WARNING, ERROR, CRITICAL) to other than INFO use other integer values mentioned in https://www.loggly.com/ultimate-guide/python-logging-basics/
 LOGGING_LEVEL = 20
@@ -37,9 +38,9 @@ SURPRISE = "surprise"
 TRUST = "trust"
 
 # Default feature vectors , similarity types and end file
-DEFAULT_BOOK_START_PERCENTAGE = 0.20
-DEFAULT_BOOK_END_PERCENTAGE = 0.20
-EMPERICAL_MULTIPLIER = 10
+DEFAULT_BOOK_START_PERCENTAGE = 0.2
+DEFAULT_BOOK_END_PERCENTAGE = 0.2
+EMPERICAL_MULTIPLIER = 1
 MINIMUM_SENTENCE_LIMIT = 10
 DEFAULT_EMOTIONS = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 SENTENCE_EMOTIONS = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -60,8 +61,13 @@ JOIN_TYPE = "inner"
 SIMILARITY = "similarity"
 BID = "bid"
 BLANG = "blang"
+BNAME = "bname"
 PG = "pg"
 test = "TEST"
+FEATURE_VECTOR_COLS = ["start_anger", "start_anticipation", "start_disgust", "start_fear", 
+        "start_joy", "start_sadness", "start_surprise", "start_trust",
+       "end_anger", "end_anticipation", "end_disgust", "end_fear", "end_joy", 
+        "end_sadness", "end_surprise", "end_trust", "bname"]
 
 # logging testing
 

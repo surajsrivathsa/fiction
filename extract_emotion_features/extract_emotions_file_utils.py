@@ -79,19 +79,21 @@ class FileUtils:
                     self.log.warning("Book {} found in filepath but not in book list file, but processing it anyway".format(pgid))
                 # if not found in book list then set english as default language
                 language = constants.ENGLISH
+                bname = constants.EMPTY
                 f = open(filepath, "r")
                 html_content = f.read()            
                 text = re.sub(self.HTML_TAGS_REGEX, self.EMPTY, html_content)
-                books_text_dict[pgid] = [text, language] 
+                books_text_dict[pgid] = [text, language, bname] 
                 print("Book {} found in filepath but not in book list file, but processing it anyway".format(pgid))   
                 #raise Exception("Book {} found in filepath but not in book list file".format(pgid))
 
             elif (pgid in book_paths_dict):
                 language = books_lang_dict[pgid][1]
+                bname = books_lang_dict[pgid][2]
                 f = open(filepath, "r")
                 html_content = f.read()            
                 text = re.sub(self.HTML_TAGS_REGEX, self.EMPTY, html_content)
-                books_text_dict[pgid] = [text, language]        
+                books_text_dict[pgid] = [text, language, bname]        
         
         print("Number of html books extracted to dict: {}".format(len(books_text_dict.keys())))
         print()
@@ -174,16 +176,18 @@ class FileUtils:
         df = pd.read_excel(io=self.blfp, sheet_name=self.SHEETNAME,header=constants.ZERO)
         print("Reading and printing book list file")
         print(df.head(10))
-
+        df.drop_duplicates(subset = [constants.BID], keep = "last", inplace = True)
         if(self.logging_flag):
             self.log.info("Reading and printing book list file")
             self.log.info(df.head(20))
+            self.log.info("")
+            self.log.info(df.describe())
 
         tmp_dict = df.to_dict(orient="list")
         
-        book_lang_dict = {}
-        for pgid, lang in list(zip(tmp_dict[constants.BID], tmp_dict[constants.BLANG])):
-            book_lang_dict[constants.PG + str(pgid)] = [pgid, lang]
+        book_lang_dict = {} 
+        for pgid, lang, bname in list(zip(tmp_dict[constants.BID], tmp_dict[constants.BLANG], tmp_dict[constants.BNAME])):
+            book_lang_dict[constants.PG + str(pgid)] = [pgid, lang, bname]
         
         x = list(book_lang_dict.keys())
         print(x[1:3])
@@ -192,3 +196,37 @@ class FileUtils:
         if(self.logging_flag):
             self.log.info(x[1:3])
         return book_lang_dict;
+
+
+    """
+    fnc: save_feature_vectors
+    Input: books_feature_vectors
+    Output: None
+
+    Description: Save the feature vectors onto a csv file for later analysis.
+    This method is optional and can be stopped running by commenting this method call from driver
+
+    Extension: None
+    """
+
+    def save_feature_vectors(self,books_feature_vectors):
+        flattened_feature_vector = {}
+        #Including only two feature vectors while flattening, If book name is also included then it causes flattening issues as elements are of different shapes
+        for key, val in books_feature_vectors.items():
+            flat_list = [item for sublist in val[0:2] for item in sublist]
+
+            #Appending book name separately
+            flat_list.append(val[2])
+
+            flattened_feature_vector[key] = flat_list
+
+        df = pd.DataFrame.from_dict(flattened_feature_vector, orient=constants.INDEX,columns=constants.FEATURE_VECTOR_COLS)
+
+        df[constants.BID] = df.index
+        df.index = list(range(1, len(df.index) + 1))
+
+        df.to_csv(path_or_buf= constants.FILE_PATH_FEATURES, index=False)
+        if(self.logging_flag):
+            self.log.info("Saving the feature vectors to file ")
+            self.log.info(df.head(20))
+            self.log.info(df.describe())

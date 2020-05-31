@@ -3,11 +3,15 @@ package org.ovgu.de.fiction.search;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Random;
 import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.inference.ChiSquareTest;
@@ -22,7 +26,10 @@ import weka.attributeSelection.GreedyStepwise;
 import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.Ranker;
 import weka.classifiers.Evaluation;
+import weka.classifiers.functions.LinearRegression;
 import weka.classifiers.functions.SMO;
+import weka.core.Attribute;
+import weka.core.DenseInstance;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.filters.Filter;
@@ -51,16 +58,121 @@ public class InterpretSearchResults {
  * @param topKResults
  * @throws Exception 
  */
-	public Map<String,Map<String,String>> performStatiscalAnalysis(TopKResults topKResults) throws Exception {
+	public Map<String,Map<String,String>> performStatiscalAnalysis(TopKResults topKResults, String query_book) throws Exception {
 		Map<String, Map<String, double[]>> books = topKResults.getBooks();
 		SortedMap<Double, String> results_topK = topKResults.getResults_topK();
 		
 		Map<Integer , TopKResults> searched_result_bins = createBinsModified(books,results_topK); // createBins(books,results_topK);
-		writeBinsToFiles(searched_result_bins);
-		Map<String,Map<String,String>> stats = getStatistics(FRGeneralUtils.getPropertyVal("file.results.arff"));
+		
+		String qery_bk = query_book;
+		writeBinsToFiles(searched_result_bins, qery_bk);
+		Map<String,Map<String,String>> stats = getStatistics(FRGeneralUtils.getPropertyVal("file.results.arff") + "_" + qery_bk + ".arff");
 		//rankFeatures(FRGeneralUtils.getPropertyVal("file.results.arff"));
 		return stats;
 		
+	}
+
+	public Map<Integer,String> performStatiscalAnalysisUsingRegression(TopKResults topKResults) throws Exception {
+		Map<String, Map<String, double[]>> books = topKResults.getBooks();
+		SortedMap<Double, String> results_topK = topKResults.getResults_topK();
+		
+		List<double []> searched_result_bins_regression = createBinsForRegression(books,results_topK);
+		Instances regression_instances = loadDataset(searched_result_bins_regression);
+		return featureSelection_Regression(regression_instances);
+	}
+	
+	private SortedMap<Integer, String> featureSelection_Regression(Instances dataset) throws Exception {
+		SortedMap<Float,String> all_features =new TreeMap<Float,String>(Collections.reverseOrder());  
+		SortedMap<Integer,String> reduced_features =new TreeMap<Integer,String>(); 
+		int trainSize = (int) Math.round(dataset.numInstances() * 0.8);
+		int testSize = dataset.numInstances() - trainSize;
+		Instances train_dataset = new Instances(dataset, 0, trainSize);
+		Instances test_dataset = new Instances(dataset, trainSize, testSize);
+			
+		LinearRegression lr = new LinearRegression();
+		lr.setRidge(0.5); // Ridge value is set by hyper parameter tuning
+		
+		lr.buildClassifier(train_dataset);
+		
+		Evaluation evaluation = new Evaluation(test_dataset);
+		evaluation.crossValidateModel(lr, dataset, 5, new Random(1));
+		double rmse = evaluation.rootMeanSquaredError();
+		System.out.println("RMSE for regression on 5 fold cross validation " + rmse);
+		System.out.print(lr.toString());
+		
+        String[] get_lines = lr.toString().split("\n");
+        for(String line : get_lines) {
+        	if(line.contains(" * ")) {
+              String[] features = line.split("\\*");
+        	  float key;
+        	  String value = " ";
+              for(int feature =0 ; feature < features.length; feature+=2) {
+            	  key = Float.valueOf(features[feature]);
+            	  value = features[feature+1].replace(" +", "");
+            	  all_features.put(Math.abs(key), value);
+              }
+        	}
+        }
+        
+        int count = 0;
+	    System.out.println("\n\n * Printing Top Features from regression ******");
+        
+        for(Entry<Float, String> item: all_features.entrySet() ) {
+           count+=1;
+      	   reduced_features.put(count, item.getValue());
+      	   System.out.println("Rank "+count+ " = " + item.getValue() );
+           if(count == 5) break;
+        }
+        
+        return reduced_features;
+		
+	}
+	
+	private List<double []> createBinsForRegression(Map<String, Map<String, double[]>> books, SortedMap<Double, String> results_topK) {
+		List<double []> searched_result_bins = new ArrayList<double[]>();
+		double weight = 0;
+
+		for(Map.Entry<String, Map<String, double[]>> corpus: books.entrySet()) { // loop over all books of corpus
+			 double [] feature_vector = new double[FRConstants.FEATURE_NUMBER]; // create a global feature vector for a single book
+			 String bookName = corpus.getKey();
+			 
+			 if(results_topK.containsValue(bookName)) {
+			 	for(Map.Entry<Double, String> result: results_topK.entrySet()){//loop_over_all_chunks_of_a_given_book
+			        if (Objects.equals(bookName, result.getValue())) {
+			           weight = result.getKey();
+			           break;
+			        }
+			 	}	
+				 Map<String, double[]> bookChunks =  corpus.getValue();
+				 	for(Map.Entry<String, double[]> chunks: bookChunks.entrySet()){//loop_over_all_chunks_of_a_given_book
+				 		double[] final_chunk_vector = new double[FRConstants.FEATURE_NUMBER + 1];
+				 		double[] chunk_vector = chunks.getValue();
+				 		 for(int i=0;i<chunk_vector.length;i++){
+					 			final_chunk_vector[i] = chunk_vector[i];
+					 			//System.out.print(final_chunk_vector + " " + chunk_vector[i]);
+					 	 }
+				 		final_chunk_vector[FRConstants.FEATURE_NUMBER] = weight;
+				 		//System.out.println(final_chunk_vector);
+				 		searched_result_bins.add(final_chunk_vector);
+				 }		 
+			 }
+		}
+		return searched_result_bins;
+	}
+	
+	private Instances loadDataset(List<double []> bins) throws RuntimeException {
+    	ArrayList<Attribute> attributes = new ArrayList<Attribute>();
+    	for(int i=0; i< FRConstants.FEATURE_NUMBER; i++) {
+    		attributes.add(new Attribute("Feature "+i));
+    	}
+    	attributes.add(new Attribute("Class label"));
+    	Instances dataRaw = new Instances("Instances", attributes , FRConstants.FEATURE_NUMBER+1);
+    	dataRaw.setClassIndex(FRConstants.FEATURE_NUMBER);
+
+    	for (double[] a: bins) {
+    	    dataRaw.add(new DenseInstance(1.0, a));
+    	}
+	    return dataRaw;
 	}
 	
 	private Map<String,Map<String,String>> getStatistics(String ARFF_RESULTS_FILE) throws Exception {
@@ -187,11 +299,11 @@ public class InterpretSearchResults {
 	/**
 	 * @about This method will simply write the instance-feature space to arff files for machine learning
 	 */
-	private void writeBinsToFiles(Map<Integer, TopKResults> searched_result_bins) throws IOException {
+	private void writeBinsToFiles(Map<Integer, TopKResults> searched_result_bins, String qery_bk) throws IOException {
 	
 		double dummy = 10000.0000;
-		String RESULTS_CSV_FILE = FRGeneralUtils.getPropertyVal("file.results.csv");
-		String RESULTS_ARFF_FILE = FRGeneralUtils.getPropertyVal("file.results.arff");
+		String RESULTS_CSV_FILE =  FRGeneralUtils.getPropertyVal("file.results.csv") + "_" + qery_bk + ".csv";
+		String RESULTS_ARFF_FILE = FRGeneralUtils.getPropertyVal("file.results.arff") + "_" + qery_bk + ".arff";
 		try (FileWriter fileWriter = new FileWriter(RESULTS_CSV_FILE);) {
 
 			fileWriter.append(FRConstants.FILE_HEADER_RES_CSV.toString());

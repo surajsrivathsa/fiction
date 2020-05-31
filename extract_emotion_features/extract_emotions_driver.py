@@ -71,6 +71,9 @@ class Driver:
 
         books_feature_vectors = emotionutils_obj.create_feature_vector(books_emotions_dict, self.book_start_percentage, self.book_end_percentage)
 
+        #Saving Feature vectors in a file for analysis
+        fileutils_obj.save_feature_vectors(books_feature_vectors)
+
         books_similarity_dict= emotionutils_obj.run_similarity_for_all_books(books_feature_vectors, type=self.similarity_type)
 
         # books_similarity_dict_cosine = emotionutils_obj.run_similarity_for_all_books(books_feature_vectors, type="cosine")
@@ -87,7 +90,7 @@ if __name__ == "__main__":
 
     # Add the arguments to the parser and parse the arguments from command line
     ap.add_argument( "--feature_file_path", nargs= "?", required=False, help=" feature_file_path", default = "/Users/surajshashidhar/git/fiction/Features_Extracted_English.csv")
-    ap.add_argument("--book_file_path", nargs= "?", required=False, help="book_file_path", default = "/Users/surajshashidhar/git/fiction/Batch10_extracted")
+    ap.add_argument("--book_file_path", nargs= "?", required=False, help="book_file_path", default = "/Users/surajshashidhar/git/fiction/testing_epubs_extracted")
     ap.add_argument( "--emoticon_file_path", nargs= "?", required=False, help=" emoticon_file_path", default="/Users/surajshashidhar/Desktop/ovgu/semester_2/XAI_project/reasearched_code_and_data/all_language_emotions.csv")
     ap.add_argument("--feature_fields", nargs= "?", required=False, help="feature_fields", default = constants.FEATURE_FIELD)
     ap.add_argument( "--language", nargs= "?", required=False, help=" language", default = constants.ENGLISH)

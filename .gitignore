@@ -27,6 +27,9 @@ hs_err_pid*
 *.epub
 *.csv
 *.xlsx
+*.numbers
+*.pptx
+*.arff
 *.classpath
 .DS_Store
 /target/
