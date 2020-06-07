@@ -53,17 +53,17 @@ public class SearchServices {
 			Map<String, String> book_master = utils.getAllMasterBooks(); // key = bookId, Value = Book_Name
 			String FEATURE_CSV_FILE = FRGeneralUtils.getPropertyVal("file.feature");
 
-			Map<String, Map<String, String>> stats_Of_results = new HashMap<>();
+			Map<String,String> stats_Of_results =new TreeMap<String,String>(); 
 
 			int TOP_K = Integer.parseInt(topK);
 			TopKResults topKResults = FictionRetrievalSearch.findRelevantBooks(queryBookId, FEATURE_CSV_FILE,
 						FRConstants.SIMI_PENALISE_BY_NOTHING, FRConstants.SIMI_ROLLUP_BY_ADDTN,
-						FRConstants.SIMI_EXCLUDE_TTR_NUMCHARS, TOP_K, similarity);
+						FRConstants.SIMI_INCLUDE_TTR_NUMCHARS, TOP_K, similarity);
 
 			InterpretSearchResults interp = new InterpretSearchResults();
 
 				try {
-					stats_Of_results = interp.performStatiscalAnalysis(topKResults);
+					stats_Of_results = interp.performStatiscalAnalysisUsingRegression(topKResults);
 				} catch (Exception e) {
 					throw new Exception("analysis cannot be done!");
 				}
@@ -91,12 +91,13 @@ public class SearchServices {
 					
 					String summary = "";
 					String authName = bookArr[1].contains("|") ? bookArr[1].replace("|", ",") : bookArr[1];
+					String language = (metadata.getLanguage()).toString().equals("en") ? "English" :"Deutch" ;
 					String publisheddate = (metadata.getDates().subList(0, 1)).toString().replace("[publication:", "").replace("]", "");
 					if((metadata.getContributors()).size() == 0) {
-					summary = "It is written by " + authName + ". Published in the year: " + publisheddate ;
+					summary = "Language: "+language +". It is written by " + authName + ". Published in the year: " + publisheddate ;
 					}
 					else{
-					summary = "It is written by " + authName + ". Contributors of this book are " + (metadata.getContributors().toString().replace("[","").replace("]","")) + ". Published in the year:" + publisheddate ;
+					summary = "Language: "+language +". It is written by " + authName + ". Contributors of this book are " + (metadata.getContributors().toString().replace("[","").replace("]","")) + ". Published in the year:" + publisheddate ;
 					}
 					BookUI book = new BookUI();
 					book.setId(bookId);
@@ -117,9 +118,13 @@ public class SearchServices {
 				if (stats_Of_results.size() > 0) {
 					Map<String, String> reduced_features = new HashMap<>();
 
-					reduced_features = stats_Of_results.get("FEAT");
+					reduced_features = stats_Of_results;
+					for (Map.Entry<String, String> reduced_fe : stats_Of_results.entrySet()) {
+						System.out.println(reduced_fe.getKey());
+						System.out.println(reduced_fe.getValue());
+					}
 					StringBuffer reducedFe = new StringBuffer(
-							"Some important factors responsible for the list obtained below are: ");
+							"  Why these books are related?  ");
 
 					reducedFe.append(FRWebUtils.getHighLevelFeatures(reduced_features));
 
@@ -127,7 +132,7 @@ public class SearchServices {
 					TIME= System.currentTimeMillis();
 					System.out.println(reducedFe);
 					if (reducedFe != null) {
-						bookList.setglobalFeature(reducedFe.toString());
+						bookList.setglobalFeature(reducedFe.toString().replaceAll(",$",""));
 					}
 					else {
 						bookList.setglobalFeature("Analysis could not be done");

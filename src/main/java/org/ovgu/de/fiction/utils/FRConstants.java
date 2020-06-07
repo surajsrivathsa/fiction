@@ -159,11 +159,21 @@ public interface FRConstants {
 	public static final String SIMI_EXCLUDE_TTR_NUMCHARS="EX";
 
 	public static final double SIMILARITY_CUTOFF = 0.70;
-	public static final int FEATURE_NUMBER = 22;
-	public static final int FEATURE_NUMBER_GLOBAL = 3;
-	public static final double FEATURE_WEIGHT_MORE = 0.85;
-	public static final double FEATURE_WEIGHT_LESS = 0.10;
-	public static final double FEATURE_WEIGHT_LEAST = 0.05;
+	public static final int FEATURE_NUMBER = 52;
+	public static final int FEATURE_NUMBER_GLOBAL = 31;//1 chunk similarity + 1 ttr + 1 char + our features(6 genre)
+	public static final int FEATURE_NUMBER_GLOBAL_WITHOUT_TTR_CHAR = 30;
+	public static final double FEATURE_WEIGHT_MORE = 0.85;//chandan 0.85
+	public static final double FEATURE_WEIGHT_LESS = 0.05;//chandan 0.001, aditya 0.1
+	public static final double FEATURE_WEIGHT_LEAST = 0.05;//chandan 0.01 aditya 0.05
+	public static final double FEATURE_WEIGHT_SIMILARITY_WITHOUT_GLOBAL = 0.1;//chandan 0.5 aditya 0.65
+	public static final double FEATURE_WEIGHT_SIMILARITY_MISC_GLOBAL =  0.8* 1.0 /FEATURE_NUMBER_GLOBAL_WITHOUT_TTR_CHAR;//cnandan 0.489 aditya 0.2
+	
+	public static final double CHUNK_WEIGHT = 0.35;
+	public static final double EMO_WEIGHT = 0.3/17;
+	public static final double CHAR_WEIGHT = 0.05;
+	public static final double GENRE_WEIGHT = 0.15/10;
+	public static final double NUMCHAR_WEIGHT = 0.05;
+	public static final double TTR_WEIGHT = 0.1;
 	
 	public static final double PERCTG_OF_SNTNC_FOR_SENTIM = 0.05;
 	public static final int RANDOM_SENTENCES_SENTIM_MID_VAL = 5000;
@@ -183,7 +193,7 @@ public interface FRConstants {
 	public static final int TOP_K_RESULTS = 25;
 
 	/* feature related */
-	public static final int LEAVE_LAST_K_ELEMENTS_OF_FEATURE = 2; //exclude 2 global elements (TTR, NUM_Chars) from
+	public static final int LEAVE_LAST_K_ELEMENTS_OF_FEATURE = 30; //exclude 2 global elements (TTR, NUM_Chars) from
 	
 	public static final int TTR_21 = 21;
 	

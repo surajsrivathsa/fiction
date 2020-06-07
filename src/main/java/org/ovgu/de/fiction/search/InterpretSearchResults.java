@@ -3,11 +3,15 @@ package org.ovgu.de.fiction.search;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Random;
 import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.inference.ChiSquareTest;
@@ -22,7 +26,10 @@ import weka.attributeSelection.GreedyStepwise;
 import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.Ranker;
 import weka.classifiers.Evaluation;
+import weka.classifiers.functions.LinearRegression;
 import weka.classifiers.functions.SMO;
+import weka.core.Attribute;
+import weka.core.DenseInstance;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.filters.Filter;
@@ -132,6 +139,7 @@ public class InterpretSearchResults {
 	    
 	   
 	    reduced_features.put("Feature1", newData2.attribute(0).toString().split(" ")[1]);
+	    System.out.println("Feature1"+ newData2.attribute(0).toString().split(" ")[1]);
 	    reduced_features.put("Feature2", newData2.attribute(1).toString().split(" ")[1]);
 	    reduced_features.put("Feature3", newData2.attribute(2).toString().split(" ")[1]);
 	   
@@ -374,5 +382,124 @@ public class InterpretSearchResults {
 		System.out.println(instances.toSummaryString());
 		System.out.println("");
 	}
+	
+	
+	//--------------------------------------------Exp AI Part---------------------------------------------------------------------
+	
+	 public Map<String,String> performStatiscalAnalysisUsingRegression(TopKResults topKResults) throws Exception {
+		Map<String, Map<String, double[]>> books = topKResults.getBooks();
+		SortedMap<Double, String> results_topK = topKResults.getResults_topK();
+		List<double []> searched_result_bins_regression = createBinsForRegression(books,results_topK);
+		Instances regression_instances = loadDataset(searched_result_bins_regression);
+		return featureSelection_Regression(regression_instances);
+	}
+	
+	private SortedMap<String, String> featureSelection_Regression(Instances dataset) throws Exception {
+		SortedMap<Float,String> all_features =new TreeMap<Float,String>(Collections.reverseOrder());  
+		SortedMap<String,String> reduced_features =new TreeMap<String,String>(); 
+		int trainSize = (int) Math.round(dataset.numInstances() * 0.8);
+		int testSize = dataset.numInstances() - trainSize;
+		Instances train_dataset = new Instances(dataset, 0, trainSize);
+		Instances test_dataset = new Instances(dataset, trainSize, testSize);
+			
+		LinearRegression lr = new LinearRegression();
+		lr.setRidge(0.5); // Ridge value is set by hyper parameter tuning
+		
+		lr.buildClassifier(train_dataset);
+		
+		Evaluation evaluation = new Evaluation(test_dataset);
+		evaluation.crossValidateModel(lr, dataset, 5, new Random(1));
+		double rmse = evaluation.rootMeanSquaredError();
+		System.out.println("RMSE for regression on 5 fold cross validation " + rmse);
+		System.out.print(lr.toString());
+		
+        String[] get_lines = lr.toString().split("\n");
+        for(String line : get_lines) {
+        	if(line.contains(" * ")) {
+              String[] features = line.split("\\*");
+        	  float key;
+        	  String value = " ";
+              for(int feature =0 ; feature < features.length; feature+=2) {
+            	  key = Float.valueOf(features[feature]);
+            	  value = features[feature+1].replace(" +", "");
+            	  all_features.put(Math.abs(key), value);
+              }
+        	}
+        }
+        
+        int count = 0;
+	    System.out.println("\n\n * Printing Top Features from regression ******");
+        
+        for(Entry<Float, String> item: all_features.entrySet() ) {
+           count+=1;
+      	   reduced_features.put("Feature"+count, (item.getValue()).replace("Feature ", "F"));
+      	   System.out.println("Rank "+count+ " = " + (item.getValue()).replace("Feature ", "F") );
+           if(count == 5) break;
+        }
+        
+        return reduced_features;
+		
+	}
+	
+	private List<double []> createBinsForRegression(Map<String, Map<String, double[]>> books, SortedMap<Double, String> results_topK) {
+		List<double []> searched_result_bins = new ArrayList<double[]>();
+		double weight = 0;
+
+		for(Map.Entry<String, Map<String, double[]>> corpus: books.entrySet()) { // loop over all books of corpus
+			 double [] feature_vector = new double[FRConstants.FEATURE_NUMBER]; // create a global feature vector for a single book
+			 String bookName = corpus.getKey();
+			 
+			 if(results_topK.containsValue(bookName)) {
+			 	for(Map.Entry<Double, String> result: results_topK.entrySet()){//loop_over_all_chunks_of_a_given_book
+			        if (Objects.equals(bookName, result.getValue())) {
+			           weight = result.getKey();
+			           break;
+			        }
+			 	}			 
+				 
+			 	Map<String, double[]> bookChunks =  corpus.getValue();
+				 	for(Map.Entry<String, double[]> chunks: bookChunks.entrySet()){//loop_over_all_chunks_of_a_given_book
+				 		double[] final_chunk_vector = new double[FRConstants.FEATURE_NUMBER + 1];
+				 		double[] chunk_vector = chunks.getValue();
+				 		 for(int i = 0;i<chunk_vector.length;i++){
+				 			 if(i <= 20)
+				 				final_chunk_vector[i] = chunk_vector[i] * FRConstants.CHUNK_WEIGHT;
+				 			 else if (i == 21)
+				 				final_chunk_vector[i] = chunk_vector[i] * FRConstants.CHAR_WEIGHT;
+				 			else if (i == 22)
+				 				final_chunk_vector[i] = chunk_vector[i] * FRConstants.NUMCHAR_WEIGHT;
+				 			else if (i == 23)
+				 				final_chunk_vector[i] = chunk_vector[i] * FRConstants.TTR_WEIGHT; 
+				 			else if (i >23 && i <=33)
+				 				final_chunk_vector[i] = chunk_vector[i] * FRConstants.GENRE_WEIGHT; 
+				 			else 
+				 				final_chunk_vector[i] = chunk_vector[i] * 1;
+				 		//System.out.println(final_chunk_vector);
+				 		 }
+				 		 final_chunk_vector[FRConstants.FEATURE_NUMBER] = weight;
+				 		 searched_result_bins.add(final_chunk_vector);
+				 		
+				 		 
+				 }		 
+			 }
+		}
+		return searched_result_bins;
+	}
+	
+	private Instances loadDataset(List<double []> bins) throws RuntimeException {
+    	ArrayList<Attribute> attributes = new ArrayList<Attribute>();
+    	for(int i=0; i< FRConstants.FEATURE_NUMBER; i++) {
+    		attributes.add(new Attribute("Feature "+i));
+    	}
+    	attributes.add(new Attribute("Class label"));
+    	Instances dataRaw = new Instances("Instances", attributes , FRConstants.FEATURE_NUMBER+1);
+    	dataRaw.setClassIndex(FRConstants.FEATURE_NUMBER);
+
+    	for (double[] a: bins) {
+    	    dataRaw.add(new DenseInstance(1.0, a));
+    	}
+	    return dataRaw;
+	}
+
 
 }

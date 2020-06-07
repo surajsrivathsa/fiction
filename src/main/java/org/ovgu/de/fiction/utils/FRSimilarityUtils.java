@@ -98,7 +98,7 @@ public class FRSimilarityUtils {
 	public Map<Double, String> getSingleNaiveSimilarity(Map<String, Map<String, double[]>> books, String qryBookId,
 			Entry<String, double[]> query, String simType, int topKRes, int LEAVE_LAST_K_ELEMENTS_OF_FEATURE) throws IOException {
 
-		int topkRequested = topKRes*3;//FRConstants.TOP_K_RESULTS * 3;
+		int topkRequested = topKRes;//FRConstants.TOP_K_RESULTS * 3;
 
 		if (books == null || qryBookId == null || query == null || simType == null)
 			return null;

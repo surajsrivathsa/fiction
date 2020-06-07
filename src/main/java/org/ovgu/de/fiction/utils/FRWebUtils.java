@@ -21,6 +21,25 @@ public class FRWebUtils {
 	private static final String MALE_ORIENTED = "male oriented";
 	private static final String FEMALE_ORIENTED = "female oriented";
 	private static final String WRITING_STYLE = "writing style";
+	private static final String DIALOGUE_INTERACTION = "dialogue interaction";
+	private static final String LOW_DIMENSIONAL_OF_CHUNKS = "genre exploration";
+	private static final String SAME_BOOK_START_END = "same book start and end similarity";
+	private static final String BOOK_START_ANGER = "anger";
+	private static final String BOOK_START_ANTICIPATION = "anticipation";
+	private static final String BOOK_START_DISGUST = "disgust";
+	private static final String BOOK_START_FEAR = "fear";
+	private static final String BOOK_START_JOY = "joy";
+	private static final String BOOK_START_SADNESS = "sadness" ;
+	private static final String BOOK_START_SURPRISE = "surprise";
+	private static final String BOOK_START_TRUST = "trust";
+	private static final String BOOK_END_ANGER = "anger";
+	private static final String BOOK_END_ANTICIPATION = "anticipation";
+	private static final String BOOK_END_DISGUST = "disgust";
+	private static final String BOOK_END_FEAR = "fear";
+	private static final String BOOK_END_JOY = "joy";
+	private static final String BOOK_END_SADNESS = "sadness";
+	private static final String BOOK_END_SURPRISE = "surprise";
+	private static final String BOOK_END_TRUST = "trust";
 
 	public Map<Integer, String> getAllMasterGenres() throws IOException {
 
@@ -93,8 +112,8 @@ public class FRWebUtils {
 		if (reduced_features.size() > 0) {
 			for (Map.Entry<String, String> reduced_fe : reduced_features.entrySet()) {
 				if (reduced_fe.getKey().startsWith("Feature")) {
-					ftrSet.add(getFeatureHighLevelName(reduced_fe.getValue()));
-					System.out.println(reduced_fe.getValue());
+					ftrSet.add(getFeatureHighLevelName(reduced_fe.getValue().trim()));
+					//System.out.println("Reduced Feature :"+reduced_fe.getValue());
 				}
 			}
 		}
@@ -115,7 +134,6 @@ public class FRWebUtils {
 
 	private static String getFeatureHighLevelName(String featureId) {
 		StringBuffer featureName = new StringBuffer();
-		System.out.println("1");
 		if (featureId.equals("F0")) // writing style
 			featureName.append(WRITING_STYLE);
 		if (featureId.equals("F1")) // female oriented
@@ -163,10 +181,68 @@ public class FRWebUtils {
 		if (featureId.equals("F19")) // ease of readability
 			featureName.append(EASE_OF_READABILITY);
 		if (featureId.equals("F20")) // plot complexity
-			featureName.append(PLOT_OF_COMPLEXITY);
+			featureName.append(DIALOGUE_INTERACTION);
 		if (featureId.equals("F21")) // vocabulary richness
+			featureName.append(DIALOGUE_INTERACTION);
+		if (featureId.equals("F22"))
+			featureName.append(PLOT_OF_COMPLEXITY);
+		if (featureId.equals("F23"))
 			featureName.append(VOCABULARY_RICHNESS);
-
+		if (featureId.equals("F24"))
+			featureName.append(LOW_DIMENSIONAL_OF_CHUNKS);
+		if (featureId.equals("F25"))
+			featureName.append(LOW_DIMENSIONAL_OF_CHUNKS);
+		if (featureId.equals("F26"))
+			featureName.append(LOW_DIMENSIONAL_OF_CHUNKS);
+		if (featureId.equals("F27"))
+			featureName.append(LOW_DIMENSIONAL_OF_CHUNKS);
+		if (featureId.equals("F28"))
+			featureName.append(LOW_DIMENSIONAL_OF_CHUNKS);
+		if (featureId.equals("F29"))
+			featureName.append(LOW_DIMENSIONAL_OF_CHUNKS);
+		if (featureId.equals("F30"))
+			featureName.append(LOW_DIMENSIONAL_OF_CHUNKS);
+		if (featureId.equals("F31"))
+			featureName.append(LOW_DIMENSIONAL_OF_CHUNKS);
+		if (featureId.equals("F32"))
+			featureName.append(LOW_DIMENSIONAL_OF_CHUNKS);
+		if (featureId.equals("F33"))
+			featureName.append(LOW_DIMENSIONAL_OF_CHUNKS);
+		if (featureId.equals("F34"))
+			featureName.append(SAME_BOOK_START_END);
+		if (featureId.equals("F35"))
+			featureName.append(BOOK_START_ANGER);
+		if (featureId.equals("F36"))
+			featureName.append(BOOK_START_ANTICIPATION);
+		if (featureId.equals("F37"))
+			featureName.append(BOOK_START_DISGUST);
+		if (featureId.equals("F38"))
+			featureName.append(BOOK_START_FEAR);
+		if (featureId.equals("F39"))
+			featureName.append(BOOK_START_JOY);
+		if (featureId.equals("F40"))
+			featureName.append(BOOK_START_SADNESS);
+		if (featureId.equals("F41"))
+			featureName.append(BOOK_START_SURPRISE);
+		if (featureId.equals("F42"))
+			featureName.append(BOOK_START_TRUST);
+		if (featureId.equals("F43"))
+			featureName.append(BOOK_END_ANGER);
+		if (featureId.equals("F44"))
+			featureName.append(BOOK_END_ANTICIPATION);
+		if (featureId.equals("F45"))
+			featureName.append(BOOK_END_DISGUST);
+		if (featureId.equals("F46"))
+			featureName.append(BOOK_END_FEAR);
+		if (featureId.equals("F47"))
+			featureName.append(BOOK_END_JOY);
+		if (featureId.equals("F48"))
+			featureName.append(BOOK_END_SADNESS);
+		if (featureId.equals("F49"))
+			featureName.append(BOOK_END_SURPRISE);
+		if (featureId.equals("F50"))
+			featureName.append(BOOK_END_TRUST);
+        System.out.println("Feature Name :"+featureName.toString());
 		return featureName.toString();
 	}
 
@@ -213,10 +289,67 @@ public class FRWebUtils {
 		if (featureId.equals("F19")) // ease of readability
 			featureName = "Flesh Reading Scores";
 		if (featureId.equals("F20")) // plot complexity
-			featureName = "Num. of Story Characters";
+			featureName = "Main charachter presence ratio";
 		if (featureId.equals("F21")) // vocabulary richness
+			featureName = "Dialogue interaction ratio";
+		if (featureId.equals("F22"))
+			featureName = "Num. of Story Characters";
+		if (featureId.equals("F23"))
 			featureName = "Type Token Ratio";
-
+		if (featureId.equals("F24"))
+			featureName = "pca1 chunk1";
+		if (featureId.equals("F25"))
+			featureName = "pca2 chunk1";
+		if (featureId.equals("F26"))
+			featureName = "pca1 chunk2";
+		if (featureId.equals("F27"))
+			featureName = "pca2 chunk2";
+		if (featureId.equals("F28"))
+			featureName = "pca1 chunk3";
+		if (featureId.equals("F29"))
+			featureName = "pca2 chunk3";
+		if (featureId.equals("F30"))
+			featureName = "pca1 chunk4";
+		if (featureId.equals("F31"))
+			featureName = "pca2 chunk4";
+		if (featureId.equals("F32"))
+			featureName = "pca1 chunk5";
+		if (featureId.equals("F33"))
+			featureName = "pca2 chunk5";
+		if (featureId.equals("F34"))
+			featureName = "same book start and end similarity";
+		if (featureId.equals("F35"))
+			featureName = "starts with anger";
+		if (featureId.equals("F36"))
+			featureName = "starts with anticipation";
+		if (featureId.equals("F37"))
+			featureName = "starts with disgust";
+		if (featureId.equals("F38"))
+			featureName = "starts with fear";
+		if (featureId.equals("F39"))
+			featureName = "starts with joy";
+		if (featureId.equals("F40"))
+			featureName = "starts with sadness";
+		if (featureId.equals("F41"))
+			featureName = "starts with surprise";
+		if (featureId.equals("F42"))
+			featureName = "starts with trust";
+		if (featureId.equals("F43"))
+			featureName = "ends with anger";
+		if (featureId.equals("F44"))
+			featureName = "ends with anticipation";
+		if (featureId.equals("F45"))
+			featureName = "ends with disgust";
+		if (featureId.equals("F46"))
+			featureName = "ends with fear";
+		if (featureId.equals("F47"))
+			featureName = "ends with joy";
+		if (featureId.equals("F48"))
+			featureName = "ends with sadness";
+		if (featureId.equals("F49"))
+			featureName = "ends with surprise";
+		if (featureId.equals("F50"))
+			featureName = "ends with trsut";
 		return featureName;
 	}
 

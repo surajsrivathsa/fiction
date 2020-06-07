@@ -11,6 +11,8 @@ import org.ovgu.de.fiction.search.FictionRetrievalSearch;
 import org.ovgu.de.fiction.search.InterpretSearchResults;
 import org.ovgu.de.fiction.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
@@ -37,10 +39,16 @@ public class ServiceController {
 	
 	//@PostMapping("/userClickData")
 	@RequestMapping(value="/userClickData", method=RequestMethod.POST)
-	public String UpdateUserClick(@RequestBody String userEvent) {
+	public ResponseEntity <String> UpdateUserClick(@RequestBody String userEvent) {
+		try {
 		System.out.println(userEvent);
 		searchService.saveUserClicktoCsv(userEvent);
-		return userEvent;
+		return new ResponseEntity<String>(HttpStatus.CREATED);
+		}
+		catch( Exception e)
+		{
+			throw e;
+		}
 	}
 	
 	@RequestMapping(path = "/hello", method = RequestMethod.GET, produces = "application/json")
