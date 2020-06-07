@@ -5,10 +5,10 @@ import pandas as pd
 import time
 
 # File path and name constants
-FILE_PATH_SIMILARITY = os.path.join(os.getcwd(), "simialrity_feature_1emp_20pcnt.csv")
-FILE_PATH_LOG = os.path.join(os.getcwd(), 'SIMFIC_2.0_Feature3.log')
+FILE_PATH_SIMILARITY = os.path.join(os.getcwd(), "simialrity_milestone3_english.csv")
+FILE_PATH_LOG = os.path.join(os.getcwd(), 'SIMFIC_2.0_Feature3_milestone3_english.log')
 FILE_MODE = "w"
-FILE_PATH_FEATURES = os.path.join(os.getcwd(), "feature3_vectors_1emp_20pcnt.csv")
+FILE_PATH_FEATURES = os.path.join(os.getcwd(), "feature3_vectors_milestone3_english.csv")
 
 # To change logging level(WARNING, ERROR, CRITICAL) to other than INFO use other integer values mentioned in https://www.loggly.com/ultimate-guide/python-logging-basics/
 LOGGING_LEVEL = 20
@@ -40,7 +40,7 @@ TRUST = "trust"
 # Default feature vectors , similarity types and end file
 DEFAULT_BOOK_START_PERCENTAGE = 0.2
 DEFAULT_BOOK_END_PERCENTAGE = 0.2
-EMPERICAL_MULTIPLIER = 1
+EMPERICAL_MULTIPLIER = 10
 MINIMUM_SENTENCE_LIMIT = 10
 DEFAULT_EMOTIONS = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 SENTENCE_EMOTIONS = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -56,7 +56,7 @@ CHUNK_ID = "chunk_id"
 ZERO = 0
 ONE = 1
 
-FEATURE_FIELD = 24
+FEATURE_FIELD = 35
 JOIN_TYPE = "inner"
 SIMILARITY = "similarity"
 BID = "bid"

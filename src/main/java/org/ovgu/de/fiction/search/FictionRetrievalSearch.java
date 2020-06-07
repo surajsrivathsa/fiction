@@ -228,7 +228,7 @@ public class FictionRetrievalSearch {
 				double [] global_feature = new double[FRConstants.FEATURE_NUMBER_GLOBAL];
 				//@suraj added below line from outside loop to inner loop
 				
-				global_feature[0] = global_books.getKey()*FRConstants.FEATURE_WEIGHT_SIMILARITY_WITHOUT_GLOBAL;
+				global_feature[0] = global_books.getKey()*FRConstants.CHUNK_WEIGHT;
 				
 				/*@suraj: Take the bookid from similarity wo ttr map.
 				 * For each of this book query the actual book feature hashmap.
@@ -248,18 +248,36 @@ public class FictionRetrievalSearch {
 						   //@suraj: While retrieving features from below we can vary the weights or contribution of each feature
 						   Map<String, double[]> chunk_map = input_books.getValue();
 						     for(Map.Entry<String, double[]> temp_chunk: chunk_map.entrySet()){
-						    	 	 global_feature[1] = temp_chunk.getValue()[FRConstants.TTR_21]*FRConstants.FEATURE_WEIGHT_LESS;
-						    	 	 global_feature[2] = temp_chunk.getValue()[FRConstants.NUM_CHARS_20]*FRConstants.FEATURE_WEIGHT_LEAST;						    	 	 
-						    	 	 global_feature[3] = temp_chunk.getValue()[22]*FRConstants.FEATURE_WEIGHT_SIMILARITY_MISC_GLOBAL;
-						    	 	 global_feature[4] = temp_chunk.getValue()[23]*FRConstants.FEATURE_WEIGHT_SIMILARITY_MISC_GLOBAL;
-						    	 	 global_feature[5] = temp_chunk.getValue()[24]*FRConstants.FEATURE_WEIGHT_SIMILARITY_MISC_GLOBAL;
-						    	 	 global_feature[6] = temp_chunk.getValue()[25]*FRConstants.FEATURE_WEIGHT_SIMILARITY_MISC_GLOBAL;
-						    	 	 global_feature[7] = temp_chunk.getValue()[26]*FRConstants.FEATURE_WEIGHT_SIMILARITY_MISC_GLOBAL;
-						    	 	 global_feature[8] = temp_chunk.getValue()[27]*FRConstants.FEATURE_WEIGHT_SIMILARITY_MISC_GLOBAL;
-						    	 	 global_feature[9] = temp_chunk.getValue()[28]*FRConstants.FEATURE_WEIGHT_SIMILARITY_MISC_GLOBAL;
-						    	 	 global_feature[10] = temp_chunk.getValue()[29]*FRConstants.FEATURE_WEIGHT_SIMILARITY_MISC_GLOBAL;
-						    	 	 global_feature[11] = temp_chunk.getValue()[30]*FRConstants.FEATURE_WEIGHT_SIMILARITY_MISC_GLOBAL;
-						    	 	 global_feature[12] = temp_chunk.getValue()[31]*FRConstants.FEATURE_WEIGHT_SIMILARITY_MISC_GLOBAL;
+						    	 global_feature[1] = temp_chunk.getValue()[FRConstants.TTR_21]*FRConstants.TTR_WEIGHT;
+					    	 	 global_feature[2] = temp_chunk.getValue()[FRConstants.NUM_CHARS_20]*FRConstants.NUMCHAR_WEIGHT;
+					    	 	 global_feature[3] = temp_chunk.getValue()[21]*FRConstants.CHAR_WEIGHT;
+					    	 	 global_feature[4] = temp_chunk.getValue()[24]*FRConstants.GENRE_WEIGHT;
+					    	 	 global_feature[5] = temp_chunk.getValue()[25]*FRConstants.GENRE_WEIGHT;
+					    	 	 global_feature[6] = temp_chunk.getValue()[26]*FRConstants.GENRE_WEIGHT;
+					    	 	 global_feature[7] = temp_chunk.getValue()[27]*FRConstants.GENRE_WEIGHT;
+					    	 	 global_feature[8] = temp_chunk.getValue()[28]*FRConstants.GENRE_WEIGHT;
+					    	 	 global_feature[9] = temp_chunk.getValue()[29]*FRConstants.GENRE_WEIGHT;
+					    	 	 global_feature[10] = temp_chunk.getValue()[30]*FRConstants.GENRE_WEIGHT;
+					    	 	 global_feature[11] = temp_chunk.getValue()[31]*FRConstants.GENRE_WEIGHT;
+					    	 	 global_feature[12] = temp_chunk.getValue()[32]*FRConstants.GENRE_WEIGHT;
+					    	 	 global_feature[13] = temp_chunk.getValue()[33]*FRConstants.GENRE_WEIGHT;
+					    	 	 global_feature[14] = temp_chunk.getValue()[34]*FRConstants.EMO_WEIGHT;
+					    	 	 global_feature[15] = temp_chunk.getValue()[35]*FRConstants.EMO_WEIGHT;
+					    	 	 global_feature[16] = temp_chunk.getValue()[36]*FRConstants.EMO_WEIGHT;
+					    	 	 global_feature[17] = temp_chunk.getValue()[37]*FRConstants.EMO_WEIGHT;
+					    	 	 global_feature[18] = temp_chunk.getValue()[38]*FRConstants.EMO_WEIGHT;
+					    	 	 global_feature[19] = temp_chunk.getValue()[39]*FRConstants.EMO_WEIGHT;
+					    	 	 global_feature[20] = temp_chunk.getValue()[40]*FRConstants.EMO_WEIGHT;
+					    	 	 global_feature[21] = temp_chunk.getValue()[41]*FRConstants.EMO_WEIGHT;
+					    	 	 global_feature[22] = temp_chunk.getValue()[42]*FRConstants.EMO_WEIGHT;
+					    	 	 global_feature[23] = temp_chunk.getValue()[43]*FRConstants.EMO_WEIGHT;
+					    	 	 global_feature[24] = temp_chunk.getValue()[44]*FRConstants.EMO_WEIGHT;
+					    	 	 global_feature[25] = temp_chunk.getValue()[45]*FRConstants.EMO_WEIGHT;
+					    	 	 global_feature[26] = temp_chunk.getValue()[46]*FRConstants.EMO_WEIGHT;
+					    	 	 global_feature[27] = temp_chunk.getValue()[47]*FRConstants.EMO_WEIGHT;
+					    	 	 global_feature[28] = temp_chunk.getValue()[48]*FRConstants.EMO_WEIGHT;
+					    	 	 global_feature[29] = temp_chunk.getValue()[49]*FRConstants.EMO_WEIGHT;
+					    	 	 global_feature[30] = temp_chunk.getValue()[50]*FRConstants.EMO_WEIGHT;
 						    	 	 /* for surajs uncomment below block
 						    	 	 global_feature[13] = temp_chunk.getValue()[32]*FRConstants.FEATURE_WEIGHT_SIMILARITY_MISC_GLOBAL;
 						    	 	 global_feature[14] = temp_chunk.getValue()[33]*FRConstants.FEATURE_WEIGHT_SIMILARITY_MISC_GLOBAL;

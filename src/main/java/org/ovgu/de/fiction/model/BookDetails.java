@@ -138,7 +138,7 @@ public class BookDetails implements Serializable {
 	@Override
 	public String toString() {
 		return "Book [bookId=" + bookId + " having " + chunks.size() + " chunks => " + chunks + ", metadata=" + metadata.getFirstTitle()
-				+ ", averageTTR=" + averageTTR + ", num of Chars="+numOfChars+ "]";
+		+ ", metadata=" + metadata.getLanguage() + ", averageTTR=" + averageTTR + ", num of Chars="+numOfChars+ "]";
 	}
 
 }

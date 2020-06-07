@@ -1,11 +1,14 @@
 package org.ovgu.de.fiction.feature.extraction;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
@@ -30,6 +33,10 @@ import edu.stanford.nlp.sentiment.SentimentCoreAnnotations.SentimentAnnotatedTre
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.CoreMap;
 
+//@suraj: added below import for german sentiment change. This object would store all relevant details of the polarity word along with the value
+//@suraj: Currently we are not using the pos tag of the polarity of the word for sentiment calculation. It could be used later on
+import org.ovgu.de.fiction.feature.extraction.GermanSentimentData;
+
 /**
  * @author Suhita
  */
@@ -46,6 +53,11 @@ public class ChunkDetailsGenerator {
 	private int NUM_OF_CHARS_PER_BOOK = -1;
 	private String CONTENT_EXTRCT_FOLDER;
 	StanfordCoreNLP SENTI_PIPELINE;
+	
+	//@suraj: added hashmap to read and store polarity dictionary
+	private static HashMap<String, Object> polarity_clues_dict = new HashMap<String, Object>();
+	private static String pathToPCS = FRConstants.GERMAN_POLARITY_FILE;
+	private static GermanSentimentData dummy_sentiment_object = new GermanSentimentData("dummy", "dummy", "dummy", "neutral", 0.0, "D");
 
 	protected void init() throws NumberFormatException, IOException {
 
@@ -72,7 +84,10 @@ public class ChunkDetailsGenerator {
 
 		List<BookDetails> books = new ArrayList<>();
 		FeatureExtractorUtility feu = new FeatureExtractorUtility();
-
+		
+		//@suraj: read the german polarity file and store it in class varibale
+		createGermanPolarityMap();
+		
 		// following loop runs, over path of each book
 		FRFileOperationUtils.getFileNames(CONTENT_EXTRCT_FOLDER).stream().forEach(file -> {
 			String fileName = file.getFileName().toString().replace(FRConstants.CONTENT_FILE, FRConstants.NONE);
@@ -80,8 +95,18 @@ public class ChunkDetailsGenerator {
 			try {
 				BookDetails book = new BookDetails();
 				book.setBookId(fileName);
+				System.out.println(" ======================== ======================= ========================");
+				System.out.println("Book language: " + FRGeneralUtils.getMetadata(fileName).getLanguage() + " Authors: " + FRGeneralUtils.getMetadata(fileName).getAuthors() + " Book name: " + FRGeneralUtils.getMetadata(fileName).getTitles());
+				System.out.println(" ======================== ======================= ========================");
 				book.setMetadata(FRGeneralUtils.getMetadata(fileName));
-				book.setChunks(getChunksFromFile(file.toString())); // this is a
+				
+				//@suraj: Added below 3 lines to retrieve book leanguage from metadata, set default language to english for other unknown language bbooks
+				String book_lang = book.getMetadata().getLanguage();
+				if(!book_lang.equals(FRConstants.BOOK_LANG_DE) && !book_lang.equals(FRConstants.BOOK_LANG_EN))
+					book_lang = FRConstants.BOOK_LANG_EN;
+				
+				//@suraj: changed the getChunksFromFile functions signature to pass bothfilepath and language
+				book.setChunks(getChunksFromFile(file.toString(),  book_lang)); // this is a
 																	 // list of
 																	 // chunks,
 																	 // each
@@ -121,12 +146,13 @@ public class ChunkDetailsGenerator {
 	 * @return : List of Chunks, Chunk has a feature vector object
 	 * @throws IOException
 	 */
-	public List<Chunk> getChunksFromFile(String path) throws IOException {
+	
+	public List<Chunk> getChunksFromFile(String path, String book_lang) throws IOException {
 
 		int batchNumber;
 		List<Chunk> chunksList = new ArrayList<>();
 		Annotation annotation = null;
-
+		System.out.println("Language inside getchunksfromfile is: " + book_lang);
 		WordAttributeGenerator wag = new WordAttributeGenerator();
 		FeatureExtractorUtility feu = new FeatureExtractorUtility();
 		List<String> stopwords = Arrays.asList(FRGeneralUtils.getPropertyVal(FRConstants.STOPWORD_FICTION).split("\\|"));
@@ -220,7 +246,7 @@ public class ChunkDetailsGenerator {
 			for (int index = 0; index < chunkSize; index++) {// loop_over_tokens_of_a_given_chunk
 				Word token = wordList.get(wordcntr);
 				String l = token.getLemma();
-
+				//System.out.println("Printing wordlist of a chunk: " + wordList.toString());
 				if (l.equals(FRConstants.P_TAG)) {
 					paragraphCount++;
 					wordcntr++;
@@ -237,29 +263,61 @@ public class ChunkDetailsGenerator {
                     int randNum = rnd.nextInt(FRConstants.RANDOM_SENTENCES_SENTIM_TOP_VAL); //get_an_INT_less_than_10k
                     
 					
-					if (sentenceSbf.toString().length()>0 && randNum<FRConstants.RANDOM_SENTENCES_SENTIM_MID_VAL && randomSntnCount<totalNumOfRandomSntnPerChunk) { // making_a_random_choice_here
+					if (book_lang.equals(FRConstants.BOOK_LANG_EN) && sentenceSbf.toString().length()>0 && randNum<FRConstants.RANDOM_SENTENCES_SENTIM_MID_VAL && randomSntnCount<totalNumOfRandomSntnPerChunk) { // making_a_random_choice_here
 						// calculateSenti as=>
 						annotation = SENTI_PIPELINE.process(sentenceSbf.toString());
+						//System.out.println("Currently inside english sentiment pipeline");	
 						int score = 2; // Default as Neutral. 1 = Negative, 2 =
 						// Neutral, 3 = Positive
+						//System.out.println(annotation);
+						
+						
 						for (CoreMap sentence : annotation.get(CoreAnnotations.SentencesAnnotation.class))// ideally
 						// this
 						// loop
 						// runs
 						// once!
 						{
+							//System.out.println(sentence);
 							Tree tree = sentence.get(SentimentAnnotatedTree.class);
 							score = RNNCoreAnnotations.getPredictedClass(tree);
 						}
+						
+						//@suraj: we recieve 5 types of score 0,1,2,3,4 from rnn/polarity back. Hence added the count capture condition for 0, 4 that was only looking for 1,2,3 previously
 						if (score == 2)
 							senti_neutral_cnt++;
-						if (score == 1)
+						if (score <= 1)
 							senti_negetiv_cnt++;
-						if (score == 3)
+						if (score >= 3)
 							senti_positiv_cnt++;
 						
 						randomSntnCount++;
+						
+						System.out.println("English Sentiment Sentence is: " + sentenceSbf.toString() + " score: " + score);
 					}
+					
+					
+					//@suraj: handle german sentiment
+					else if (book_lang.equals(FRConstants.BOOK_LANG_DE) && sentenceSbf.toString().length()>0 && randNum<FRConstants.RANDOM_SENTENCES_SENTIM_MID_VAL && randomSntnCount<totalNumOfRandomSntnPerChunk * 1.5) { // making_a_random_choice_here
+						//System.out.println("Currently inside german sentiment pipeline");	
+						//System.out.println("German Sentiment Sentence is: " + sentenceSbf.toString());
+						int score = 2; // Default as Neutral. 1 = Negative, 2 =
+						
+						//@suraj: call the functions added at the bottom to get the sentiment score
+						score = calculateSentimentperSentence(SentenceTokenizer(sentenceSbf.toString()));
+						//@suraj: we recieve 5 types of score 0,1,2,3,4 from rnn/polarity back. Hence added the count capture condition for 0, 4 that was only looking for 1,2,3 previously
+						if (score == 2)
+							senti_neutral_cnt++;
+						if (score <= 1)
+							senti_negetiv_cnt++;
+						if (score >= 3)
+							senti_positiv_cnt++;
+						
+						randomSntnCount++;
+						System.out.println("German Sentiment Sentence is: " + sentenceSbf.toString() + " score: " + score);
+					}
+					//System.out.println(book_lang + " : " + sentenceSbf.toString().length() + " > 0 " + " : " + randNum + " < " + FRConstants.RANDOM_SENTENCES_SENTIM_MID_VAL + " : " + randomSntnCount + " < " + totalNumOfRandomSntnPerChunk);
+					
 					// reset the sentence buffer for next sentence
 					sentenceSbf = new StringBuffer();
 
@@ -275,10 +333,23 @@ public class ChunkDetailsGenerator {
 				}
 				/* append the token to form sentence. Below part needed for sentiment calculation */
 
-				else if (!l.equals(FRConstants.S_TAG) && !l.equals(FRConstants.P_TAG)) {
+				//@suraj: Made changes to below two else if condition. For english books we keep orignial word as RNN based classifier would be used
+				
+				else if (!l.equals(FRConstants.S_TAG) && !l.equals(FRConstants.P_TAG) && book_lang.equals(FRConstants.BOOK_LANG_EN)) {
 					sentenceSbf.append(" ").append(token.getOriginal());
 				}
-
+				
+				
+				//@suraj: For german, we would need lemma for each token as sentiment classification is dictionary based and polarity dictionary has only lemmas.
+				//@suraj: regex would exclude all the non word characters, it would only include alfabets and numbers.
+				//@suraj: changed token.getLemma back to token.getOriginal as getLemma was returning no value back as pipeline was configured for english during the run
+				else if (!l.equals(FRConstants.S_TAG) && !l.equals(FRConstants.P_TAG) && book_lang.equals(FRConstants.BOOK_LANG_DE)) { 
+					//token.getOriginal().matches(FRConstants.REGEX_ONLY_ALFABETS_AND_NUMBERS)
+					sentenceSbf.append(" ").append(token.getOriginal());
+				}
+				
+				//System.out.println("Appened sentence: " + sentenceSbf.toString());
+				
 				if (!FRGeneralUtils.hasPunctuation(l) && !stopwords.contains(l))
 					stpwrdPuncRmvd.add(l);
 
@@ -463,4 +534,131 @@ public class ChunkDetailsGenerator {
 
 	}
 
+	//@suraj: Added below 5 methods as part of calculating german sentiments
+    public static void createGermanPolarityMap() throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(FRGeneralUtils.getPropertyVal(FRConstants.GERMAN_POLARITY_FILE)));
+        String line = "";
+        
+        while ((line = br.readLine()) != null){
+            //System.out.println(line);
+            String[] data = line.split("\t");
+            //System.out.println(Arrays.toString(data));
+            //System.out.println(data.length);
+            //System.out.println(Arrays.toString(data));
+            //Double score = Double.parseDouble(data[2])-Double.parseDouble(data[3]);
+            //System.out.println(score);
+            String[] words = data[4].split("/");
+            //System.out.println(Arrays.toString(words));
+            
+            String actual_word = data[0].toLowerCase(Locale.GERMAN); String lemmatized_word = data[1].toLowerCase(Locale.GERMAN); 
+            String pos_tag = data[2];  String sentiment_type = data[3]; String flag = data[5];
+            
+            if(!sentiment_type.equals("neutral") && !sentiment_type.equals("positive") && !sentiment_type.equals("negative")) {
+            	sentiment_type = "neutral";
+            }
+            
+            //System.out.println(cleanProbabilityValues(words, sentiment_type));
+            Double prob = cleanProbabilityValues(words, sentiment_type);
+            //System.out.println(new GermanSentimentData(actual_word, lemmatized_word, pos_tag, sentiment_type, prob, flag));
+            polarity_clues_dict.put(actual_word, new GermanSentimentData(actual_word, lemmatized_word, pos_tag, sentiment_type, prob, flag));
+            
+        }
+        System.out.println("Total words in german polarity dictionary are : " + polarity_clues_dict.size());
+        br.close();
+    	
+    }
+    
+    public static int calculateSentimentperSentence(String[] sentence_tokens) {
+    	Double negative_sentiment_score = 0.0;
+    	Double positive_sentiment_score = 0.0;
+    	Double neutral_sentiment_score = 0.0;
+    	int positive_counter = 1;
+    	int negative_counter = 1;
+    	int neutral_counter = 1;
+    	String tmp_sentiment_type = "neutral";
+    	Double tmp_sentiment_val = 0.0;
+    	GermanSentimentData tmp_obj ;
+    	
+    	for(int i = 0; i < sentence_tokens.length; i++) {
+    		tmp_obj = (GermanSentimentData) polarity_clues_dict.getOrDefault(sentence_tokens[i], dummy_sentiment_object);
+    		tmp_sentiment_val = tmp_obj.sentiment_value;
+    		tmp_sentiment_type = tmp_obj.sentiment_type;
+    		
+    		//System.out.println(tmp_obj.toString());
+    		
+    		if(tmp_sentiment_type.equals("neutral")) {
+    			neutral_counter++;
+    			neutral_sentiment_score += tmp_sentiment_val;
+    		}
+    		else if(tmp_sentiment_type.equals("positive")) {
+    			positive_counter++;
+    			positive_sentiment_score += tmp_sentiment_val;
+    		}
+    			
+    		else if(tmp_sentiment_type.equals("negative")) {
+    			negative_counter++;
+    			negative_sentiment_score += tmp_sentiment_val;
+    		}
+    		else {
+    			neutral_counter++;
+    			neutral_sentiment_score += tmp_sentiment_val;   		
+    		}
+    	}
+    	System.out.println("Negative sentiment: " + negative_sentiment_score + " | Neutral sentiment: " + neutral_sentiment_score + " | Positive sentiment: " + positive_sentiment_score);
+    	Double overall_sentiment_score = negative_sentiment_score * FRConstants.GERMAN_NEGATIVE_POLARITY_WEIGHT + neutral_sentiment_score/neutral_counter + positive_sentiment_score * FRConstants.GERMAN_POSITIVE_POLARITY_WEIGHT;
+    	System.out.println("Overall sentiment is: " + overall_sentiment_score);  
+    	int scaled_sentiment_score = scaleGermanSentimentScoretoEnglishSentiment(overall_sentiment_score);
+    	return scaled_sentiment_score;
+    }
+    
+    public static Double cleanProbabilityValues(String[] probabilities, String sentiment_type) {
+    	Double[] probs = new Double[probabilities.length];
+    	for(int i = 0; i < probabilities.length; i++) {
+    		
+    		if(probabilities[i].equals("-")) {
+    			probs[i] = 0.0;   			
+    		}
+    		else {
+    			probs[i] = Double.parseDouble(probabilities[i] );
+    		}
+    			
+    	}
+    	
+    	Arrays.sort(probs);
+    	Double required_prob = 0.0;
+    	
+    	if(sentiment_type.equals("neutral")){
+    			required_prob = probs[0];
+    	}
+    	else if(sentiment_type.equals("negative")) {
+    		required_prob = -1.0 * Math.abs(probs[0]);
+    	}
+    	else {
+    		required_prob = probs[2];
+    	}
+    	
+    	return required_prob ;
+    }
+
+    public static String[] SentenceTokenizer(String sentence) {
+    	String[] tmp = sentence.split(" ");
+    	String[] tokenized_sentences = new String[tmp.length];
+    	for(int i = 0; i < tmp.length; i++) {
+    		tokenized_sentences[i] = tmp[i].replaceAll(FRConstants.REGEX_ONLY_ALFABETS_AND_NUMBERS, "").trim().toLowerCase(Locale.GERMAN);
+    	}
+    	//System.out.println(Arrays.toString(tokenized_sentences));
+    	return tokenized_sentences;
+    }
+
+    
+	public static int scaleGermanSentimentScoretoEnglishSentiment(Double sentiment_value) {
+	    	
+	    	if(sentiment_value >= FRConstants.GERMAN_POSITIVE_SENTIMENT_CUTOFF)
+	    		return 3;
+	    	else if(sentiment_value <= FRConstants.GERMAN_NEGATIVE_SENTIMENT_CUTOFF)
+	    		return 1;
+	    	else
+	    		return 2;
+	    }
+    
 }

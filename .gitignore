@@ -33,3 +33,12 @@ hs_err_pid*
 *.classpath
 .DS_Store
 /target/
+*.js
+*.png
+*.css
+*.htm
+Text
+*.pdf
+deeplearning_vocab
+*.txt
+*-checkpoint*

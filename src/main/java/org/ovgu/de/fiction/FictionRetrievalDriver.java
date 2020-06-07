@@ -4,6 +4,7 @@ import org.apache.commons.exec.*;
 import org.apache.commons.exec.launcher.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.ovgu.de.fiction.feature.extraction.ChunkDetailsGenerator;
@@ -21,37 +22,35 @@ import org.ovgu.de.fiction.utils.FRGeneralUtils;
  */
 public class FictionRetrievalDriver {
 
-	
-
 	public static void main(String[] args) throws Exception {
 
 		long start = System.currentTimeMillis();
 		//System.out.println("Hello world");
 
-		/* 1> Extract content from Gutenberg corpus - one time 
+		/* 1> Extract content from Gutenberg corpus - one time */
 		
-		ContentExtractor.generateContentFromAllEpubs();
+		//ContentExtractor.generateContentFromAllEpubs();
 		//System.out.println("Time taken for generating content (min)-" + (System.currentTimeMillis() - start) / (1000 * 60));
 
 		//start = System.currentTimeMillis();
-		*/
+		/**/
 		
 		// 2> Generate features from the extracted content - one time 
 		
-		/* Commenting below block as i needed to extract only html output. Un comment when required
-		List<BookDetails> features = generateOtherFeatureForAll();
+		/* Commenting below block as i needed to extract only html output. Un comment when required*/
+		//List<BookDetails> features = generateOtherFeatureForAll();
 		System.out.println("Time taken for feature extraction and chunk generation (min)-" + (System.currentTimeMillis() - start) / (1000 * 60));
 		start = System.currentTimeMillis();
-		*/
+		/**/
 		
 
 		/* 3> Write features to CSV - one time */
-		
-		/* Commenting below block as i needed to extract only html output. Un comment when required
-		FeatureExtractorUtility.writeFeaturesToCsv(features);
+	
+		/* Commenting below block as i needed to extract only html output. Un comment when required*/
+		//FeatureExtractorUtility.writeFeaturesToCsv(features);
 		 start = System.currentTimeMillis();
 		System.out.println("Time taken for writing to CSV (min)-" + (System.currentTimeMillis() - start) / (1000 * 60));
-		*/
+		/**/
 		
 		
 		/*
@@ -97,9 +96,10 @@ public class FictionRetrievalDriver {
 		
 		
 		 */
-		String[] query_books = {"pg108DoyleReturnSherlk", "pg2701HermanMobyDick", "pg766DickensDavidCopfld", 
-				"pg1342JaneAustenPP", "pg158JaneAustenEmma",
-				"pg1155Agatha2", "pg766DickensDavidCopfld",  "pg1400DickensGreatExp", "pg730DickensOliverTw", "pg1400DickensGreatExp"};
+		
+		
+		
+		String[] query_books = {"pg108", "pg2701"};//, "pg2701", "pg766", "pg1342", "pg158","pg1155",  "pg1400", "pg730"};
 		
 		for(int i = 0; i < query_books.length; i++)
 		{
@@ -110,16 +110,20 @@ public class FictionRetrievalDriver {
 			TopKResults topKResults = FictionRetrievalSearch.findRelevantBooks(qryBookNum, FEATURE_CSV_FILE, 
 					FRConstants.SIMI_PENALISE_BY_CHUNK_NUMS, FRConstants.SIMI_ROLLUP_BY_ADDTN, 
 					FRConstants.SIMI_INCLUDE_TTR_NUMCHARS,FRConstants.TOP_K_RESULTS,FRConstants.SIMILARITY_L2);
+					
 			
-			//InterpretSearchResults interp = new InterpretSearchResults();
+			InterpretSearchResults interp = new InterpretSearchResults();
 			//interp.performStatiscalAnalysis(topKResults, qryBookNum);
 			
 			//@suraj: InterpretSearchResults interp = new InterpretSearchResults();
 			//interp.performStatiscalAnalysis(topKResults);
-			//@suraj: interp.performStatiscalAnalysisUsingRegression(topKResults);
+			//@suraj: 
+			interp.performStatiscalAnalysisUsingRegression(topKResults, 0, FRConstants.SIMI_INCLUDE_TTR_NUMCHARS);
 			//findLuceneRelevantBooks(qryBookNum);
 			
 		}
+		
+		
 		
 		//String qryBookNum = "pg108DoyleReturnSherlk"; 
 		/**/
@@ -313,6 +317,8 @@ Rank 5 =  Feature 8
 	 if (exitValue2 == 0) {
 		 System.exit(0);
 	 }*/
+	
+	
 	
 	
 }

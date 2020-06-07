@@ -19,6 +19,9 @@ public interface FRConstants {
 	public static final String OUT_FOLDER_TOKENS = "folder.out.chunks";
 	public static final String STOPWORD_FICTION = "stopword.fiction";
 	
+	//@suraj: added below constants and linked to file path in config.properties
+	public static final String GERMAN_POLARITY_FILE = "file.german.polarity";
+	
 	
 	// adding for python program
 	public static final String SCRIPT_TYPE = "script.type";
@@ -52,6 +55,7 @@ public interface FRConstants {
 	public static final String REGEX_TRAILING_SPACE = "^\\s+|\\s+$";
 	public static final String P_TAG = "<p>";
 	public static final String S_TAG = "<s>";
+	public static final String REGEX_ONLY_ALFABETS_AND_NUMBERS = "[^0-9a-zA-ZÀ-ž]";
 
 	/* Stanford api related */
 	public static final String STNFRD_LEMMA_ANNOTATIONS = "tokenize,ssplit,pos,lemma,ner"; // "tokenize,ssplit,pos,lemma,ner";
@@ -79,6 +83,15 @@ public interface FRConstants {
 	public static final String METADATA_LNG = "language: english";
 	public static final String METADATA_1ST_RLS = "first released:";
 	public static final String METADATA_DATE = "date:";
+	
+	//@suraj: added constants defining language of each book and sentiment cutoffs for german
+	public static final String BOOK_LANG_EN = "en";
+	public static final String BOOK_LANG_DE = "de";
+	public static final Double GERMAN_POSITIVE_SENTIMENT_CUTOFF = 0.3;
+	public static final Double GERMAN_NEGATIVE_SENTIMENT_CUTOFF = -0.1;
+	public static final Double GERMAN_POSITIVE_POLARITY_WEIGHT = 0.85;
+	public static final Double GERMAN_NEGATIVE_POLARITY_WEIGHT = 1.0;
+	
 	public static final String REPRINTED = "reprinted";
 	public static final String COPYWRIGHT = "copyright";
 	public static final String PREFACE = "preface";
@@ -181,14 +194,22 @@ public interface FRConstants {
 	public static final String SIMI_EXCLUDE_TTR_NUMCHARS="EX";
 
 	public static final double SIMILARITY_CUTOFF = 0.70;
-	public static final int FEATURE_NUMBER = 32;
-	public static final int FEATURE_NUMBER_GLOBAL = 13;//1 chunk similarity + 1 ttr + 1 char + our features(6 genre)
-	public static final int FEATURE_NUMBER_GLOBAL_WITHOUT_TTR_CHAR = 12;
+	public static final int FEATURE_NUMBER_LOCAL = 21;//used inside interpret search results
+	public static final int FEATURE_NUMBER = 51;
+	public static final int FEATURE_NUMBER_GLOBAL = 31;//1 chunk similarity + 1 ttr + 1 char + our features(6 genre)
+	public static final int FEATURE_NUMBER_GLOBAL_WITHOUT_TTR_CHAR = 30;
 	public static final double FEATURE_WEIGHT_MORE = 0.85;//chandan 0.85
 	public static final double FEATURE_WEIGHT_LESS = 0.05;//chandan 0.001, aditya 0.1
 	public static final double FEATURE_WEIGHT_LEAST = 0.05;//chandan 0.01 aditya 0.05
 	public static final double FEATURE_WEIGHT_SIMILARITY_WITHOUT_GLOBAL = 0.1;//chandan 0.5 aditya 0.65
 	public static final double FEATURE_WEIGHT_SIMILARITY_MISC_GLOBAL =  0.8* 1.0 /FEATURE_NUMBER_GLOBAL_WITHOUT_TTR_CHAR;//cnandan 0.489 aditya 0.2
+	
+	public static final double CHUNK_WEIGHT = 0.65;
+	public static final double EMO_WEIGHT = 0.1/17;
+	public static final double CHAR_WEIGHT = 0.05;
+	public static final double GENRE_WEIGHT = 0.1/10;
+	public static final double NUMCHAR_WEIGHT = 0.05;
+	public static final double TTR_WEIGHT = 0.05;
 	
 	public static final double PERCTG_OF_SNTNC_FOR_SENTIM = 0.05;
 	public static final int RANDOM_SENTENCES_SENTIM_MID_VAL = 5000;
@@ -205,14 +226,14 @@ public interface FRConstants {
 	public static final double DATA_DISTRIB_40_PERCENT  = 0.4;
 	public static final double DATA_DISTRIB_DIFFER_CUTOFF  = 0.01;
 	
-	public static final int TOP_K_RESULTS = 10;
+	public static final int TOP_K_RESULTS = 25;
 
 	/* feature related */
-	public static final int LEAVE_LAST_K_ELEMENTS_OF_FEATURE = 12; //exclude 2 global elements (TTR, NUM_Chars, similarity and emotion vectors) from
+	public static final int LEAVE_LAST_K_ELEMENTS_OF_FEATURE = 30; //exclude 2 global elements (TTR, NUM_Chars, similarity and emotion vectors) from
 	
-	public static final int TTR_21 = 21;
+	public static final int TTR_21 = 23;//earlier value = 21
 	
-	public static final int NUM_CHARS_20 = 20;
+	public static final int NUM_CHARS_20 = 22;//earlier value = 20
 	
 	public static final int FLSH_RS_19 = 19;
 	
