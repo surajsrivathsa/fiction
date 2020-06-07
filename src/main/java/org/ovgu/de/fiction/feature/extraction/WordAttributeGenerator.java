@@ -1,11 +1,15 @@
 package org.ovgu.de.fiction.feature.extraction;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.ovgu.de.fiction.model.Concept;
 import org.ovgu.de.fiction.model.Word;
@@ -14,17 +18,37 @@ import org.ovgu.de.fiction.utils.FRGeneralUtils;
 import org.ovgu.de.fiction.utils.FRFileOperationUtils;
 import org.ovgu.de.fiction.utils.StanfordPipeline;
 
+import com.google.common.base.Strings;
+
+import edu.stanford.nlp.ie.util.*;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.util.CoreMap;
 
 /**
- * @author Suhita, Sayantan
+ * @author Aditya
  * @version - Changes for sentiment features
  */
 public class WordAttributeGenerator {
+/*	
+	static List<String> splitAtNthOccurrence(String input, int n, String delimiter) {
+	    List<String> pieces = new ArrayList<>();
+	    // *? is the reluctant quantifier
+	    String regex = Strings.repeat(".*?" + delimiter, n);
+	    Matcher matcher = Pattern.compile(regex).matcher(input);
 
+	    int lastEndOfMatch = -1;
+	    while (matcher.find()) {
+	        pieces.add(matcher.group());
+	        lastEndOfMatch = matcher.end();
+	    }
+	    if (lastEndOfMatch != -1) {
+	        pieces.add(input.substring(lastEndOfMatch));
+	    }
+	    return pieces;
+	}
+*/	
 	private static final String NNP = "NNP";
 
 	/**
@@ -33,18 +57,32 @@ public class WordAttributeGenerator {
 	 * @return = List of "Word" objects, each object has original token, POS tag, lemma, NER as
 	 *         elements
 	 * @author Suhita, Modified by Sayantan for # of characters
+	 * @throws IOException 
 	 */
 	public Concept generateWordAttributes(Path path) {
 
 		FeatureExtractorUtility feu = new FeatureExtractorUtility();
 		Concept cncpt = new Concept();
+		String fileName1 = path.toString().replace(FRConstants.REP_FN, FRConstants.NONE).replace(FRConstants.CONTENT_FILE, FRConstants.NONE);
+		String x = "";
+		//System.out.println(fileName1);
+		//System.out.println(path.toString());
+		try {
+			x = FRGeneralUtils.getMetadata(fileName1).getLanguage();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("Language: "+x);
+		//System.exit(0);
 		Annotation document = new Annotation(FRFileOperationUtils.readFile(path.toString()));
 
-		StanfordPipeline.getPipeline(null).annotate(document);
+		StanfordPipeline.getPipeline(null, x).annotate(document);
 		List<CoreMap> sentences = document.get(CoreAnnotations.SentencesAnnotation.class);
 		List<Word> tokenList = new ArrayList<>();
-		Map<String, Integer> charMap = new HashMap<>(); // a new object per new
+		Map<String, Integer> charMap = new HashMap<>();// a new object per new
 														 // book // Book
+		
 		StringBuffer charName = new StringBuffer();
 		int numOfSyllables = 0;
 		int numOfSentences =0;
@@ -65,18 +103,20 @@ public class WordAttributeGenerator {
 				String pos = cl.get(CoreAnnotations.PartOfSpeechAnnotation.class);
 				String ner = cl.get(CoreAnnotations.NamedEntityTagAnnotation.class);
 				String lemma = cl.get(CoreAnnotations.LemmaAnnotation.class).toLowerCase();
+				//System.out.println(original + " " + ner + " " + pos + " "+ lemma);
 				/*
 				 * logic 2: check if ner is "P", then further check next 2 element in sentence , ex.
 				 * Tom Cruise, Mr. Tom Cruise if yes, then concatenate all two or three tokens i.e.
 				 * "Mr" +"Tom" + "Cruise" into a single token the single concatenated token is added
 				 * to a Map , where key is number of times "Mr. Tom Cruise" appears
 				 */
-				if (ner.equals(FRConstants.NER_CHARACTER) && !original.matches(FRConstants.CHARACTER_STOPWORD_REGEX)) {
+				if ((ner.equals(FRConstants.NER_CHARACTER) || ner.equals(FRConstants.NER_CHARACTER_DE))  && !original.matches(FRConstants.CHARACTER_STOPWORD_REGEX)) {
+					
 					if (charName.length() == 0)
 						charName.append(original.toLowerCase());
 					else
 						charName.append(FRConstants.SPACE).append(original.toLowerCase());
-				} else if (!ner.equals(FRConstants.NER_CHARACTER) && charName.length() != 0) {
+				} else if (!(ner.equals(FRConstants.NER_CHARACTER) || ner.equals(FRConstants.NER_CHARACTER_DE)) && charName.length() != 0) {
 
 					// calculate for character
 					numOfSyllables = FRGeneralUtils.countSyllables(charName.toString().toLowerCase());
@@ -95,15 +135,21 @@ public class WordAttributeGenerator {
 				} else {
 					addToTokenList(tokenList, original, pos, ner, lemma, FRGeneralUtils.countSyllables(original.toLowerCase()));
 				}
-
+				
 			}
 		}
 		cncpt.setWords(tokenList);
+		
+		for (Entry<String,Integer> c : charMap.entrySet()) {
+			System.out.println(c.getKey()+" "+c.getValue());
+		}
+		
 		cncpt.setCharacterMap(feu.getUniqueCharacterMap(charMap));
 		cncpt.setNumOfSentencesPerBook(numOfSentences);
 		StanfordPipeline.resetPipeline();
 		return cncpt;
 	}
+	
 
 	public void addToTokenList(List<Word> tokenList, String original, String pos, String ner, String lemma, int numOfSyllbles) {
 		if (lemma.matches("^'.*[a-zA-Z]$")) { // 's o'clock 'em

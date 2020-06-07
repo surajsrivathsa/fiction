@@ -86,6 +86,12 @@ public class Chunk implements Serializable {
 		return sbf.toString();
 	}
 
+	
+	public static String getStrings(List<String> tokens) {
+		StringBuffer sbf = new StringBuffer();
+		tokens.forEach(t -> sbf.append(t + FRConstants.SPACE));
+		return sbf.toString();
+	}
 	/**
 	 * @return the textFormat
 	 */

@@ -1,6 +1,7 @@
 package org.ovgu.de.fiction.utils;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +15,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 /*
- * Author: Sayantan
+ * Author: Aditya
  * Simialrity function implementations
  */
 public class FRSimilarityUtils {
@@ -205,11 +206,16 @@ public class FRSimilarityUtils {
 		
 		Multimap<Double, String> multimap = ArrayListMultimap.create();
 		
+		for(Map.Entry<String, double[]> corpus_input : corpus.entrySet()){
+			System.out.println(corpus_input.getKey());
+		}
+		
+		
 		double[] qry_vector = corpus.get(queryBookId);
 		double[] book_vector=null;
 		double dist_meas_values = 0.0; // this will hold cosine or L1 or L2 measures, depending upon user choice
 		double norm_qry = 0.0;
-		
+		System.out.println(Arrays.toString(qry_vector));
 		//find normalised qry vector value ONLY once
 		for(int j=0;j<qry_vector.length;j++){
 			norm_qry = norm_qry+(qry_vector[j]*qry_vector[j]);

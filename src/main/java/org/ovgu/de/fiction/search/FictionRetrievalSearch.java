@@ -4,9 +4,11 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -15,15 +17,20 @@ import org.ovgu.de.fiction.utils.FRConstants;
 import org.ovgu.de.fiction.utils.FRSimilarityUtils;
 
 /**
- * @author Suhita,Sayantan
+ * @author Aditya
  */
 public class FictionRetrievalSearch {
 
 	public static TopKResults findRelevantBooks(String qryBookNum, String featureCsvFile, String PENALISE, String ROLLUP, 
-			String TTR_CHARS,int topKRes,String similarity) throws IOException {
+			String TTR_CHARS,int topKRes,String similarity,int configindex) throws IOException {
 		Map<String, Map<String, double[]>> books = getChunkFeatureMapForAllBooks(featureCsvFile);
-
-		SortedMap<Double, String> results_topK = compareQueryBookWithCorpus(qryBookNum, books, PENALISE, ROLLUP, TTR_CHARS,topKRes,similarity);
+		for (Entry<String, Map<String, double[]>> queryChunk : books.entrySet())
+		{
+		//	System.out.println(queryChunk.getKey());
+		}
+			
+			
+		SortedMap<Double, String> results_topK = compareQueryBookWithCorpus(qryBookNum, books, PENALISE, ROLLUP, TTR_CHARS,topKRes,similarity, configindex);
 		
 		TopKResults topK = new TopKResults();
 		topK.setBooks(books);
@@ -53,7 +60,7 @@ public class FictionRetrievalSearch {
 	}
 
 	private static SortedMap<Double, String> compareQueryBookWithCorpus(String qryBookId, Map<String, Map<String, double[]>> books, 
-			String PENALISE, String ROLLUP, String TTR_CHARS,int topKRes, String similarity)
+			String PENALISE, String ROLLUP, String TTR_CHARS,int topKRes, String similarity, int configindex)
 			throws IOException {
 		// Step: Send the query book chunk wise and find relevance rank with corpus
 		FRSimilarityUtils simUtils = new FRSimilarityUtils();
@@ -81,6 +88,9 @@ public class FictionRetrievalSearch {
 			System.out.println("for qry chunk = " + qryBookId + " - " + queryChunk.getKey() + " Similar Book chunks are");
 			System.out.println(chunkSimResults);
 			System.out.println(".. ");
+			if (!chunkSimResults.containsValue(qryBookId + " - " + queryChunk.getKey()))   // @aditya : added to include small book chunks in the results corpus
+				chunkSimResults.put(1.0,qryBookId + "-" + queryChunk.getKey());
+			
 			staging_results.put(qryBookId + "-" + queryChunk.getKey(), chunkSimResults);// this will
 																						// always
 																						// return 20
@@ -140,6 +150,7 @@ public class FictionRetrievalSearch {
 					book_weight = book_weight + stg2.getValue();// accumulate weights
 				}
 			}// end of a chunk rolling here
+			//System.out.println(books.get("pg6651").size());
 			double noOfChunks = books.get(bookId).size();
 			if(PENALISE.equals(FRConstants.SIMI_PENALISE_BY_NOTHING))
 				book_results.put(bookId, Math.round((book_weight) * 10000.0000) / 10000.0000);
@@ -181,29 +192,63 @@ public class FictionRetrievalSearch {
 			//create feature vectors below
 			for(Map.Entry<Double, String> global_books:sorted_results_wo_TTR.entrySet()){
 				double [] global_feature = new double[FRConstants.FEATURE_NUMBER_GLOBAL];
-				global_feature[0] = global_books.getKey()*FRConstants.FEATURE_WEIGHT_MORE;
+				global_feature[0] = global_books.getKey()*FRConstants.CHUNK_WEIGHT[configindex];
 				   for(Map.Entry<String, Map<String, double[]>> input_books: books.entrySet()){
 					   if(global_books.getValue().equals(input_books.getKey())){ // match bookId with bookId 
 						   Map<String, double[]> chunk_map = input_books.getValue();
 						     for(Map.Entry<String, double[]> temp_chunk: chunk_map.entrySet()){
-						    	 	 global_feature[1] = temp_chunk.getValue()[FRConstants.TTR_21]*FRConstants.FEATURE_WEIGHT_LESS;
-						    	 	 global_feature[2] = temp_chunk.getValue()[FRConstants.NUM_CHARS_20]*FRConstants.FEATURE_WEIGHT_LEAST;
+						    	 	 global_feature[1] = temp_chunk.getValue()[FRConstants.TTR_21]*FRConstants.TTR_WEIGHT[configindex];
+						    	 	 global_feature[2] = temp_chunk.getValue()[FRConstants.NUM_CHARS_20]*FRConstants.NUMCHAR_WEIGHT[configindex];
+						    	 	 global_feature[3] = temp_chunk.getValue()[21]*FRConstants.CHAR_WEIGHT[configindex];
+						    	 	global_feature[4] = temp_chunk.getValue()[24]*FRConstants.GENRE_WEIGHT[configindex];
+						    	 	 global_feature[5] = temp_chunk.getValue()[25]*FRConstants.GENRE_WEIGHT[configindex];
+						    	 	 global_feature[6] = temp_chunk.getValue()[26]*FRConstants.GENRE_WEIGHT[configindex];
+						    	 	 global_feature[7] = temp_chunk.getValue()[27]*FRConstants.GENRE_WEIGHT[configindex];
+						    	 	 global_feature[8] = temp_chunk.getValue()[28]*FRConstants.GENRE_WEIGHT[configindex];
+						    	 	 global_feature[9] = temp_chunk.getValue()[29]*FRConstants.GENRE_WEIGHT[configindex];
+						    	 	 global_feature[10] = temp_chunk.getValue()[30]*FRConstants.GENRE_WEIGHT[configindex];
+						    	 	 global_feature[11] = temp_chunk.getValue()[31]*FRConstants.GENRE_WEIGHT[configindex];
+						    	 	 global_feature[12] = temp_chunk.getValue()[32]*FRConstants.GENRE_WEIGHT[configindex];
+						    	 	 global_feature[13] = temp_chunk.getValue()[33]*FRConstants.GENRE_WEIGHT[configindex];
+						    	 	 global_feature[14] = temp_chunk.getValue()[34]*FRConstants.EMO_WEIGHT[configindex];
+						    	 	 global_feature[15] = temp_chunk.getValue()[35]*FRConstants.EMO_WEIGHT[configindex];
+						    	 	 global_feature[16] = temp_chunk.getValue()[36]*FRConstants.EMO_WEIGHT[configindex];
+						    	 	 global_feature[17] = temp_chunk.getValue()[37]*FRConstants.EMO_WEIGHT[configindex];
+						    	 	 global_feature[18] = temp_chunk.getValue()[38]*FRConstants.EMO_WEIGHT[configindex];
+						    	 	 global_feature[19] = temp_chunk.getValue()[39]*FRConstants.EMO_WEIGHT[configindex];
+						    	 	 global_feature[20] = temp_chunk.getValue()[40]*FRConstants.EMO_WEIGHT[configindex];
+						    	 	 global_feature[21] = temp_chunk.getValue()[41]*FRConstants.EMO_WEIGHT[configindex];
+						    	 	 global_feature[22] = temp_chunk.getValue()[42]*FRConstants.EMO_WEIGHT[configindex];
+						    	 	 global_feature[23] = temp_chunk.getValue()[43]*FRConstants.EMO_WEIGHT[configindex];
+						    	 	 global_feature[24] = temp_chunk.getValue()[44]*FRConstants.EMO_WEIGHT[configindex];
+						    	 	 global_feature[25] = temp_chunk.getValue()[45]*FRConstants.EMO_WEIGHT[configindex];
+						    	 	 global_feature[26] = temp_chunk.getValue()[46]*FRConstants.EMO_WEIGHT[configindex];
+						    	 	 global_feature[27] = temp_chunk.getValue()[47]*FRConstants.EMO_WEIGHT[configindex];
+						    	 	 global_feature[28] = temp_chunk.getValue()[48]*FRConstants.EMO_WEIGHT[configindex];
+						    	 	 global_feature[29] = temp_chunk.getValue()[49]*FRConstants.EMO_WEIGHT[configindex];
+						    	 	 global_feature[30] = temp_chunk.getValue()[50]*FRConstants.EMO_WEIGHT[configindex];
+						    	 	
 						     }
 						   
 					   }
 				   }
-				if(!global_books.getValue().equals(qryBookId))// dont_add_query_vector_which_is_specially_created
+				//if(!global_books.getValue().equals(qryBookId))// dont_add_query_vector_which_is_specially_created
 				global_corpus.put(global_books.getValue(),global_feature);
+				System.out.println("++++++++++++++++++++++++++++++++++++++++++++============");
+				System.out.println(global_books.getValue());
+				System.out.println(Arrays.toString(global_feature));
+				
 			}
-			
+			/*
 			//qry_vector = [0.85, 0.10, 0.05]
 			double [] global_qry_vector = new double[FRConstants.LEAVE_LAST_K_ELEMENTS_OF_FEATURE+1];
-			global_qry_vector[0] = FRConstants.FEATURE_WEIGHT_MORE;
-			global_qry_vector[1] = FRConstants.FEATURE_WEIGHT_LESS;
-			global_qry_vector[2] = FRConstants.FEATURE_WEIGHT_LEAST;
+			global_qry_vector[0] = FRConstants.CHUNK_WEIGHT[0];
+			global_qry_vector[1] = FRConstants.TTR_WEIGHT[0];
+			global_qry_vector[2] = FRConstants.NUMCHAR_WEIGHT[0];
+			global_qry_vector[3] = FRConstants.CHAR_WEIGHT[0];
 			
 			global_corpus.put(qryBookId, global_qry_vector); // add the global_query to corpus
-			
+			*/
 			
 			sorted_results_mit_TTR = simUtils.getSingleNaiveSimilarityDummy(global_corpus, qryBookId, FRConstants.TOP_K_RESULTS, FRConstants.SIMILARITY_L2);
 			
@@ -252,7 +297,9 @@ public class FictionRetrievalSearch {
 													// num
 			feature_array[j - 1] = Double.parseDouble(instances[j]);
 		}
-
+		
+		//System.out.println(bookName + chunkNo +Arrays.toString(feature_array));
+		//System.exit(0);
 		Map<String, double[]> chunkFeatureMap = bookFeatureMap.containsKey(bookName) ? bookFeatureMap.get(bookName) : new HashMap<>();
 		chunkFeatureMap.put(chunkNo, feature_array);
 		bookFeatureMap.put(bookName, chunkFeatureMap);

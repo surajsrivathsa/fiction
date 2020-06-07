@@ -5,24 +5,31 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.List;
 
 import org.ovgu.de.fiction.model.BookDetails;
 import org.ovgu.de.fiction.model.Chunk;
+import org.ovgu.de.fiction.model.Concept;
 import org.ovgu.de.fiction.model.Feature;
 import org.ovgu.de.fiction.model.Word;
 import org.ovgu.de.fiction.utils.FRConstants;
 import org.ovgu.de.fiction.utils.FRGeneralUtils;
+
+import com.google.common.base.Strings;
 
 import weka.core.Instances;
 import weka.core.converters.ArffSaver;
 import weka.core.converters.CSVLoader;
 
 /**
- * @author Suhita
+ * @author Aditya
  *         The class contains the methods for feature extraction
  */
 public class FeatureExtractorUtility {
@@ -79,7 +86,7 @@ public class FeatureExtractorUtility {
 			double possPronounCount, double locativePrepositionCount, double coordConj, double commaCount, double periodCount,
 			double colonCount, double semiColonCount, double hyphenCount, double intrjctnCount, double quoteCount,
 			Map<Integer, Integer> wordCountList, int senti_negetiv, int senti_positiv, int senti_neutral, int properWordCount,
-			int numOfSyllables) {
+			int numOfSyllables,double dialogratiochunk) {
 
 		Feature feature = new Feature();
 
@@ -118,7 +125,26 @@ public class FeatureExtractorUtility {
 			product += key * wordCountList.get(key);
 		}
 		feature.setAverageSentenceLength(new Double(product) / new Double(count));
+		feature.setDialogRatioChunk(dialogratiochunk);
 		return feature;
+	}
+	
+	
+	static List<String> splitAtNthOccurrence(String input, int n, String delimiter) {
+	    List<String> pieces = new ArrayList<>();
+	    // *? is the reluctant quantifier
+	    String regex = Strings.repeat(".*?" + delimiter, n);
+	    Matcher matcher = Pattern.compile(regex).matcher(input);
+
+	    int lastEndOfMatch = -1;
+	    while (matcher.find()) {
+	        pieces.add(matcher.group());
+	        lastEndOfMatch = matcher.end();
+	    }
+	    if (lastEndOfMatch != -1) {
+	        pieces.add(input.substring(lastEndOfMatch));
+	    }
+	    return pieces;
 	}
 
 	/**
@@ -167,6 +193,42 @@ public class FeatureExtractorUtility {
 										 // (including qry book)
 							
 				Feature feature = chunk.getFeature();
+				/*
+				String str = Chunk.getStrings(chunk.getTokenListWithoutStopwordAndPunctuation());
+				//List<String> strArray = new ArrayList<>();
+				/*List.partition(List.newArrayList(str.split("-")), 3)
+			    .stream().map(strings -> strings.stream().collect(Collectors.joining("-")))
+			    .forEach(System.out::println);
+				String[] strArray = str.split(("(?<=\\G.* .* .* .* .* .* .* .* .* .* .*) "));
+				System.out.println(strArray[0]);*/
+				/*System.out.println(str);
+				//List<String> strArray = new ArrayList<>();
+				String[] strArray = str.split(" ");
+				String temp = "";
+				WordAttributeGenerator wag = new WordAttributeGenerator();
+				for(int i=0; i<strArray.length;i++) {
+					
+					temp = temp + " " + strArray[i];
+					if(i % 50 == 0)
+					{
+						temp = temp + ".";
+						System.out.println(i + " " + temp);
+						Concept cncpt2 = wag.generateWordAttributes2(temp);
+						System.out.println("Size" + cncpt2.getCharacterMap().size());
+						temp = "";
+					}
+				}*/
+				//strArray = splitAtNthOccurrence(str, 50, " ");
+				//System.out.println(strArray.get(0));
+				/*List<String> appendedList = new ArrayList<String>();
+				for (String s : strArray) {
+				    appendedList.add(s + ".");
+				}
+				System.out.println(appendedList.get(0));
+				*///WordAttributeGenerator wag = new WordAttributeGenerator();
+				//Concept cncpt2 = wag.generateWordAttributes2(appendedList.get(0));
+				//System.out.println("Size" + cncpt2.getCharacterMap().size());
+				
 				double[] feature_array = new double[FRConstants.FEATURE_NUMBER];
 				
 				row_count++; //row_count of all records, required for finding AVG values
@@ -207,7 +269,7 @@ public class FeatureExtractorUtility {
 				if(min_avg_senten_len > feature_array[FRConstants.SENTENCE_L_14])
 					min_avg_senten_len = feature_array[FRConstants.SENTENCE_L_14];
 				RUNNINGSUM_avg_senten_len = RUNNINGSUM_avg_senten_len+feature_array[FRConstants.SENTENCE_L_14];
-				
+				feature_array[FRConstants.DIALOG_RAT_CHUNK] = feature.getDialogRatioChunk();
 				feature_array[FRConstants.NUM_CHARS_20] = book.getNumOfChars(); //global_vector_element, normalize_NUM_of_Chars
 				if (max_NUM_of_CHARS < feature_array[FRConstants.NUM_CHARS_20])
 					max_NUM_of_CHARS = feature_array[FRConstants.NUM_CHARS_20]; 
@@ -221,7 +283,11 @@ public class FeatureExtractorUtility {
 				if (max_TTR > feature_array[FRConstants.TTR_21])
 					max_TTR = feature_array[FRConstants.TTR_21];
 				RUNNINGSUM_TTR = RUNNINGSUM_TTR+feature_array[FRConstants.TTR_21];
+				//feature_array[FRConstants.MAX_NUM] = book.getmax();
+				feature_array[FRConstants.CHAR_RAT] = book.getratio();
+				//feature_array[FRConstants.DIALOG_RAT] = book.getdialogratio();
 				
+				//System.out.println("Test" + book.getdialogratio());
 				// add each "doc" and its feature vector array
 				corpus.put(bookId + "-" + chunk.getChunkNo(), feature_array);
 			}
@@ -292,7 +358,8 @@ public class FeatureExtractorUtility {
 		 // load CSV
 		try{
 			CSVLoader loader = new CSVLoader();
-			 loader.setSource(new File(source_CSV_FILE));//source_csv
+			System.out.println(source_CSV_FILE); 
+			loader.setSource(new File(source_CSV_FILE));//source_csv
 			 Instances data = loader.getDataSet();
 			 
 			 // save ARFF
@@ -349,8 +416,12 @@ public class FeatureExtractorUtility {
 					if (!FNAME_OUTER.contains(".")) {
 					  // case 1: {Sayantan Polley, Sayan Polley} | op = Sayantan Polley
 						if (FNAME_OUTER.length() >= FNAME_INNER.length() && FNAME_OUTER.contains(FNAME_INNER) && LNAME_OUTER.equals(LNAME_INNER)) {
-							if (names.length() > inputMap.getKey().length())
+							if (names.length() > inputMap.getKey().length()) {
+								Integer old = charMapClone.get(names);
+								Integer newval = inputMap.getValue();
+								charMapClone.put(names, old!=null ? old + newval : newval);
 								charMapClone.remove(inputMap.getKey()); // remove smaller - inner- 'Sayan Polley'
+							}
 							else
 								charMapClone.remove(names);
 						}
@@ -360,7 +431,11 @@ public class FeatureExtractorUtility {
 						 * i.e delete "Polley" from charMap
 						 */
 						if (outerName.length >= 2 && innerName.length == 1 && LNAME_OUTER.contains(FNAME_INNER)) { // &&
-																													 // !LNAME_INNER.equals("")
+							/*																						 // !LNAME_INNER.equals("")
+							Integer old = charMapClone.get(names);
+							Integer newval = inputMap.getValue();
+							charMapClone.put(names, old!=null ? old + newval : newval);
+							*/
 							charMapClone.remove(inputMap.getKey()); // Note:innerName.length==1,
 																	 // doesnt combine/delete : Sayan Ghosh and Suhita Ghosh
 						}
@@ -369,6 +444,9 @@ public class FeatureExtractorUtility {
 						 * case 3: {Sayantan Polley, Sayan} | op = Sayantan Polley
 						 */
 						if(outerName.length >= 2 && innerName.length == 1 && FNAME_OUTER.contains(FNAME_INNER)){
+							Integer old = charMapClone.get(names);
+							Integer newval = inputMap.getValue();
+							charMapClone.put(names, old!=null ? old + newval : newval);
 							charMapClone.remove(inputMap.getKey());
 						}
 					} else { // we deal with "." dots here below
@@ -380,7 +458,12 @@ public class FeatureExtractorUtility {
 						if (String.valueOf(FNAME_OUTER.charAt(0)).equals(String.valueOf(FNAME_INNER.charAt(0)))) {
 							if ((LNAME_OUTER.contains(LNAME_INNER) || LNAME_INNER.contains(LNAME_OUTER))  //if (LNAME_OUTER.length() >= LNAME_INNER.length() && LNAME_OUTER.contains(LNAME_INNER)
 									&& !LNAME_INNER.equals("") && !LNAME_OUTER.equals("")) {
-								if (names.length() < inputMap.getKey().length()) {// remove smaller
+								if (names.length() < inputMap.getKey().length()) {
+									/*
+									Integer old = charMapClone.get(names);
+									Integer newval = inputMap.getValue();
+									charMapClone.put(names, old!=null ? old + newval : newval);// remove smaller
+									*/
 									charMapClone.remove(names);
 								} else {
 									charMapClone.remove(inputMap.getKey());

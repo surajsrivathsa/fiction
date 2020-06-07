@@ -7,7 +7,7 @@ import java.util.List;
 import nl.siegmann.epublib.domain.Metadata;
 
 /**
- * @author Suhita
+ * @author Aditya
  */
 public class BookDetails implements Serializable {
 
@@ -22,7 +22,9 @@ public class BookDetails implements Serializable {
 	private BigDecimal averageTTR;
 	
 	private int numOfChars; // added by Sayantan, at Book level
-
+	private int max;
+	private double ratio;
+	private double dialogratio;
 	
 	/**
 	 * @param bookId
@@ -30,13 +32,14 @@ public class BookDetails implements Serializable {
 	 * @param metadata
 	 * @param feature
 	 */
-	public BookDetails(String bookId, List<Chunk> chunks, Metadata metadata, String content, int numOfChars) {
+	public BookDetails(String bookId, List<Chunk> chunks, Metadata metadata, String content, int numOfChars,int max) {
 		super();
 		this.bookId = bookId;
 		this.chunks = chunks;
 		this.metadata = metadata;
 		this.content = content;
 		this.numOfChars = numOfChars;
+		this.max = max;
 	}
 
 	/**
@@ -130,7 +133,30 @@ public class BookDetails implements Serializable {
 	public void setNumOfChars(int numOfChars) {
 		this.numOfChars = numOfChars;
 	}
+	public int getmax() {
+		return max;
+	}
 
+	public void setmax(int max) {
+		this.max= max;
+	}
+	
+	public double getratio() {
+		return ratio;
+	}
+
+	public void setratio(double ratio) {
+		this.ratio= ratio;
+	}
+	
+	public double getdialogratio() {
+		return dialogratio;
+	}
+
+	public void setdialogratio(double dialogratio) {
+		this.dialogratio= dialogratio;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
@@ -138,7 +164,7 @@ public class BookDetails implements Serializable {
 	@Override
 	public String toString() {
 		return "Book [bookId=" + bookId + " having " + chunks.size() + " chunks => " + chunks + ", metadata=" + metadata.getFirstTitle()
-				+ ", averageTTR=" + averageTTR + ", num of Chars="+numOfChars+ "]";
+				+ ", averageTTR=" + averageTTR + ", num of Chars="+numOfChars+ ", max="+max+  ", ratio="+ratio+ "]";
 	}
 
 }
