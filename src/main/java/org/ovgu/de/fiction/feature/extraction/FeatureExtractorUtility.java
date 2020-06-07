@@ -29,7 +29,7 @@ import weka.core.converters.ArffSaver;
 import weka.core.converters.CSVLoader;
 
 /**
- * @author Suhita
+ * @author Aditya
  *         The class contains the methods for feature extraction
  */
 public class FeatureExtractorUtility {
@@ -86,7 +86,7 @@ public class FeatureExtractorUtility {
 			double possPronounCount, double locativePrepositionCount, double coordConj, double commaCount, double periodCount,
 			double colonCount, double semiColonCount, double hyphenCount, double intrjctnCount, double quoteCount,
 			Map<Integer, Integer> wordCountList, int senti_negetiv, int senti_positiv, int senti_neutral, int properWordCount,
-			int numOfSyllables) {
+			int numOfSyllables,double dialogratiochunk) {
 
 		Feature feature = new Feature();
 
@@ -125,6 +125,7 @@ public class FeatureExtractorUtility {
 			product += key * wordCountList.get(key);
 		}
 		feature.setAverageSentenceLength(new Double(product) / new Double(count));
+		feature.setDialogRatioChunk(dialogratiochunk);
 		return feature;
 	}
 	
@@ -268,7 +269,7 @@ public class FeatureExtractorUtility {
 				if(min_avg_senten_len > feature_array[FRConstants.SENTENCE_L_14])
 					min_avg_senten_len = feature_array[FRConstants.SENTENCE_L_14];
 				RUNNINGSUM_avg_senten_len = RUNNINGSUM_avg_senten_len+feature_array[FRConstants.SENTENCE_L_14];
-				
+				feature_array[FRConstants.DIALOG_RAT_CHUNK] = feature.getDialogRatioChunk();
 				feature_array[FRConstants.NUM_CHARS_20] = book.getNumOfChars(); //global_vector_element, normalize_NUM_of_Chars
 				if (max_NUM_of_CHARS < feature_array[FRConstants.NUM_CHARS_20])
 					max_NUM_of_CHARS = feature_array[FRConstants.NUM_CHARS_20]; 
@@ -284,7 +285,8 @@ public class FeatureExtractorUtility {
 				RUNNINGSUM_TTR = RUNNINGSUM_TTR+feature_array[FRConstants.TTR_21];
 				//feature_array[FRConstants.MAX_NUM] = book.getmax();
 				feature_array[FRConstants.CHAR_RAT] = book.getratio();
-				feature_array[FRConstants.DIALOG_RAT] = book.getdialogratio();
+				//feature_array[FRConstants.DIALOG_RAT] = book.getdialogratio();
+				
 				//System.out.println("Test" + book.getdialogratio());
 				// add each "doc" and its feature vector array
 				corpus.put(bookId + "-" + chunk.getChunkNo(), feature_array);
@@ -356,7 +358,8 @@ public class FeatureExtractorUtility {
 		 // load CSV
 		try{
 			CSVLoader loader = new CSVLoader();
-			 loader.setSource(new File(source_CSV_FILE));//source_csv
+			System.out.println(source_CSV_FILE); 
+			loader.setSource(new File(source_CSV_FILE));//source_csv
 			 Instances data = loader.getDataSet();
 			 
 			 // save ARFF

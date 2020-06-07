@@ -26,7 +26,9 @@ import org.ovgu.de.fiction.utils.FRFileOperationUtils;
 import org.ovgu.de.fiction.utils.FRGeneralUtils;
 import org.ovgu.de.fiction.utils.StanfordPipeline;
 
-
+/**
+ * @author Aditya
+ */
 
 
 public class ConvDetails {

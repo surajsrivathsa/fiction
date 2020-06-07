@@ -18,7 +18,7 @@ import nl.siegmann.epublib.domain.Metadata;
 import nl.siegmann.epublib.epub.EpubReader;
 
 /**
- * @author Suhita
+ * @author Aditya
  */
 
 /**

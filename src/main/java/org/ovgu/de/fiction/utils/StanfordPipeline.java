@@ -5,7 +5,7 @@ import java.util.Properties;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
 /**
- * @author Suhita
+ * @author Aditya
  *
  */
 public class StanfordPipeline {
@@ -48,7 +48,7 @@ public class StanfordPipeline {
 			//properties.put("parse.maxlen", "30");
 		}
 		else if(annotations!=null && annotations.contains("parse") && lang.equals("de")) {
-			properties.put("depparse.model", "edu/stanford/nlp/models/parser/nndep/german_SD.gz");
+			properties.put("depparse.model", "edu/stanford/nlp/models/parser/nndep/UD_German.gz");
 			//properties.put("parse.maxlen", "30");
 		}
 		

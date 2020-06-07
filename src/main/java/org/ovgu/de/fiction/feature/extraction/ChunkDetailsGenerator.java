@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
@@ -13,6 +14,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.io.Writer;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 
 import org.apache.log4j.Logger;
@@ -35,7 +38,7 @@ import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.CoreMap;
 
 /**
- * @author Suhita
+ * @author Aditya
  */
 public class ChunkDetailsGenerator {
 
@@ -54,6 +57,10 @@ public class ChunkDetailsGenerator {
 	private double ratio = 0.0;
 	private double dialogratio = 0.0;
 	private Map<String, String> bigcharMap = new HashMap<>();
+	//@suraj: added hashmap to read and store polarity dictionary
+	private static HashMap<String, Object> polarity_clues_dict = new HashMap<String, Object>();
+	private static String pathToPCS = FRConstants.GERMAN_POLARITY_FILE;
+	private static GermanSentimentData dummy_sentiment_object = new GermanSentimentData("dummy", "dummy", "dummy", "neutral", 0.0, "D");
 	protected void init() throws NumberFormatException, IOException {
 		
 		CHUNK_SIZE = Integer.parseInt(FRGeneralUtils.getPropertyVal(FRConstants.CHUNK_SIZE));
@@ -79,7 +86,8 @@ public class ChunkDetailsGenerator {
 
 		List<BookDetails> books = new ArrayList<>();
 		FeatureExtractorUtility feu = new FeatureExtractorUtility();
-
+		//read the german polarity file and store it in class variable
+		createGermanPolarityMap();
 		// following loop runs, over path of each book
 		FRFileOperationUtils.getFileNames(CONTENT_EXTRCT_FOLDER).stream().forEach(file -> {
 			String fileName = file.getFileName().toString().replace(FRConstants.CONTENT_FILE, FRConstants.NONE);
@@ -87,8 +95,17 @@ public class ChunkDetailsGenerator {
 			try {
 				BookDetails book = new BookDetails();
 				book.setBookId(fileName);
+				System.out.println(" ======================== ======================= ========================");
+				System.out.println("Book language: " + FRGeneralUtils.getMetadata(fileName).getLanguage() + " Authors: " + FRGeneralUtils.getMetadata(fileName).getAuthors() + " Book name: " + FRGeneralUtils.getMetadata(fileName).getTitles());
+				System.out.println(" ======================== ======================= ========================");
 				book.setMetadata(FRGeneralUtils.getMetadata(fileName));
-				book.setChunks(getChunksFromFile(file.toString(),book)); // this is a
+				//Added below 3 lines to retrieve book language from metadata, set default language to english for other unknown language books
+				
+				String book_lang = book.getMetadata().getLanguage();
+				
+				if(!book_lang.equals(FRConstants.BOOK_LANG_DE) && !book_lang.equals(FRConstants.BOOK_LANG_EN))
+					book_lang = FRConstants.BOOK_LANG_EN;
+				book.setChunks(getChunksFromFile(file.toString(),book, book_lang)); // this is a
 																	 // list of
 																	 // chunks,
 																	 // each
@@ -151,8 +168,9 @@ public class ChunkDetailsGenerator {
 	 * @return : List of Chunks, Chunk has a feature vector object
 	 * @throws IOException
 	 */
-	public List<Chunk> getChunksFromFile(String path, BookDetails cbook) throws IOException {
+	public List<Chunk> getChunksFromFile(String path, BookDetails cbook, String book_lang) throws IOException {
 		BookDetails book = new BookDetails();
+		
 		String fileName = path.replace(FRConstants.CONTENT_FILE, FRConstants.NONE);
 		//String filename = path.replace("[^\\\\]+(?=$)","");
 		int m= fileName.lastIndexOf('\\');
@@ -166,6 +184,9 @@ public class ChunkDetailsGenerator {
 		ratio = 0;
 		List<Chunk> chunksList = new ArrayList<>();
 		Annotation annotation = null;
+		
+		//System.out.println("Language inside getchunksfromfile is: " + book_lang);
+		
 		//Map<String, String> bigcharMap = new HashMap<>();
 		WordAttributeGenerator wag = new WordAttributeGenerator();
 		FeatureExtractorUtility feu = new FeatureExtractorUtility();
@@ -174,16 +195,16 @@ public class ChunkDetailsGenerator {
 																	 // a
 																	 // "word-token-pos-ner"
 																	 // list
-																	 // of
+																	// of
 																	 // whole
 																	 // book!
 
 		// dummu
 		//Concept cncpt2 = wag.generateWordAttributes2(Paths.get(path));
-		for (Entry<String,Integer> c : cncpt.getCharacterMap().entrySet()) {
+		/*for (Entry<String,Integer> c : cncpt.getCharacterMap().entrySet()) {
 			LOG.info(c.getKey()+" "+c.getValue());
 			bigcharMap.put(c.getKey(), book.getBookId());
-		}
+		}*/
 		
 		NUM_OF_CHARS_PER_BOOK = cncpt.getCharacterMap().size();
 		cncpt.getCharacterMap().entrySet().forEach(entry->{
@@ -198,7 +219,7 @@ public class ChunkDetailsGenerator {
 		
 		ConvDetails conv = new ConvDetails();
 		dialogratio = conv.convRatio(wordList);
-		LOG.info("Dialog Ratio = "+dialogratio);
+		//LOG.info("Dialog Ratio = "+dialogratio);
 		
 		// String fileName =
 		// Paths.get(path).getFileName().toString().replace(Constants.CONTENT_FILE, Constants.NONE);
@@ -267,6 +288,7 @@ public class ChunkDetailsGenerator {
 			int properWordCount = 0;
 			int numOfSyllables = 0;
 			int randomSntnCount =0;
+			double dialogratiochunk = 0.0;
 			StringBuffer sentenceSbf = new StringBuffer();
 			
 			//calculate ratio of quoted to total words and return
@@ -293,29 +315,61 @@ public class ChunkDetailsGenerator {
                     int randNum = rnd.nextInt(FRConstants.RANDOM_SENTENCES_SENTIM_TOP_VAL); //get_an_INT_less_than_10k
                     
 					
-					if (sentenceSbf.toString().length()>0 && randNum<FRConstants.RANDOM_SENTENCES_SENTIM_MID_VAL && randomSntnCount<totalNumOfRandomSntnPerChunk) { // making_a_random_choice_here
+                    if (book_lang.equals(FRConstants.BOOK_LANG_EN) && sentenceSbf.toString().length()>0 && randNum<FRConstants.RANDOM_SENTENCES_SENTIM_MID_VAL && randomSntnCount<totalNumOfRandomSntnPerChunk) { // making_a_random_choice_here
 						// calculateSenti as=>
 						annotation = SENTI_PIPELINE_EN.process(sentenceSbf.toString());
+						//System.out.println("Currently inside english sentiment pipeline");	
 						int score = 2; // Default as Neutral. 1 = Negative, 2 =
 						// Neutral, 3 = Positive
+						//System.out.println(annotation);
+						
+						
 						for (CoreMap sentence : annotation.get(CoreAnnotations.SentencesAnnotation.class))// ideally
 						// this
 						// loop
 						// runs
 						// once!
 						{
+							//System.out.println(sentence);
 							Tree tree = sentence.get(SentimentAnnotatedTree.class);
 							score = RNNCoreAnnotations.getPredictedClass(tree);
 						}
+						
+						//@suraj: we recieve 5 types of score 0,1,2,3,4 from rnn/polarity back. Hence added the count capture condition for 0, 4 that was only looking for 1,2,3 previously
 						if (score == 2)
 							senti_neutral_cnt++;
-						if (score == 1)
+						if (score <= 1)
 							senti_negetiv_cnt++;
-						if (score == 3)
+						if (score >= 3)
 							senti_positiv_cnt++;
 						
 						randomSntnCount++;
+						
+						//System.out.println("English Sentiment Sentence is: " + sentenceSbf.toString() + " score: " + score);
 					}
+					
+					
+					//@suraj: handle german sentiment
+					else if (book_lang.equals(FRConstants.BOOK_LANG_DE) && sentenceSbf.toString().length()>0 && randNum<FRConstants.RANDOM_SENTENCES_SENTIM_MID_VAL && randomSntnCount<totalNumOfRandomSntnPerChunk * 1.5) { // making_a_random_choice_here
+						//System.out.println("Currently inside german sentiment pipeline");	
+						//System.out.println("German Sentiment Sentence is: " + sentenceSbf.toString());
+						int score = 2; // Default as Neutral. 1 = Negative, 2 =
+						
+						//@suraj: call the functions added at the bottom to get the sentiment score
+						score = calculateSentimentperSentence(SentenceTokenizer(sentenceSbf.toString()));
+						//@suraj: we recieve 5 types of score 0,1,2,3,4 from rnn/polarity back. Hence added the count capture condition for 0, 4 that was only looking for 1,2,3 previously
+						if (score == 2)
+							senti_neutral_cnt++;
+						if (score <= 1)
+							senti_negetiv_cnt++;
+						if (score >= 3)
+							senti_positiv_cnt++;
+						
+						randomSntnCount++;
+						//System.out.println("German Sentiment Sentence is: " + sentenceSbf.toString() + " score: " + score);
+					}
+					//System.out.println(book_lang + " : " + sentenceSbf.toString().length() + " > 0 " + " : " + randNum + " < " + FRConstants.RANDOM_SENTENCES_SENTIM_MID_VAL + " : " + randomSntnCount + " < " + totalNumOfRandomSntnPerChunk);
+					
 					// reset the sentence buffer for next sentence
 					sentenceSbf = new StringBuffer();
 
@@ -331,7 +385,16 @@ public class ChunkDetailsGenerator {
 				}
 				/* append the token to form sentence. Below part needed for sentiment calculation */
 
-				else if (!l.equals(FRConstants.S_TAG) && !l.equals(FRConstants.P_TAG)) {
+				else if (!l.equals(FRConstants.S_TAG) && !l.equals(FRConstants.P_TAG) && book_lang.equals(FRConstants.BOOK_LANG_EN)) {
+					sentenceSbf.append(" ").append(token.getOriginal());
+				}
+				
+				
+				//@suraj: For german, we would need lemma for each token as sentiment classification is dictionary based and polarity dictionary has only lemmas.
+				//@suraj: regex would exclude all the non word characters, it would only include alfabets and numbers.
+				//@suraj: changed token.getLemma back to token.getOriginal as getLemma was returning no value back as pipeline was configured for english during the run
+				else if (!l.equals(FRConstants.S_TAG) && !l.equals(FRConstants.P_TAG) && book_lang.equals(FRConstants.BOOK_LANG_DE)) { 
+					//token.getOriginal().matches(FRConstants.REGEX_ONLY_ALFABETS_AND_NUMBERS)
 					sentenceSbf.append(" ").append(token.getOriginal());
 				}
 
@@ -354,9 +417,11 @@ public class ChunkDetailsGenerator {
 
 				} else if (token.getPos().equals(FRConstants.POSSESIV_P) || token.getPos().equals(FRConstants.POSSESIV_P_DE)) {
 					possPronounCount++;
-					if (l.equals(FRConstants.HE) || l.equals(FRConstants.ER))
+					if (l.equals(FRConstants.HE) || l.equals(FRConstants.ER) ||
+							l.equals(FRConstants.SEINER) || l.equals(FRConstants.SEINES) || l.equals(FRConstants.SEINE))
 						malePrpPosPronounCount++;
-					else if (l.equals(FRConstants.SHE) || l.equals(FRConstants.SIE))
+					else if (l.equals(FRConstants.SHE) || l.equals(FRConstants.SIE) ||
+							l.equals(FRConstants.IHRE) || l.equals(FRConstants.IHRER) || l.equals(FRConstants.IHRES))
 						femalePrpPosPronounCount++;
 
 				}
@@ -421,7 +486,12 @@ public class ChunkDetailsGenerator {
 				wordCountPerSntnc++;
 			}
 			addToWordCountMap(raw, wordCountPerSntncMap, wordCountPerSntnc);
-			//System.out.println("counts = " + 	malePrpPosPronounCount + "female = " + femalePrpPosPronounCount +"pper" + personalPronounCount);
+			
+			ConvDetails conv2 = new ConvDetails();
+			dialogratiochunk = conv2.convRatio(raw);
+			LOG.info("Dialog Ratio for chunk = "+dialogratiochunk);
+			
+			//System.out.println("counts = " + 	malePrpPosPronounCount + "female = " + femalePrpPosPronounCount +"pper" + personalPronounCount + "locp"+locativePrepositionCount);
 			Chunk chunk = new Chunk();
 			chunk.setChunkNo(chunkNo);
 			// String chunkFileName = OUT_FOLDER_TOKENS + fileName + "-" +
@@ -436,7 +506,7 @@ public class ChunkDetailsGenerator {
 			Feature feature = feu.generateFeature(chunkNo, paragraphCount, sentenceCount, raw, null, stpwrdPuncRmvd, malePrpPosPronounCount,
 					femalePrpPosPronounCount, personalPronounCount, possPronounCount, locativePrepositionCount, coordConj, commaCount,
 					periodCount, colonCount, semiColonCount, hyphenCount, intrjctnCount, convCount, wordCountPerSntncMap, senti_negetiv_cnt,
-					senti_positiv_cnt, senti_neutral_cnt, properWordCount, numOfSyllables);
+					senti_positiv_cnt, senti_neutral_cnt, properWordCount, numOfSyllables, dialogratiochunk);
 			chunk.setFeature(feature);
 			chunksList.add(chunk);
 			chunkNo++;
@@ -542,5 +612,133 @@ public class ChunkDetailsGenerator {
 		return tokens;
 
 	}
+	
+	// Added below 5 methods as part of calculating german sentiments
+    public static void createGermanPolarityMap() throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(FRGeneralUtils.getPropertyVal(FRConstants.GERMAN_POLARITY_FILE)));
+        String line = "";
+        
+        while ((line = br.readLine()) != null){
+            //System.out.println(line);
+            String[] data = line.split("\t");
+            //System.out.println(Arrays.toString(data));
+            //System.out.println(data.length);
+            //System.out.println(Arrays.toString(data));
+            //Double score = Double.parseDouble(data[2])-Double.parseDouble(data[3]);
+            //System.out.println(score);
+            String[] words = data[4].split("/");
+            //System.out.println(Arrays.toString(words));
+            
+            String actual_word = data[0].toLowerCase(Locale.GERMAN); String lemmatized_word = data[1].toLowerCase(Locale.GERMAN); 
+            String pos_tag = data[2];  String sentiment_type = data[3]; String flag = data[5];
+            
+            if(!sentiment_type.equals("neutral") && !sentiment_type.equals("positive") && !sentiment_type.equals("negative")) {
+            	sentiment_type = "neutral";
+            }
+            
+            //System.out.println(cleanProbabilityValues(words, sentiment_type));
+            Double prob = cleanProbabilityValues(words, sentiment_type);
+            //System.out.println(new GermanSentimentData(actual_word, lemmatized_word, pos_tag, sentiment_type, prob, flag));
+            polarity_clues_dict.put(actual_word, new GermanSentimentData(actual_word, lemmatized_word, pos_tag, sentiment_type, prob, flag));
+            
+        }
+        System.out.println("Total words in german polarity dictionary are : " + polarity_clues_dict.size());
+        br.close();
+    	
+    }
+    
+    public static int calculateSentimentperSentence(String[] sentence_tokens) {
+    	Double negative_sentiment_score = 0.0;
+    	Double positive_sentiment_score = 0.0;
+    	Double neutral_sentiment_score = 0.0;
+    	int positive_counter = 1;
+    	int negative_counter = 1;
+    	int neutral_counter = 1;
+    	String tmp_sentiment_type = "neutral";
+    	Double tmp_sentiment_val = 0.0;
+    	GermanSentimentData tmp_obj ;
+    	
+    	for(int i = 0; i < sentence_tokens.length; i++) {
+    		tmp_obj = (GermanSentimentData) polarity_clues_dict.getOrDefault(sentence_tokens[i], dummy_sentiment_object);
+    		tmp_sentiment_val = tmp_obj.sentiment_value;
+    		tmp_sentiment_type = tmp_obj.sentiment_type;
+    		
+    		//System.out.println(tmp_obj.toString());
+    		
+    		if(tmp_sentiment_type.equals("neutral")) {
+    			neutral_counter++;
+    			neutral_sentiment_score += tmp_sentiment_val;
+    		}
+    		else if(tmp_sentiment_type.equals("positive")) {
+    			positive_counter++;
+    			positive_sentiment_score += tmp_sentiment_val;
+    		}
+    			
+    		else if(tmp_sentiment_type.equals("negative")) {
+    			negative_counter++;
+    			negative_sentiment_score += tmp_sentiment_val;
+    		}
+    		else {
+    			neutral_counter++;
+    			neutral_sentiment_score += tmp_sentiment_val;   		
+    		}
+    	}
+    	//System.out.println("Negative sentiment: " + negative_sentiment_score + " | Neutral sentiment: " + neutral_sentiment_score + " | Positive sentiment: " + positive_sentiment_score);
+    	Double overall_sentiment_score = negative_sentiment_score * FRConstants.GERMAN_NEGATIVE_POLARITY_WEIGHT + neutral_sentiment_score/neutral_counter + positive_sentiment_score * FRConstants.GERMAN_POSITIVE_POLARITY_WEIGHT;
+    	//System.out.println("Overall sentiment is: " + overall_sentiment_score);  
+    	int scaled_sentiment_score = scaleGermanSentimentScoretoEnglishSentiment(overall_sentiment_score);
+    	return scaled_sentiment_score;
+    }
+    
+    public static Double cleanProbabilityValues(String[] probabilities, String sentiment_type) {
+    	Double[] probs = new Double[probabilities.length];
+    	for(int i = 0; i < probabilities.length; i++) {
+    		
+    		if(probabilities[i].equals("-")) {
+    			probs[i] = 0.0;   			
+    		}
+    		else {
+    			probs[i] = Double.parseDouble(probabilities[i] );
+    		}
+    			
+    	}
+    	
+    	Arrays.sort(probs);
+    	Double required_prob = 0.0;
+    	
+    	if(sentiment_type.equals("neutral")){
+    			required_prob = probs[0];
+    	}
+    	else if(sentiment_type.equals("negative")) {
+    		required_prob = -1.0 * Math.abs(probs[0]);
+    	}
+    	else {
+    		required_prob = probs[2];
+    	}
+    	
+    	return required_prob ;
+    }
+
+    public static String[] SentenceTokenizer(String sentence) {
+    	String[] tmp = sentence.split(" ");
+    	String[] tokenized_sentences = new String[tmp.length];
+    	for(int i = 0; i < tmp.length; i++) {
+    		tokenized_sentences[i] = tmp[i].replaceAll(FRConstants.REGEX_ONLY_ALFABETS_AND_NUMBERS, "").trim().toLowerCase(Locale.GERMAN);
+    	}
+    	//System.out.println(Arrays.toString(tokenized_sentences));
+    	return tokenized_sentences;
+    }
+
+    
+	public static int scaleGermanSentimentScoretoEnglishSentiment(Double sentiment_value) {
+	    	
+	    	if(sentiment_value >= FRConstants.GERMAN_POSITIVE_SENTIMENT_CUTOFF)
+	    		return 3;
+	    	else if(sentiment_value <= FRConstants.GERMAN_NEGATIVE_SENTIMENT_CUTOFF)
+	    		return 1;
+	    	else
+	    		return 2;
+	    }
+	
 
 }

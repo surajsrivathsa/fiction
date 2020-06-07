@@ -34,6 +34,7 @@ public class Feature implements Serializable {
 	private double sentimentNegetiv;
 	private double sentimentPositiv;
 	private double fleshReadingScore;
+	private double dialogratiochunk;
 
 	/**
 	 * @return the paragraphCount
@@ -309,6 +310,14 @@ public class Feature implements Serializable {
 	public void setFleshReadingScore(double fleshReadingScore) {
 		this.fleshReadingScore = fleshReadingScore;
 	}
+	
+	public double getDialogRatioChunk() {
+		return dialogratiochunk;
+	}
+
+	public void setDialogRatioChunk(double dialogratiochunk) {
+		this.dialogratiochunk = dialogratiochunk;
+	}
 
 	@Override
 	public String toString() {
@@ -321,7 +330,7 @@ public class Feature implements Serializable {
 				+ ", conjunctionPunctuationRatio=" + conjunctionPunctuationRatio + ", averageSentenceLength="
 				+ averageSentenceLength + ", conversationRatio=" + conversationRatio + ", sentimentNeutral="
 				+ sentimentNeutral + ", sentimentNegetiv=" + sentimentNegetiv + ", sentimentPositiv=" + sentimentPositiv
-				+ ", fleshReadingScore=" + fleshReadingScore + "]";
+				+ ", fleshReadingScore=" + fleshReadingScore+ ", dialogratiochunk=" + dialogratiochunk+ "]";
 	}
 
 }

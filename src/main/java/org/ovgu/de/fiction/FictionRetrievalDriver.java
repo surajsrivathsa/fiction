@@ -14,7 +14,7 @@ import org.ovgu.de.fiction.utils.FRConstants;
 import org.ovgu.de.fiction.utils.FRGeneralUtils;
 
 /**
- * @author Suhita, Sayantan
+ * @author Aditya
  */
 public class FictionRetrievalDriver {
 
@@ -36,31 +36,42 @@ public class FictionRetrievalDriver {
 
 		/* 3> Write features to CSV - one time */
 		FeatureExtractorUtility.writeFeaturesToCsv(features);
-		 start = System.currentTimeMillis();
+		start = System.currentTimeMillis();
 		System.out.println("Time taken for writing to CSV (min)-" + (System.currentTimeMillis() - start) / (1000 * 60));
 		
-		/* 4> Query */
-		String qryBookNum = "pg3402"; //pg11CarolAlice,  pg1400DickensGreatExp,pg766DickensDavidCopfld
-														 // pg2701HermanMobyDick,pg537DoyleTerrorTales
-		// pg13720HermanVoyage1, pg2911Galsw2, pg1155Agatha2,pg2852DoyleHound, pg2097DoyleSignFour
+		/* 4> Query 
+		String query_book = "pg11";
+		int len = FRConstants.EMO_WEIGHT.length;
+		
+		for(int i = 0; i < len; i++)
+		{
+			String qryBookNum = query_book; 
+			System.out.println("Querying for book : " + qryBookNum);
+			String FEATURE_CSV_FILE = FRGeneralUtils.getPropertyVal("file.feature");
+			System.out.println("==========================================================================");
+			System.out.println("Running for index" + i);
+			
+			TopKResults topKResults = FictionRetrievalSearch.findRelevantBooks(qryBookNum, FEATURE_CSV_FILE, 
+					FRConstants.SIMI_PENALISE_BY_CHUNK_NUMS, FRConstants.SIMI_ROLLUP_BY_ADDTN, 
+					FRConstants.SIMI_INCLUDE_TTR_NUMCHARS,FRConstants.TOP_K_RESULTS,FRConstants.SIMILARITY_L2,i);
 
-		// read from csv features and prints ranked relevant books, run after CSV is written
-		String FEATURE_CSV_FILE = FRGeneralUtils.getPropertyVal("file.feature");
-		//Config 1: three possible setting similarity objective penalization: divide chunks by (1) OR (number_of_chunks) OR sqr_root(number_of_chunks)
-		//Config 2: two possible settings for similarity roll up : add_chunks (default) OR multipl_chunks
-		//Config 3: Include or exclude TTR and Numbr of Chars
-		
-		
-		TopKResults topKResults = FictionRetrievalSearch.findRelevantBooks(qryBookNum, FEATURE_CSV_FILE, 
-				FRConstants.SIMI_PENALISE_BY_CHUNK_NUMS, FRConstants.SIMI_ROLLUP_BY_ADDTN, 
-				FRConstants.SIMI_EXCLUDE_TTR_NUMCHARS,FRConstants.TOP_K_RESULTS,FRConstants.SIMILARITY_L2);
+			System.out.println("==========================================================================");		
+			
+			//InterpretSearchResults interp = new InterpretSearchResults();
+			//interp.performStatiscalAnalysis(topKResults);
+			
+			//@suraj: InterpretSearchResults interp = new InterpretSearchResults();
+			//interp.performStatiscalAnalysis(topKResults);
+			//interp.performStatiscalAnalysisUsingRegression(topKResults,i, FRConstants.SIMI_INCLUDE_TTR_NUMCHARS);
+			//findLuceneRelevantBooks(qryBookNum);
+			
+		}
 		
 		/* * 5> Perform some machine learning over the results
 		 
 		*/
 		//InterpretSearchResults interp = new InterpretSearchResults();
 		//interp.performStatiscalAnalysis(topKResults);
-		
 		//findLuceneRelevantBooks(qryBookNum);
 	}
 

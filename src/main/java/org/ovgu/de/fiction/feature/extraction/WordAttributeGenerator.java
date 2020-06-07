@@ -27,7 +27,7 @@ import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.util.CoreMap;
 
 /**
- * @author Suhita, Sayantan
+ * @author Aditya
  * @version - Changes for sentiment features
  */
 public class WordAttributeGenerator {
@@ -65,6 +65,8 @@ public class WordAttributeGenerator {
 		Concept cncpt = new Concept();
 		String fileName1 = path.toString().replace(FRConstants.REP_FN, FRConstants.NONE).replace(FRConstants.CONTENT_FILE, FRConstants.NONE);
 		String x = "";
+		//System.out.println(fileName1);
+		//System.out.println(path.toString());
 		try {
 			x = FRGeneralUtils.getMetadata(fileName1).getLanguage();
 		} catch (IOException e) {

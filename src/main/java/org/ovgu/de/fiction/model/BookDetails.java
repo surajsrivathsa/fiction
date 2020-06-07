@@ -7,7 +7,7 @@ import java.util.List;
 import nl.siegmann.epublib.domain.Metadata;
 
 /**
- * @author Suhita
+ * @author Aditya
  */
 public class BookDetails implements Serializable {
 
