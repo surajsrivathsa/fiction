@@ -70,6 +70,7 @@ public class FRWebUtils {
 		try (BufferedReader br = new BufferedReader(new FileReader(BookmasterCSVFile));) {
 			while ((line = br.readLine()) != null) {
 				if (csvRow > 0) {
+					System.out.println(line);
 					String[] bookName = line.split(";pg");
 					int bookIDStart = line.indexOf(";pg");
 					int bookIDEnd = line.indexOf(".epub");
@@ -88,7 +89,8 @@ public class FRWebUtils {
 	public String getMasterBookName(Map<String, String> book_master, String bookId) {
 		String bookName = "";
 		for (Map.Entry<String, String> res : book_master.entrySet()) {
-			if (res.getKey().equalsIgnoreCase(bookId)) {
+			if (res.getKey().trim().equalsIgnoreCase(bookId)) {
+				System.out.println("bookId From master"+bookId);
 				bookName = res.getValue();
 				return bookName;
 			}

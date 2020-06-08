@@ -159,7 +159,7 @@ public interface FRConstants {
 	public static final String SIMI_EXCLUDE_TTR_NUMCHARS="EX";
 
 	public static final double SIMILARITY_CUTOFF = 0.70;
-	public static final int FEATURE_NUMBER = 52;
+	public static final int FEATURE_NUMBER = 51;
 	public static final int FEATURE_NUMBER_GLOBAL = 31;//1 chunk similarity + 1 ttr + 1 char + our features(6 genre)
 	public static final int FEATURE_NUMBER_GLOBAL_WITHOUT_TTR_CHAR = 30;
 	public static final double FEATURE_WEIGHT_MORE = 0.85;//chandan 0.85
