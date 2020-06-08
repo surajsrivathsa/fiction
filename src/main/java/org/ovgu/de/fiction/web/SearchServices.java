@@ -92,7 +92,7 @@ public class SearchServices {
 					
 					String summary = "";
 					String authName = bookArr[1].contains("|") ? bookArr[1].replace("|", ",") : bookArr[1];
-					String language = (metadata.getLanguage()).toString().equals("en") ? "English" :"Deutch" ;
+					String language = (metadata.getLanguage()).toString().equals("en") ? "English" :"Deutsch" ;
 					String publisheddate = (metadata.getDates().subList(0, 1)).toString().replace("[publication:", "").replace("]", "");
 					if((metadata.getContributors()).size() == 0) {
 					summary = "Language: "+language +". It is written by " + authName + ". Published in the year: " + publisheddate ;
