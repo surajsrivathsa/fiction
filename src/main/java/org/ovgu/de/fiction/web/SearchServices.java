@@ -70,6 +70,7 @@ public class SearchServices {
 
 				int rank = 0;
 				for (Map.Entry<Double, String> res : topKResults.getResults_topK().entrySet()) {
+					System.out.println("BookTest:"+res.getValue());
 
 					String[] bookArr = utils.getMasterBookName(book_master, String.valueOf(res.getValue())).split("#");
 					if (bookArr.length < 2)
@@ -102,6 +103,7 @@ public class SearchServices {
 					BookUI book = new BookUI();
 					book.setId(bookId);
 					book.setName(bookName);
+					System.out.println(bookId);
 					book.setAuthor(authName);
 					book.setRank(rank);
 					StringBuffer sbf = new StringBuffer(FRGeneralUtils.getPropertyVal(WEB_CONTEXT_PATH));
