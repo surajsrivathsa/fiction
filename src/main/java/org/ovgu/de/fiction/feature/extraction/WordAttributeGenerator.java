@@ -144,7 +144,8 @@ public class WordAttributeGenerator {
 			System.out.println(c.getKey()+" "+c.getValue());
 		}
 		
-		cncpt.setCharacterMap(feu.getUniqueCharacterMap(charMap));
+		cncpt.setCharacterMap(feu.getUniqueCharacterMapFW(feu.getUniqueCharacterMap(charMap)));
+		//System.exit(0);
 		cncpt.setNumOfSentencesPerBook(numOfSentences);
 		StanfordPipeline.resetPipeline();
 		return cncpt;
