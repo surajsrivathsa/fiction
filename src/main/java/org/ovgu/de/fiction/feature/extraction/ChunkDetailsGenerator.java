@@ -138,7 +138,7 @@ public class ChunkDetailsGenerator {
 
 		});
 		
-		/*for (Entry<String,String> c : bigcharMap.entrySet()) {
+		for (Entry<String,String> c : bigcharMap.entrySet()) {
 			LOG.info(c.getKey()+" "+c.getValue());
 			
 		}
@@ -155,7 +155,7 @@ public class ChunkDetailsGenerator {
 		} catch (IOException ex) {
 		  ex.printStackTrace(System.err);
 		}
-		*/
+		
 		return books;
 	}
 
