@@ -13,6 +13,8 @@ import org.ovgu.de.fiction.search.InterpretSearchResults;
 import org.ovgu.de.fiction.utils.FRConstants;
 import org.ovgu.de.fiction.utils.FRGeneralUtils;
 
+import me.xdrop.fuzzywuzzy.FuzzySearch;
+
 /**
  * @author Aditya
  */
@@ -21,25 +23,35 @@ public class FictionRetrievalDriver {
 	
 
 	public static void main(String[] args) throws Exception {
-
+		
+		
+		System.out.println(FuzzySearch.ratio("fry","try"));
+		System.out.println(FuzzySearch.ratio("prison","prisoner"));
+		System.out.println(FuzzySearch.ratio("mutiny","mutineer"));
+		System.out.println(FuzzySearch.ratio("bounty","bountiful"));
+		System.out.println(FuzzySearch.ratio("except","accept"));
+		System.out.println(FuzzySearch.ratio("release","realize"));
+		System.out.println(FuzzySearch.ratio("doom","mood"));
+		System.out.println(FuzzySearch.ratio("reason","treason"));
+		
 		long start = System.currentTimeMillis();
 
 		/* 1> Extract content from Gutenberg corpus - one time */
-		ContentExtractor.generateContentFromAllEpubs();
+		//ContentExtractor.generateContentFromAllEpubs();
 		System.out.println("Time taken for generating content (min)-" + (System.currentTimeMillis() - start) / (1000 * 60));
 
 		start = System.currentTimeMillis();
 		/* 2> Generate features from the extracted content - one time */
-		List<BookDetails> features = generateOtherFeatureForAll();
+		//List<BookDetails> features = generateOtherFeatureForAll();
 		System.out.println("Time taken for feature extraction and chunk generation (min)-" + (System.currentTimeMillis() - start) / (1000 * 60));
 		start = System.currentTimeMillis();
 
 		/* 3> Write features to CSV - one time */
-		FeatureExtractorUtility.writeFeaturesToCsv(features);
+		//FeatureExtractorUtility.writeFeaturesToCsv(features);
 		start = System.currentTimeMillis();
 		System.out.println("Time taken for writing to CSV (min)-" + (System.currentTimeMillis() - start) / (1000 * 60));
 		
-		/* 4> Query 
+		/* 4> Query */
 		String query_book = "pg11";
 		int len = FRConstants.EMO_WEIGHT.length;
 		
@@ -60,9 +72,10 @@ public class FictionRetrievalDriver {
 			//InterpretSearchResults interp = new InterpretSearchResults();
 			//interp.performStatiscalAnalysis(topKResults);
 			
-			//@suraj: InterpretSearchResults interp = new InterpretSearchResults();
+			//@suraj: 
+			InterpretSearchResults interp = new InterpretSearchResults();
 			//interp.performStatiscalAnalysis(topKResults);
-			//interp.performStatiscalAnalysisUsingRegression(topKResults,i, FRConstants.SIMI_INCLUDE_TTR_NUMCHARS);
+			interp.performStatiscalAnalysisUsingRegression(topKResults,i, FRConstants.SIMI_INCLUDE_TTR_NUMCHARS);
 			//findLuceneRelevantBooks(qryBookNum);
 			
 		}

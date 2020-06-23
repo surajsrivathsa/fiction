@@ -225,7 +225,7 @@ public interface FRConstants {
 	public static final String SIMI_EXCLUDE_TTR_NUMCHARS = "EX";
 
 	public static final double SIMILARITY_CUTOFF = 0.7;
-	public static final int FEATURE_NUMBER = 24;
+	public static final int FEATURE_NUMBER = 51;
 	public static final int FEATURE_NUMBER_LOCAL = 21;
 	public static final int FEATURE_NUMBER_GLOBAL = 31;
 	public static final double FEATURE_WEIGHT_MORE = 0.2;
@@ -236,8 +236,8 @@ public interface FRConstants {
 	public static final double[] EMO_WEIGHT = {0.5/17,.1/17,.1/17,.4/17,.3/17,.2/17,0,17/17};
 	public static final double[] CHAR_WEIGHT = {0.1,.05,.2,.2,.2,.2,0,2.0};
 	public static final double[] GENRE_WEIGHT = {0/10,.1/10,.1/10,.4/10,.3/10,.2/10,1.0,10/10};
-	public static final double[] NUMCHAR_WEIGHT = {0.05,.05,.05,0,0,0,0,0.2};
-	public static final double[] TTR_WEIGHT = {0.05,.05,.05,0,0,0,0,0.2};
+	public static final double[] NUMCHAR_WEIGHT = {0.05,.05,.05,0.1,0,0,0,0.2};
+	public static final double[] TTR_WEIGHT = {0.05,.05,.05,0.1,0,0,0,0.2};
 	
 	
 	public static final double PERCTG_OF_SNTNC_FOR_SENTIM = 0.05;

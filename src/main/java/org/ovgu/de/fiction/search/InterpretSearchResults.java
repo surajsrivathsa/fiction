@@ -140,6 +140,9 @@ public class InterpretSearchResults {
 			{
 				System.out.println("Rank: " + item.getKey() + " Feature: " + item.getValue());
 		    }
+			
+			System.out.println("============== End of explanation ===============");
+			
 			return combined_explanations;
 		}
 		
