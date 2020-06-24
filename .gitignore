@@ -42,3 +42,6 @@ Text
 deeplearning_vocab
 *.txt
 *-checkpoint*
+*.json
+*.pyc
+*.vscode

@@ -4,9 +4,14 @@ import org.apache.commons.exec.*;
 import org.apache.commons.exec.launcher.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
+import me.xdrop.fuzzywuzzy.*;
+import org.aksw.palmetto.*;
+import org.aksw.palmetto.corpus.CorpusAdapter;
 import org.ovgu.de.fiction.feature.extraction.ChunkDetailsGenerator;
 import org.ovgu.de.fiction.feature.extraction.FeatureExtractorUtility;
 import org.ovgu.de.fiction.model.BookDetails;
@@ -95,7 +100,7 @@ public class FictionRetrievalDriver {
 				"pg2684Galsw4", "pg4765Galsw3", "pg2148EdgarPoe2", "pg2150EdgarPoe4", "pg2149EdgarPoe3"};
 		
 		
-		 */
+		 
 		
 		
 		
@@ -122,99 +127,31 @@ public class FictionRetrievalDriver {
 			//findLuceneRelevantBooks(qryBookNum);
 			
 		}
-		
-		
-		
-		//String qryBookNum = "pg108DoyleReturnSherlk"; 
-		/**/
-		
-		//pg11CarolAlice,  pg1400DickensGreatExp,pg766DickensDavidCopfld
-		// pg2701HermanMobyDick,pg537DoyleTerrorTales
-		// pg13720HermanVoyage1, pg2911Galsw2, pg1155Agatha2,pg2852DoyleHound, pg2097DoyleSignFour
-
-		// read from csv features and prints ranked relevant books, run after CSV is written
-		
-		/* Commenting below block as i needed to extract only html output. Un comment when required*/
-		//String FEATURE_CSV_FILE = FRGeneralUtils.getPropertyVal("file.feature");
-		/**/
-		
-		//Config 1: three possible setting similarity objective penalization: divide chunks by (1) OR (number_of_chunks) OR sqr_root(number_of_chunks)
-		//Config 2: two possible settings for similarity roll up : add_chunks (default) OR multipl_chunks
-		//Config 3: Include or exclude TTR and Numbr of Chars
-		
-		/* Commenting below block as i needed to extract only html output. Un comment when required
-		TopKResults topKResults = FictionRetrievalSearch.findRelevantBooks(qryBookNum, FEATURE_CSV_FILE, 
-				FRConstants.SIMI_PENALISE_BY_CHUNK_NUMS, FRConstants.SIMI_ROLLUP_BY_ADDTN, 
-				FRConstants.SIMI_EXCLUDE_TTR_NUMCHARS,FRConstants.TOP_K_RESULTS,FRConstants.SIMILARITY_L2);
-		*/
-		
-		/* * 5> Perform some machine learning over the results
-		 
-		*/
-		
-		/* Commenting below block as i needed to extract only html output. Un comment when required
-		InterpretSearchResults interp = new InterpretSearchResults();
-		interp.performStatiscalAnalysis(topKResults, qery_bk);
-		For Global Feature based Similarity, QBE Book = pg158 printing top 10 results
-Rank 1 is  Book = pg766 weight = 1 
-Rank 2 is  Book = pg1342 weight = 0.992
-Rank 3 is  Book = pg730 weight = 0.975
-Rank 4 is  Book = pg1400 weight = 0.97
-Rank 5 is  Book = pg108 weight = 0.963
-Rank 6 is  Book = pg141 weight = 0.956
-Rank 7 is  Book = pg834 weight = 0.955
-Rank 8 is  Book = pg2852 weight = 0.939
-Rank 9 is  Book = pg98 weight = 0.938
-Rank 10 is  Book = pg105 weight = 0.936
-
-For Global Feature based Similarity, QBE Book = pg158 printing top 10 results
-Rank 1 is  Book = pg2852 weight = 1 
-Rank 2 is  Book = pg108 weight = 0.993
-Rank 3 is  Book = pg1342 pg834 weight = 0.99
-Rank 4 is  Book = pg98 weight = 0.976
-Rank 5 is  Book = pg105 weight = 0.975
-Rank 6 is  Book = pg730 weight = 0.968
-Rank 7 is  Book = pg1400 weight = 0.963
-Rank 8 is  Book = pg766 weight = 0.953
-Rank 9 is  Book = pg141 weight = 0.944
-Rank 10 is  Book = pg2097 weight = 0.931
-May 29, 2020 1:31:43 AM com.github.fommil.jni.JniLoader liberalLoad
-INFO: successfully loaded /var/folders/tf/2pswl45d7gxghml4qfn86s3r0000gn/T/jniloader7354101386306657182netlib-native_system-osx-x86_64.jnilib
-May 29, 2020 1:31:43 AM com.github.fommil.jni.JniLoader load
-INFO: already loaded netlib-native_system-osx-x86_64.jnilib
-May 29, 2020 1:31:43 AM com.github.fommil.jni.JniLoader load
-INFO: already loaded netlib-native_system-osx-x86_64.jnilib
-RMSE for regression on 5 fold cross validation 0.010235512734960284
-
-Linear Regression Model
-
-Class label =
-
-      1.3698 * Feature 0 +
-      0.2518 * Feature 3 +
-     -0.4037 * Feature 4 +
-      1.2325 * Feature 5 +
-      0.5976 * Feature 7 +
-     -0.6448 * Feature 8 +
-     -1.6492 * Feature 9 +
-      0.2107 * Feature 13 +
-     -0.0417 * Feature 14 +
-     -0.7272 * Feature 15 +
-     -0.0392 * Feature 19 +
-     -0.0791 * Feature 20 +
-     -0.0039 * Feature 21 +
-      1.0805
-
- * Printing Top Features from regression ******
-Rank 1 =  Feature 9
-Rank 2 =  Feature 0
-Rank 3 =  Feature 5
-Rank 4 =  Feature 15
-Rank 5 =  Feature 8
 
 		*/
 		
 		//findLuceneRelevantBooks(qryBookNum);
+		
+		String[] query_books = {"crime", "hour", "business", "manner", "murder" , "reason" ,"theory" , "investigation", "side", "arrest"};//, "pg2701", "pg766", "pg1342", "pg158","pg1155",  "pg1400", "pg730"};
+		String[] result_books = {"crime", "hour", "business", "manner", "murder" , "reason" ,"theory" , "investigation", "side", "arrest", "beast", "reason"};
+		//String[] result_books = {"beast", "reason", "murderous", "hand", "finger", "bed", "game", "manners", "evidence", "protection"};
+		System.out.println(jacardcomparision(query_books, result_books));
+		
+		System.out.println(FuzzySearch.ratio("prison","prisoner"));
+		System.out.println(FuzzySearch.ratio("affection","affectionately"));
+		System.out.println(FuzzySearch.ratio("cowardice","cowardly"));
+		System.out.println(FuzzySearch.ratio("seafaring","sea"));
+		System.out.println(FuzzySearch.ratio("try","fry"));
+		System.out.println(FuzzySearch.ratio("opposite","near"));
+		System.out.println(FuzzySearch.ratio("treason","reason"));
+		System.out.println(FuzzySearch.ratio("murder","murderous"));
+		System.out.println(FuzzySearch.ratio("tweedle dee","tweedle dum"));
+		//CorpusAdapter ca = Palmetto.getCorpusAdapter("NPMI", "");
+		start = System.currentTimeMillis();
+		String[] palmetto_aruments= {"/Volumes/suraj/XAI_project/Wikipedia_bd/wikipedia_bd", "npmi", "/Volumes/suraj/XAI_project/Wikipedia_bd/topics_df.txt"};
+		//Palmetto.main(palmetto_aruments);
+		long end = System.currentTimeMillis();
+		System.out.println((end-start) * 1.0 /1000);
 	}
 
 	public static List<BookDetails> generateOtherFeatureForAll() throws IOException {
@@ -222,7 +159,83 @@ Rank 5 =  Feature 8
 		List<BookDetails> books = chunkImpl.getChunksFromAllFiles();
 		return books;
 	}
+	
+	public static int jacardFuzzySearch(String[] qry_topics, String[] result_book_topics) {
+		List<String> qry_topics_lst = new ArrayList<>(Arrays.asList(qry_topics));
+		List<String> result_book_topics_lst = new ArrayList<>(Arrays.asList(result_book_topics));
+		
+		List<String> intersection_lst = new ArrayList<String>();
+		int union_count = qry_topics_lst.size() + result_book_topics_lst.size();	
+		int intersection_count = intersection_lst.size();
+		double fuzzyjacard = 0.0;
+				
+		for(int i = 0; i < qry_topics_lst.size(); i++) {
+			
+			int j = 0;
+			int indx = result_book_topics_lst.size();
+			while(result_book_topics_lst.size() > 0 && indx > 0) {
+				
+				if(FuzzySearch.ratio(qry_topics_lst.get(i),result_book_topics_lst.get(j)) > 70) {
+					intersection_lst.add(result_book_topics_lst.get(j));
+					result_book_topics_lst.remove(result_book_topics_lst.get(j));
+					j++;
+					indx--;
+					break;
+				}
+				
+				else {
+					j++;
+					indx--;
+				}
+			}
+			
+			fuzzyjacard = (intersection_lst.size() * 1.0)/(union_count - intersection_lst.size());
+			
+		}
+		
+		System.out.println("From fuzzyjacard: " + fuzzyjacard + " Intersection list size: " + intersection_lst.size() + " Union list size: " + union_count);
+		/*
+		qry_topics_lst.stream().forEach((qry_topic -> {
+			System.out.println(qry_topic);
+			int index = -1;
+			int counter = 0;
+			result_book_topics_lst.stream().forEach(corpus_topic -> {
+				System.out.println(corpus_topic);
+				
+				if(FuzzySearch.ratio(qry_topic,corpus_topic) > 70) {
+					intersection_lst.add(corpus_topic);
+					result_book_topics_lst.remove(result_book_topics_lst.get(counter));
+				}
+				
+				
+			});
+			}
+		));
+		*/
+		return intersection_lst.size();		
+	}
 
+	public static double jacardcomparision(String[] qry_topics, String[] result_book_topics) {
+		Set<String> qry_topics_s1 = new HashSet<String>(Arrays.asList(qry_topics));
+		Set<String> result_book_topics_s2 = new HashSet<String>(Arrays.asList(result_book_topics));
+		
+		System.out.println(qry_topics_s1.toString());
+		double union = qry_topics_s1.size() + result_book_topics_s2.size();
+		
+		Set<String> intersection = new HashSet<String>();
+		
+		int intersection_count = jacardFuzzySearch(qry_topics, result_book_topics);
+		
+		qry_topics_s1.retainAll(result_book_topics_s2);
+		System.out.println(qry_topics_s1.toString());
+		
+		double jacqard_coefficient = 0.0, jacqard_coefficient_fuzzy = 0.0;
+		jacqard_coefficient = qry_topics_s1.size()/(union - qry_topics_s1.size());
+		jacqard_coefficient_fuzzy = intersection_count/(union - intersection_count);
+		System.out.println("Intersection_count: " + intersection_count + " Union count: " + union);
+		System.out.println(jacqard_coefficient + " | " + jacqard_coefficient_fuzzy);
+		return jacqard_coefficient;
+	}
 	
 	public static void extract_Feature3_windows() throws IOException {
 		// String python_parameters = "--feature_file_path C:\\OvGU_DKe\\Project\\GutenbergDataset\\Features_Extracted_English.csv --book_file_path C:\\OvGU_DKe\\Project\\GutenbergDataset\\Short_epubs_extracted\\ --emoticon_file_path C:\\Users\\rambo\\git\\fiction\\all_language_emotions.csv --feature_fields 24 --language en --encoding utf-8 --new_feature_file_path C:\\OvGU_DKe\\Project\\GutenbergDataset\\Short_epubs_extracted\\new_Features_Extracted.csv --book_list_file_path C:\\Users\\rambo\\git\\fiction\\Final_Booklist.xlsx --logging_flag True";

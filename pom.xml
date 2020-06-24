@@ -107,6 +107,19 @@
 		    <artifactId>commons-exec</artifactId>
 		    <version>1.3</version>
 		</dependency>
+		
+		<dependency>
+		    <groupId>me.xdrop</groupId>
+		    <artifactId>fuzzywuzzy</artifactId>
+		    <version>1.3.1</version>
+		</dependency>
+		
+		<dependency>
+	  		<groupId>org.aksw</groupId>
+	  		<artifactId>palmetto</artifactId>
+  		<version>0.1.1</version>
+  		
+  	</dependency>
 	
 	</dependencies>
 
