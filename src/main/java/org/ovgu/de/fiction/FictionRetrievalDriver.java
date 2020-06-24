@@ -24,7 +24,7 @@ public class FictionRetrievalDriver {
 
 	public static void main(String[] args) throws Exception {
 		
-		
+		/*
 		System.out.println(FuzzySearch.ratio("fry","try"));
 		System.out.println(FuzzySearch.ratio("prison","prisoner"));
 		System.out.println(FuzzySearch.ratio("mutiny","mutineer"));
@@ -33,6 +33,7 @@ public class FictionRetrievalDriver {
 		System.out.println(FuzzySearch.ratio("release","realize"));
 		System.out.println(FuzzySearch.ratio("doom","mood"));
 		System.out.println(FuzzySearch.ratio("reason","treason"));
+		*/
 		
 		long start = System.currentTimeMillis();
 
@@ -42,19 +43,19 @@ public class FictionRetrievalDriver {
 
 		start = System.currentTimeMillis();
 		/* 2> Generate features from the extracted content - one time */
-		//List<BookDetails> features = generateOtherFeatureForAll();
+		List<BookDetails> features = generateOtherFeatureForAll();
 		System.out.println("Time taken for feature extraction and chunk generation (min)-" + (System.currentTimeMillis() - start) / (1000 * 60));
 		start = System.currentTimeMillis();
 
 		/* 3> Write features to CSV - one time */
-		//FeatureExtractorUtility.writeFeaturesToCsv(features);
+		FeatureExtractorUtility.writeFeaturesToCsv(features);
 		start = System.currentTimeMillis();
 		System.out.println("Time taken for writing to CSV (min)-" + (System.currentTimeMillis() - start) / (1000 * 60));
 		
-		/* 4> Query */
+		//  4> Query 
 		String query_book = "pg11";
 		int len = FRConstants.EMO_WEIGHT.length;
-		
+		/*
 		for(int i = 0; i < len; i++)
 		{
 			String qryBookNum = query_book; 
@@ -77,15 +78,19 @@ public class FictionRetrievalDriver {
 			//interp.performStatiscalAnalysis(topKResults);
 			interp.performStatiscalAnalysisUsingRegression(topKResults,i, FRConstants.SIMI_INCLUDE_TTR_NUMCHARS);
 			//findLuceneRelevantBooks(qryBookNum);
+			 
 			
 		}
-		
-		/* * 5> Perform some machine learning over the results
-		 
 		*/
+	
+		
+		// 5> Perform some machine learning over the results
+		 
+		
 		//InterpretSearchResults interp = new InterpretSearchResults();
 		//interp.performStatiscalAnalysis(topKResults);
 		//findLuceneRelevantBooks(qryBookNum);
+		
 	}
 
 	public static List<BookDetails> generateOtherFeatureForAll() throws IOException {

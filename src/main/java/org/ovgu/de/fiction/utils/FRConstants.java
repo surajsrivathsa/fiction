@@ -19,7 +19,7 @@ public interface FRConstants {
 	public static final String OUT_FOLDER_TOKENS = "folder.out.chunks";
 	public static final String STOPWORD_FICTION = "stopword.fiction";
 
-	public static final String REP_FN = "C:\\OvGU_DKe\\Project\\GutenbergDataset\\testing_epubs_extracted\\";
+	public static final String REP_FN = "/Users/surajshashidhar/git/fiction/Batch10/";
 
 	/* regex */
 	public static final String REGEX_ALL_PUNCTUATION = "[\\s\"\\.\\,\\?\\!\\:\\;\\'-]";

@@ -63,7 +63,9 @@ public class WordAttributeGenerator {
 
 		FeatureExtractorUtility feu = new FeatureExtractorUtility();
 		Concept cncpt = new Concept();
-		String fileName1 = path.toString().replace(FRConstants.REP_FN, FRConstants.NONE).replace(FRConstants.CONTENT_FILE, FRConstants.NONE);
+		//replace(FRConstants.REP_FN, FRConstants.NONE).
+		String fileName1 = path.getFileName().toString().replace(FRConstants.CONTENT_FILE, FRConstants.NONE);
+		System.out.println("Filename extracted for getting metadata: " + fileName1);
 		String x = "";
 		//System.out.println(fileName1);
 		//System.out.println(path.toString());

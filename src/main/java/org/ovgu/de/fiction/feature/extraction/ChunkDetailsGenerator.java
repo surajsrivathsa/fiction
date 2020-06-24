@@ -145,7 +145,7 @@ public class ChunkDetailsGenerator {
 		
 		String eol = System.getProperty("line.separator");
 
-		try (Writer writer = new FileWriter("C:\\OvGU_DKe\\Project\\GutenbergDataset\\Short_tokens\\charmap.csv")) {
+		try (Writer writer = new FileWriter("/Users/surajshashidhar/git/fiction/milestone4/charmap_m4_b10.csv")) {
 		  for (Map.Entry<String, String> entry : bigcharMap.entrySet()) {
 		    writer.append(entry.getKey())
 		          .append(',')
@@ -187,7 +187,7 @@ public class ChunkDetailsGenerator {
 		
 		//System.out.println("Language inside getchunksfromfile is: " + book_lang);
 		
-		//Map<String, String> bigcharMap = new HashMap<>();
+		Map<String, String> bigcharMap = new HashMap<>();
 		WordAttributeGenerator wag = new WordAttributeGenerator();
 		FeatureExtractorUtility feu = new FeatureExtractorUtility();
 		List<String> stopwords = Arrays.asList(FRGeneralUtils.getPropertyVal(FRConstants.STOPWORD_FICTION).split("\\|"));
@@ -203,7 +203,7 @@ public class ChunkDetailsGenerator {
 		//Concept cncpt2 = wag.generateWordAttributes2(Paths.get(path));
 		for (Entry<String,Integer> c : cncpt.getCharacterMap().entrySet()) {
 			LOG.info(c.getKey()+" "+c.getValue());
-			//bigcharMap.put(c.getKey(), book.getBookId());
+			bigcharMap.put(c.getKey(), book.getBookId());
 		}
 		//System.exit(0);
 		NUM_OF_CHARS_PER_BOOK = cncpt.getCharacterMap().size();
