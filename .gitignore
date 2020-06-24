@@ -30,3 +30,17 @@ hs_err_pid*
 *.classpath
 .DS_Store
 /target/
+*.js
+*.arff
+*.pdf
+*.json
+*.png
+*.class
+*.pyc
+*.txt
+*.css
+*.htm
+Text
+deeplearning_vocab
+Final_Booklist.numbers
+*.ipynb
