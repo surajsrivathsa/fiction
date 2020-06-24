@@ -138,7 +138,7 @@ public class ChunkDetailsGenerator {
 
 		});
 		
-		/*for (Entry<String,String> c : bigcharMap.entrySet()) {
+		for (Entry<String,String> c : bigcharMap.entrySet()) {
 			LOG.info(c.getKey()+" "+c.getValue());
 			
 		}
@@ -155,7 +155,7 @@ public class ChunkDetailsGenerator {
 		} catch (IOException ex) {
 		  ex.printStackTrace(System.err);
 		}
-		*/
+		
 		return books;
 	}
 
@@ -201,11 +201,11 @@ public class ChunkDetailsGenerator {
 
 		// dummu
 		//Concept cncpt2 = wag.generateWordAttributes2(Paths.get(path));
-		/*for (Entry<String,Integer> c : cncpt.getCharacterMap().entrySet()) {
+		for (Entry<String,Integer> c : cncpt.getCharacterMap().entrySet()) {
 			LOG.info(c.getKey()+" "+c.getValue());
-			bigcharMap.put(c.getKey(), book.getBookId());
-		}*/
-		
+			//bigcharMap.put(c.getKey(), book.getBookId());
+		}
+		//System.exit(0);
 		NUM_OF_CHARS_PER_BOOK = cncpt.getCharacterMap().size();
 		cncpt.getCharacterMap().entrySet().forEach(entry->{
 			sum = sum + entry.getValue();
@@ -254,6 +254,7 @@ public class ChunkDetailsGenerator {
 		int senti_positiv_cnt = 0;
 		int senti_neutral_cnt = 0;
 		int wordCountPerSntnc = 0;
+		int countselfnarr = 0;
 		double totalNumOfRandomSntnPerChunk =0; // sentiment_calculated_over_these_randm_sentences_per_chunk
 		
 		
@@ -288,6 +289,8 @@ public class ChunkDetailsGenerator {
 			int properWordCount = 0;
 			int numOfSyllables = 0;
 			int randomSntnCount =0;
+			int icountnonquote = 0, icount = 0;
+			int flag = 0;
 			double dialogratiochunk = 0.0;
 			StringBuffer sentenceSbf = new StringBuffer();
 			
@@ -383,6 +386,10 @@ public class ChunkDetailsGenerator {
 					index--;
 					continue;
 				}
+				
+				
+				
+				
 				/* append the token to form sentence. Below part needed for sentiment calculation */
 
 				else if (!l.equals(FRConstants.S_TAG) && !l.equals(FRConstants.P_TAG) && book_lang.equals(FRConstants.BOOK_LANG_EN)) {
@@ -479,9 +486,20 @@ public class ChunkDetailsGenerator {
 					hyphenCount++;
 				else if (token.getLemma().equals(FRConstants.EXCLAMATION))
 					intrjctnCount++;
-				else if (token.getLemma().equals(FRConstants.DOUBLE_QUOTES))
+				else if (token.getLemma().equals(FRConstants.DOUBLE_QUOTES) 
+						|| token.getOriginal().equals("'") || token.getOriginal().equals("\"")) {
 					convCount++;
-
+					flag++;
+				}
+				if(flag % 2 == 0) {
+					 if (token.getOriginal().equals("I") || token.getOriginal().equals("i")) {
+					
+						icountnonquote++;
+						}
+				}
+				if (token.getOriginal().equals("I") || token.getOriginal().equals("i"))
+					icount++;
+				//System.out.println(icountnonquote + "hello there" + icount);
 				wordcntr++;
 				wordCountPerSntnc++;
 			}
@@ -516,9 +534,13 @@ public class ChunkDetailsGenerator {
 			stpwrdPuncRmvd = new ArrayList<>();
 			paragraphCount = 0;
 			//max = 0;
-
+			//System.out.println(icountnonquote + "hello there" + icount);
+			//System.out.println("narritive or not" + ((double)icountnonquote/icount));
+			if((double)icountnonquote/icount >= 0.5)
+				countselfnarr++;
 		}
-
+		System.out.println(countselfnarr + "heehoo" + batchNumber);	
+		
 		return chunksList;
 	}
 
@@ -597,7 +619,7 @@ public class ChunkDetailsGenerator {
 			textTokens = new ArrayList<>();
 			chunkNo++;
 		}
-
+		
 		return chunksList;
 	}
 

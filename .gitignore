@@ -1,35 +1,10 @@
-# Compiled class file
-*.class
-
-# Log file
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-
-# ignore epubs and html
-*.html
-*.epub
-*.csv
-*.xlsx
-*.classpath
-.DS_Store
 /target/
+*.epub
+*.html
+*.log
+.DS_Store
+*.csv
+*.classpath
 *.js
 *.arff
 *.pdf
@@ -44,3 +19,10 @@ Text
 deeplearning_vocab
 Final_Booklist.numbers
 *.ipynb
+*.py
+*.pyc
+*.sh
+*.vscode
+*.csv
+*.zip
+

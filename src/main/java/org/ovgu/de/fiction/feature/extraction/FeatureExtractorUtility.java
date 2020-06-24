@@ -28,6 +28,7 @@ import weka.core.Instances;
 import weka.core.converters.ArffSaver;
 import weka.core.converters.CSVLoader;
 
+import me.xdrop.fuzzywuzzy.*;
 /**
  * @author Aditya
  *         The class contains the methods for feature extraction
@@ -495,5 +496,33 @@ public class FeatureExtractorUtility {
 	//	System.out.println(" out edits ="+charMapClone);
 		return charMapClone;
 	}
+	
+	public Map<String, Integer> getUniqueCharacterMapFW(Map<String, Integer> charMap) {
+		
+		List<String> all_names = new ArrayList<String>(charMap.keySet());
 
+		Map<String, Integer> charMapClone = new HashMap<>(charMap);
+		
+		for (String names : all_names) {
+
+			for (Map.Entry<String, Integer> inputMap : charMap.entrySet()) {
+				if (!names.equals(inputMap.getKey())) {
+					if(FuzzySearch.ratio(names,inputMap.getKey()) >= 85) {
+					System.out.println(FuzzySearch.ratio(names,inputMap.getKey()) +"----" +names + "--- "+ inputMap.getKey());
+					Integer old = charMapClone.get(names);
+					Integer newval = inputMap.getValue();
+					charMapClone.put(names, old!=null ? old + newval : newval);
+					charMapClone.remove(inputMap.getKey());
+					}
+					}
+		
+			}
+		
+		
+	}
+	
+	return charMapClone;
+	
+}
+	
 }
