@@ -5,8 +5,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.Serializable;
 import java.util.*;
-
-
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.ovgu.de.fiction.model.BookList;
@@ -53,24 +52,28 @@ public class SearchServices {
 			Map<String, String> book_master = utils.getAllMasterBooks(); // key = bookId, Value = Book_Name
 			String FEATURE_CSV_FILE = FRGeneralUtils.getPropertyVal("file.feature");
 
-			Map<String,String> stats_Of_results =new TreeMap<String,String>(); 
+			Map<Integer,String> stats_Of_results =new TreeMap<Integer,String>(); 
+			Map<String,String> final_results =new TreeMap<String,String>();
 
 			int TOP_K = Integer.parseInt(topK);
 			TopKResults topKResults = FictionRetrievalSearch.findRelevantBooks(queryBookId, FEATURE_CSV_FILE,
 						FRConstants.SIMI_PENALISE_BY_NOTHING, FRConstants.SIMI_ROLLUP_BY_ADDTN,
-						FRConstants.SIMI_INCLUDE_TTR_NUMCHARS, TOP_K, similarity);
+						FRConstants.SIMI_INCLUDE_TTR_NUMCHARS, TOP_K, similarity, FRConstants.CONFIGINDEX);
 
 			InterpretSearchResults interp = new InterpretSearchResults();
 
 				try {
-					stats_Of_results = interp.performStatiscalAnalysisUsingRegression(topKResults);
+					stats_Of_results = interp.performStatiscalAnalysisUsingRegression(topKResults,4, FRConstants.SIMI_INCLUDE_TTR_NUMCHARS);
+					for(Entry<Integer, String> item: stats_Of_results.entrySet() ) 
+					{
+						final_results.put("Feature"+item.getKey(),item.getValue());
+				    }
 				} catch (Exception e) {
 					throw new Exception("analysis cannot be done!");
 				}
 
 				int rank = 0;
 				for (Map.Entry<Double, String> res : topKResults.getResults_topK().entrySet()) {
-					System.out.println("BookTest:"+res.getValue());
 
 					String[] bookArr = utils.getMasterBookName(book_master, String.valueOf(res.getValue())).split("#");
 					if (bookArr.length < 2)
@@ -103,7 +106,6 @@ public class SearchServices {
 					BookUI book = new BookUI();
 					book.setId(bookId);
 					book.setName(bookName);
-					System.out.println(bookId);
 					book.setAuthor(authName);
 					book.setRank(rank);
 					StringBuffer sbf = new StringBuffer(FRGeneralUtils.getPropertyVal(WEB_CONTEXT_PATH));
@@ -120,11 +122,8 @@ public class SearchServices {
 				if (stats_Of_results.size() > 0) {
 					Map<String, String> reduced_features = new HashMap<>();
 
-					reduced_features = stats_Of_results;
-					for (Map.Entry<String, String> reduced_fe : stats_Of_results.entrySet()) {
-						System.out.println(reduced_fe.getKey());
-						System.out.println(reduced_fe.getValue());
-					}
+					reduced_features = final_results;
+					
 					StringBuffer reducedFe = new StringBuffer(
 							"  Why these books are related?  ");
 

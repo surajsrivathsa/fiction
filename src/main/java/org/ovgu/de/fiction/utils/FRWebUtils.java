@@ -22,7 +22,7 @@ public class FRWebUtils {
 	private static final String FEMALE_ORIENTED = "female oriented";
 	private static final String WRITING_STYLE = "writing style";
 	private static final String DIALOGUE_INTERACTION = "dialogue interaction";
-	private static final String LOW_DIMENSIONAL_OF_CHUNKS = "genre exploration";
+	private static final String LOW_DIMENSIONAL_OF_CHUNKS = "genre similarity";
 	private static final String SAME_BOOK_START_END = "same book start and end similarity";
 	private static final String BOOK_START_ANGER = "anger";
 	private static final String BOOK_START_ANTICIPATION = "anticipation";
@@ -70,7 +70,6 @@ public class FRWebUtils {
 		try (BufferedReader br = new BufferedReader(new FileReader(BookmasterCSVFile));) {
 			while ((line = br.readLine()) != null) {
 				if (csvRow > 0) {
-					System.out.println(line);
 					String[] bookName = line.split(";pg");
 					int bookIDStart = line.indexOf(";pg");
 					int bookIDEnd = line.indexOf(".epub");
@@ -90,7 +89,6 @@ public class FRWebUtils {
 		String bookName = "";
 		for (Map.Entry<String, String> res : book_master.entrySet()) {
 			if (res.getKey().trim().equalsIgnoreCase(bookId)) {
-				System.out.println("bookId From master"+bookId);
 				bookName = res.getValue();
 				return bookName;
 			}
@@ -244,7 +242,6 @@ public class FRWebUtils {
 			featureName.append(BOOK_END_SURPRISE);
 		if (featureId.equals("F50"))
 			featureName.append(BOOK_END_TRUST);
-        System.out.println("Feature Name :"+featureName.toString());
 		return featureName.toString();
 	}
 
