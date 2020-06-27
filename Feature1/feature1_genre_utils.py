@@ -12,11 +12,11 @@ class GenreUtils:
         self.bfp = book_file_path
         self.master_file_path = master_file_path
         self.encoding = encoding
-        self.window_size = 50
+        self.window_size = 5
         self.vector_size = 100
         self.num_epoch = 100
         self.chunk_size  = chunk_size
-        self.start_feature = 22
+        self.start_feature = 24
         self.feature_size = chunk_size * 2
 
     def split_chunks(self, books, size, name):
@@ -55,6 +55,9 @@ class GenreUtils:
     #Generate chunk vectors for all the books
         try:
             book_vecs = {}
+            files = words_books.keys()
+            new_chunk_vecs = pd.DataFrame()
+            print(files)
             for file_name in words_books:
                 book_vecs[file_name] = []
                 books_list = list(itertools.chain(*words_books[file_name]))
@@ -74,19 +77,19 @@ class GenreUtils:
                     merged_data = pd.DataFrame(merged_data).T
                     merged_data.index = [chunk]
                     all_chunk_vecs = all_chunk_vecs.append(merged_data)
-                pca = PCA(n_components=2)
-                result = pca.fit_transform(all_chunk_vecs)
-                book_vecs[file_name] = list(itertools.chain(*result))
-                print("Retrieved Book Vecs for Book: " + file_name)
-            new_book_vec = pd.DataFrame(book_vecs)
-            chunk_vector_df = new_book_vec.T
-            chunk_vector_df.columns = self.get_feature_names()
-            print(chunk_vector_df)
-            return chunk_vector_df
+                new_chunk_vecs = new_chunk_vecs.append((all_chunk_vecs.sum(axis = 0)/5).T,ignore_index=True)
+            pca = PCA(n_components=10)
+            result = pca.fit_transform(new_chunk_vecs)
+            result = pd.DataFrame(result)
+            result.index = files 
+            f_names = self.get_feature_names()
+            print(f_names)
+            result.columns = f_names
+            print(result)
+            return  result
         except:
             print("Unable to call the vector generating function")
             sys.exit(1)
-        
 
     def get_feature_names(self):
     #Name the new feature columns

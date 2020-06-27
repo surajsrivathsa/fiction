@@ -182,8 +182,8 @@ public interface FRConstants {
 	public static final String SIMI_EXCLUDE_TTR_NUMCHARS="EX";
 
 	public static final double SIMILARITY_CUTOFF = 0.70;
-	public static final int FEATURE_NUMBER = 28;
-	public static final int FEATURE_NUMBER_GLOBAL = 9;
+	public static final int FEATURE_NUMBER = 32;
+	public static final int FEATURE_NUMBER_GLOBAL = 13;
 	public static final double FEATURE_WEIGHT_MORE = 0.85;
 	public static final double FEATURE_WEIGHT_LESS = 0.10;
 	public static final double FEATURE_WEIGHT_LEAST = 0.05;
@@ -206,7 +206,7 @@ public interface FRConstants {
 	public static final int TOP_K_RESULTS = 25;
 
 	/* feature related */
-	public static final int LEAVE_LAST_K_ELEMENTS_OF_FEATURE = 8; //exclude 2 global elements (TTR, NUM_Chars) from
+	public static final int LEAVE_LAST_K_ELEMENTS_OF_FEATURE = 12; //exclude 2 global elements (TTR, NUM_Chars) from
 	
 	public static final int TTR_21 = 21;
 	

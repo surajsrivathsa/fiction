@@ -34,7 +34,7 @@ public class FictionRetrievalDriver {
 		System.out.println("Time taken for generating content (min)-" + (System.currentTimeMillis() - start) / (1000 * 60));
 
 		start = System.currentTimeMillis();
-		
+		*/
 		
 		/* 2> Generate features from the extracted content - one time */
 		/*
@@ -42,7 +42,7 @@ public class FictionRetrievalDriver {
 		System.out.println("Time taken for feature extraction and chunk generation (min)-" + (System.currentTimeMillis() - start) / (1000 * 60));
 		start = System.currentTimeMillis();
 		
-		
+		*/
 
 		/* 3> Write features to CSV - one time */
 		
@@ -51,18 +51,20 @@ public class FictionRetrievalDriver {
 		 start = System.currentTimeMillis();
 		System.out.println("Time taken for writing to CSV (min)-" + (System.currentTimeMillis() - start) / (1000 * 60));
 		
-		
+		*/
 		
 		/*
 		 * @Suraj: Adding feature 3 extraction program calling from java to python
 		 */
 		
-		/*extract_Feature3();*/
+		/*extract_Feature3();*/ 
 		extract_Feature1();
 		
 		/* 4> Query */
-	/*	String qryBookNum = "pg1400DickensGreatExp"; 
-		
+		/*
+		String[] qryBookNum = {"pg11","pg108","pg2701","pg766","pg1342","pg158","pg2097","pg4045"}; 
+		//pg108DoyleReturnSherlk, pg2701HermanMobyDick, pg766DickensDavidCopfld, pg1342JaneAustenPP, pg158JaneAustenEmma
+		//pg1155Agatha2, pg766DickensDavidCopfld
 		//pg11CarolAlice,  pg1400DickensGreatExp,pg766DickensDavidCopfld
 		// pg2701HermanMobyDick,pg537DoyleTerrorTales
 		// pg13720HermanVoyage1, pg2911Galsw2, pg1155Agatha2,pg2852DoyleHound, pg2097DoyleSignFour
@@ -76,15 +78,17 @@ public class FictionRetrievalDriver {
 		//Config 2: two possible settings for similarity roll up : add_chunks (default) OR multipl_chunks
 		//Config 3: Include or exclude TTR and Numbr of Chars
 		
-
-		TopKResults topKResults = FictionRetrievalSearch.findRelevantBooks(qryBookNum, FEATURE_CSV_FILE, 
+		for (int i=0;i<qryBookNum.length;i++)
+		{
+		TopKResults topKResults = FictionRetrievalSearch.findRelevantBooks(qryBookNum[i], FEATURE_CSV_FILE, 
 				FRConstants.SIMI_PENALISE_BY_CHUNK_NUMS, FRConstants.SIMI_ROLLUP_BY_ADDTN, 
 				FRConstants.SIMI_INCLUDE_TTR_NUMCHARS,FRConstants.TOP_K_RESULTS,FRConstants.SIMILARITY_L2);
 		
-		/* * 5> Perform some machine learning over the results
+		}
+		System.out.println("-------------End of a file-----------------------");
+		/* * 5> Perform some machine learning over the resultsqryBookNum
 		 
 		*/
-		
 
 		/*InterpretSearchResults interp = new InterpretSearchResults();
 		interp.performStatiscalAnalysis(topKResults);*/

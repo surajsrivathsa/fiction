@@ -2,11 +2,12 @@ import pandas as pd
 import re
 import spacy
 import os
-from bs4 import BeautifulSoup
 import sys
+from bs4 import BeautifulSoup
+
 
 class FileUtils:
-    def __init__(self,book_file_path,feature_file_path,new_feature_file_path,chunk_size ,master_file_path, encoding='utf-8'):
+    def __init__(self,book_file_path,feature_file_path,new_feature_file_path,chunk_size,master_file_path, encoding='utf-8'):
         self.FILENAME_PARSE_REGEX = "(pg)([0-9]*).*?-content(.html)"
         self.FEATURE_FILENAME_PARSE_REGEX = "(pg)([0-9]*).*"
         self.bfp = book_file_path
@@ -18,6 +19,7 @@ class FileUtils:
         self.HTML_FILE_EXTENSION = ".html"
         self.EMPTY = ""
         self.lang_file = {}
+
         try:
             new_file = pd.read_csv(self.master_file_path,encoding= 'unicode_escape')
         #Dictionary of books along with its language
@@ -37,11 +39,11 @@ class FileUtils:
             for root, dirs, files in os.walk(self.bfp):
                 print("Parsing directory {} for html files".format(root))
                 for file in files:
-                    if file.endswith(self.HTML_FILE_EXTENSION) and os.stat(os.path.join(root, file)).st_size > 0:
+                    if file.endswith(self.HTML_FILE_EXTENSION) and os.stat(os.path.join(root, file)).st_size > 10000:
                         arr = filename_pattern.search(file)
                         if arr:
                             books_path_dict[arr.group(1) + arr.group(2)] = [file, os.path.join(root, file)]
-                    elif os.stat(os.path.join(root, file)).st_size == 0:
+                    elif os.stat(os.path.join(root, file)).st_size < 10000:
                         print("Empty file found: {}".format(file))
             return books_path_dict
         except:
@@ -58,13 +60,12 @@ class FileUtils:
                 book_data[file_name] = []
                 with open(books_path_dict[file_name][1],encoding='latin-1') as opened_file:
                     file_data = opened_file.read()
-                    if(len(file_data)!=0):
+                    if(len(file_data)>10000):
                         book_data[file_name].append(file_data)
                         print("Filename "+file_name)
                         print("File length "+ str(len(book_data[file_name][0])))
                     else:
                         print("Empty file present")
-                        sys.exit(1)
             return book_data
         except:
             print("Unable to read HTML")
@@ -89,7 +90,7 @@ class FileUtils:
             new_list = []
             new_sent = ""
             for sentence in books:
-                sentence = BeautifulSoup(sentence,features="lxml")
+                sentence = BeautifulSoup(sentence)
                 introduction_doc = nlp(sentence.text)
                 tokens = [token.text for token in introduction_doc]
                 words = [w.lower() for w in tokens]
@@ -139,6 +140,7 @@ class FileUtils:
     def write_feature_file(self,chunk_vector_df):
     #Write the features to a new feature file
         try:
+            
             feat_file = pd.read_csv(self.feature_file_path)
             files = feat_file["bookId-chunkNo"]
             filename_pattern = re.compile(self.FEATURE_FILENAME_PARSE_REGEX)
@@ -148,6 +150,7 @@ class FileUtils:
                 names.append(arr.group(1) + arr.group(2))
             feat_file['filenames']=names
             merged_df = feat_file.merge(chunk_vector_df,left_on='filenames',right_on = chunk_vector_df.index)
+            print(chunk_vector_df)
             merged_df.index = merged_df['bookId-chunkNo']
             merged_df = merged_df.drop("bookId-chunkNo",axis = 1)
             merged_df = merged_df.drop("filenames",axis = 1)
@@ -157,8 +160,6 @@ class FileUtils:
         except:
             print("File already present with the same name. Please delete the file and try again")
             sys.exit(1)
-
-
 
 
 

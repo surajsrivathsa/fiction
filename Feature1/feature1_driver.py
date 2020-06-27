@@ -11,7 +11,7 @@ class Driver:
         self.master_file_path = master_file_path
         self.encoding = encoding
         self.new_feature_file_path = new_feature_file_path
-        self.chunk_size = 3
+        self.chunk_size = 5
     
     def get_book_vec(self):
         gen_utils_obj = feature1_genre_utils.GenreUtils(self.book_file_path,self.chunk_size,self.master_file_path)
@@ -19,8 +19,10 @@ class Driver:
         fileutils_obj = feature1_file_utils.FileUtils(self.book_file_path,self.feature_file_path,self.new_feature_file_path,self.chunk_size,self.master_file_path)
         print("Generated object for file_utils")
         books = fileutils_obj.read_bookpath_and_extract_pgid()
+        print(books.keys())
         print("Retrieved books pgid")
         read_books = fileutils_obj.read_html_files(books)
+        #print(read_books.keys())
         print("Read html files")
         words_books, sentence_books = fileutils_obj.get_preprocessed_books(read_books)
         print("Got the pre-processed books")

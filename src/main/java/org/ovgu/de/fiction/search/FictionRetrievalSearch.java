@@ -181,41 +181,57 @@ public class FictionRetrievalSearch {
 			//create feature vectors below
 			for(Map.Entry<Double, String> global_books:sorted_results_wo_TTR.entrySet()){
 				double [] global_feature = new double[FRConstants.FEATURE_NUMBER_GLOBAL];
-				global_feature[0] = global_books.getKey()*FRConstants.FEATURE_WEIGHT_MORE;
+				global_feature[0] = global_books.getKey()*0;
 				   for(Map.Entry<String, Map<String, double[]>> input_books: books.entrySet()){
 					   if(global_books.getValue().equals(input_books.getKey())){ // match bookId with bookId 
 						   Map<String, double[]> chunk_map = input_books.getValue();
 						     for(Map.Entry<String, double[]> temp_chunk: chunk_map.entrySet()){
-						    	 	 global_feature[1] = temp_chunk.getValue()[FRConstants.TTR_21]*FRConstants.FEATURE_WEIGHT_LESS;
-						    	 	 global_feature[2] = temp_chunk.getValue()[FRConstants.NUM_CHARS_20]*FRConstants.FEATURE_WEIGHT_LEAST;
-						    	 	 global_feature[3] = temp_chunk.getValue()[22];
-						    	 	 global_feature[4] = temp_chunk.getValue()[23];
-						    	 	 global_feature[5] = temp_chunk.getValue()[24];
-						    	 	 global_feature[6] = temp_chunk.getValue()[25];
-						    	 	 global_feature[7] = temp_chunk.getValue()[26];
-						    	 	 global_feature[8] = temp_chunk.getValue()[27];						    	 
-						    	 	 
+						    	 	 global_feature[1] = temp_chunk.getValue()[FRConstants.TTR_21]*0;
+						    	 	 global_feature[2] = temp_chunk.getValue()[FRConstants.NUM_CHARS_20]*0;
+						    	 	 global_feature[3] = temp_chunk.getValue()[22]*1;
+						    	 	 global_feature[4] = temp_chunk.getValue()[23]*1;
+						    	 	 global_feature[5] = temp_chunk.getValue()[24]*1;
+						    	 	 global_feature[6] = temp_chunk.getValue()[25]*1;
+						    	 	 global_feature[7] = temp_chunk.getValue()[26]*1;
+						    	 	 global_feature[8] = temp_chunk.getValue()[27]*1;
+						    	 	 global_feature[9] = temp_chunk.getValue()[28]*1;
+						    	 	 global_feature[10] = temp_chunk.getValue()[29]*1;
+						    	 	 global_feature[11] = temp_chunk.getValue()[30]*1;
+						    	 	 global_feature[12] = temp_chunk.getValue()[31]*1;
+						    	 	 //global_feature[13] = temp_chunk.getValue()[32]*1;
+						    	 	 //global_feature[14] = temp_chunk.getValue()[33]*1;
+						    	 	 //global_feature[15] = temp_chunk.getValue()[34]*1;
+						    	 	 //global_feature[16] = temp_chunk.getValue()[35]*1;
+						    	 	 //global_feature[17] = temp_chunk.getValue()[36]*1;
+						    	 	 //global_feature[18] = temp_chunk.getValue()[37]*1;
+						    	 	 //global_feature[13] = temp_chunk.getValue()[38]*1;
+					    	 	     //global_feature[14] = temp_chunk.getValue()[39]*1;
+						    	 	 //global_feature[15] = temp_chunk.getValue()[40]*1;
+						    	 	 //global_feature[16] = temp_chunk.getValue()[41]*1;	
+						    	 	 //global_feature[13] = temp_chunk.getValue()[32]*1;
+						    	 	 //global_feature[14] = temp_chunk.getValue()[33]*1;
+						    	 	 //global_feature[15] = temp_chunk.getValue()[34]*1;
+						    	 	 //global_feature[16] = temp_chunk.getValue()[35]*1;						    	 	 
 						    	 			
 						     }
 						   
 					   }
 
 				   }
-				System.out.println("Before FOR");
-				System.out.println("===============");
-				for (int i=0; i<9; i++)
-					System.out.println(global_feature[i]);
-				if(!global_books.getValue().equals(qryBookId))// dont_add_query_vector_which_is_specially_created
+
+				//if(!global_books.getValue().equals(qryBookId))// dont_add_query_vector_which_is_specially_created
 				global_corpus.put(global_books.getValue(),global_feature);
 			}
 			
 			//qry_vector = [0.85, 0.10, 0.05]
-			double [] global_qry_vector = new double[FRConstants.LEAVE_LAST_K_ELEMENTS_OF_FEATURE+1];
-			global_qry_vector[0] = FRConstants.FEATURE_WEIGHT_MORE;
-			global_qry_vector[1] = FRConstants.FEATURE_WEIGHT_LESS;
-			global_qry_vector[2] = FRConstants.FEATURE_WEIGHT_LEAST;
+			//double [] global_qry_vector = new double[FRConstants.LEAVE_LAST_K_ELEMENTS_OF_FEATURE+1];
+			//global_qry_vector[0] = FRConstants.FEATURE_WEIGHT_MORE;
+			//global_qry_vector[1] = FRConstants.FEATURE_WEIGHT_LESS;
+			//global_qry_vector[2] = FRConstants.FEATURE_WEIGHT_LEAST;
+
 			
-			global_corpus.put(qryBookId, global_qry_vector); // add the global_query to corpus
+					
+			//global_corpus.put(qryBookId, global_qry_vector); // add the global_query to corpus
 			
 			
 			sorted_results_mit_TTR = simUtils.getSingleNaiveSimilarityDummy(global_corpus, qryBookId, FRConstants.TOP_K_RESULTS, FRConstants.SIMILARITY_L2);
@@ -223,6 +239,7 @@ public class FictionRetrievalSearch {
 			System.out.println("");
 			System.out.println("For Global Feature based Similarity, QBE Book = " + qryBookId + " printing top " + FRConstants.TOP_K_RESULTS + " results");
 			sorted_results_mit_TTR = printTopKResults(sorted_results_mit_TTR);
+			System.out.println("================== End of explanation ===========================");
 			return sorted_results_mit_TTR;
 			
 		}
