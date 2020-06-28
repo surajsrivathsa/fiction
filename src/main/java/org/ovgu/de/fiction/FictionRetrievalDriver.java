@@ -58,8 +58,8 @@ public class FictionRetrievalDriver {
 		//@suraj: Adding feature 3 function
 		//extract_Feature3_linux();
 
-		/* 4> Query 
-		String query_book = "pg11";
+		// 4> Query 
+		String query_book = "pg16";
 		int len = FRConstants.EMO_WEIGHT.length;
 		
 		for(int i = 0; i < len; i++)

@@ -20,7 +20,7 @@ public interface FRConstants {
 	public static final String STOPWORD_FICTION = "stopword.fiction";
 	public static final String LUCENE_FEATURE_FILE = "file.bagofwords.lucene.feature";
 
-	public static final String REP_FN = "C:\\OvGU_DKe\\Project\\GutenbergDataset\\testing_epubs_extracted\\";
+	public static final String REP_FN = "/Users/surajshashidhar/git/fiction/Short_epubs_extracted/";
 
 	// adding for python program feature3 emotion
 	// adding for python program
@@ -159,7 +159,7 @@ public interface FRConstants {
 
 	public static final String COMMA = ",";
 
-	public static final String FILE_HEADER = "bookId-chunkNo,F0,F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11,F12,F13,F14,F15,F16,F17,F18,F19,F20,F21,F22,F23, F24,F25,F26,F27,F28,F29,F30,F31,F32,F33,F34,F35,F36,F37,F38,F39,F40,F41,F42,F43,F44,F45,F46,F47,F48,F49,F50";
+	public static final String FILE_HEADER = "bookId-chunkNo,F0,F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11,F12,F13,F14,F15,F16,F17,F18,F19,F20,F21,F22,F23"; //, F24,F25,F26,F27,F28,F29,F30,F31,F32,F33,F34,F35,F36,F37,F38,F39,F40,F41,F42,F43,F44,F45,F46,F47,F48,F49,F50";
 
 	public static final String FILE_HEADER_RES_CSV = "bookId_RowNum,F0,F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11,F12,F13,F14,F15,F16,F17,F18,F19,F20,F21,F22,F23, F24,F25,F26,F27,F28,F29,F30,F31,F32,F33,F34,F35,F36,F37,F38,F39,F40,F41,F42,F43,F44,F45,F46,F47,F48,F49,F50,Class";
 
@@ -257,7 +257,7 @@ public interface FRConstants {
 	public static final String SIMI_EXCLUDE_TTR_NUMCHARS = "EX";
 
 	public static final double SIMILARITY_CUTOFF = 0.7;
-	public static final int FEATURE_NUMBER = 51;
+	public static final int FEATURE_NUMBER = 24;
 	public static final int FEATURE_NUMBER_LOCAL = 21;
 	public static final int FEATURE_NUMBER_GLOBAL = 31;
 	public static final double FEATURE_WEIGHT_MORE = 0.2;
