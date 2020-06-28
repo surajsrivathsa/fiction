@@ -1,0 +1,8 @@
+argparse==1.4.0
+pandas==1.0.3
+spacy==2.2.4
+bs4==0.0.1
+gensim==3.8.3
+sklearn
+nltk==3.5
+nltk.download('punkt')
