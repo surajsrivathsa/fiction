@@ -7,8 +7,8 @@
 *.classpath
 *.js
 *.arff
-*.pdf
-*.json
+
+
 *.png
 *.class
 *.pyc
@@ -28,3 +28,4 @@ Final_Booklist.numbers
 *.pkl
 *.tar.gz
 *.gz
+/Features_extracted_milestone4.csv
