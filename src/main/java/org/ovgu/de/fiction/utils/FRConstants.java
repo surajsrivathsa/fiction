@@ -248,5 +248,8 @@ public interface FRConstants {
 	public static final String EPUB_PATH ="web.ctx.path"; 
 	public static final String EVENT_HEADER = "Genre,Book-ID,SelectedBook-ID";
 	
-
+   //Lucene
+	public static final String SEARCH_ENGINE_TYPE_SIMFIC = "SIMFIC";
+	public static final String SEARCH_ENGINE_TYPE_LUCENE = "LUCENE";
+	public static final String LUCENE_FEATURE_FILE = "file.bagofwords.lucene.feature";
 }

@@ -30,10 +30,10 @@ public class ServiceController {
 	@RequestMapping(path = "/simbooks/{queryBookId}/{topK}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	//@GetMapping(produces = "application/json")
-	public BookList simbooks(@PathVariable String queryBookId, @PathVariable String topK) throws Exception {
+	public BookList simbooks(@PathVariable String queryBookId, @PathVariable String topK, @PathVariable String system) throws Exception {
     	System.out.println("topK:" + topK );
     	BookList data = new BookList();
-		data = searchService.displayBook(queryBookId,topK);
+		data = searchService.displayBook(queryBookId,topK, system);
 		return data;
 	}
 	

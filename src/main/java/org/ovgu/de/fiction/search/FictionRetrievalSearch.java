@@ -14,29 +14,39 @@ import java.util.TreeMap;
 
 import org.ovgu.de.fiction.model.TopKResults;
 import org.ovgu.de.fiction.utils.FRConstants;
+import org.ovgu.de.fiction.utils.FRGeneralUtils;
 import org.ovgu.de.fiction.utils.FRSimilarityUtils;
 
 
 
 public class FictionRetrievalSearch {
 
+	private static String pathToBOW =  "";
+    private static HashMap<String, Double[]> bow_featuremap = new HashMap<String, Double[]>();
+  
 	public static TopKResults findRelevantBooks(String qryBookNum, String featureCsvFile, String PENALISE, String ROLLUP, 
-			String TTR_CHARS,int topKRes,String similarity,int configindex) throws IOException {
-		Map<String, Map<String, double[]>> books = getChunkFeatureMapForAllBooks(featureCsvFile);
-		for (Entry<String, Map<String, double[]>> queryChunk : books.entrySet())
-		{
-		//	System.out.println(queryChunk.getKey());
-		}
-			
-			
-		SortedMap<Double, String> results_topK = compareQueryBookWithCorpus(qryBookNum, books, PENALISE, ROLLUP, TTR_CHARS,topKRes,similarity, configindex);
+			String TTR_CHARS,int topKRes,String similarity, String search_engine_type, int configindex) throws IOException {
 		
 		TopKResults topK = new TopKResults();
-		topK.setBooks(books);
-		topK.setResults_topK(results_topK);
-		return topK;
-	}
+		
+		if(search_engine_type.equals(FRConstants.SEARCH_ENGINE_TYPE_SIMFIC)) {
+			System.out.println("We are using simfic search system");
+			Map<String, Map<String, double[]>> books = getChunkFeatureMapForAllBooks(featureCsvFile);
 
+			SortedMap<Double, String> results_topK = compareQueryBookWithCorpus(qryBookNum, books, PENALISE, ROLLUP, TTR_CHARS,topKRes,similarity,configindex);
+			
+			topK.setBooks(books);
+			topK.setResults_topK(results_topK);
+		}
+		
+		else {
+			System.out.println("We are using lucene search system");
+			topK = bagofwordsSearch( qryBookNum);			
+		}
+		
+		return topK;
+		
+	}
 	private static Map<String, Map<String, double[]>> getChunkFeatureMapForAllBooks(String featureCsvFile)
 			throws IOException, FileNotFoundException {
 		String line = "";
@@ -541,4 +551,93 @@ private static SortedMap<Double, String> compareQueryBookWithCorpusNew(String qr
 	
 	
 }
+//Read LUCENE File
+private static void preprocessBOWfile() throws IOException {
+  	BufferedReader br = new BufferedReader(new FileReader(pathToBOW));
+      String line = "";
+      int header_flag = 1;  
+      String bookid = "";
+      
+      while ((line = br.readLine()) != null){
+      	if(header_flag == 0) {
+      		String[] data = line.split(",");
+      		Double[] bow_feature = new Double[51];
+      		bookid = data[0];
+      		
+      		//from column F0 to F50,--> 51 column leaving out the first column as it has pgid
+      		for(int col = 1; col < FRConstants.FEATURE_NUMBER + 1; col++) 
+      			bow_feature[col-1] = Double.parseDouble(data[col]);
+      		
+      		bow_featuremap.put(bookid, bow_feature);
+      		//System.out.println(Arrays.toString(data));
+      	}
+      	else
+      		header_flag = 0;        	
+      }
+      
+      //printing the read file
+      /*
+      bow_featuremap.entrySet().forEach(row->{
+          System.out.println(row.getKey() + " " + Arrays.toString(row.getValue()));  
+       });
+       */
+       
+      
+      br.close();
+      return ;
+  }
+
+	//Calculate L2 similarity
+ private static double calculateL2Similarity(Double[] query_feature, Double[] other_book_feature) {
+  	
+  	double dist_meas_values = 0.0;
+
+		for (int i = 0; i < query_feature.length; i++) 
+		{
+			dist_meas_values = dist_meas_values + Math.pow(query_feature[i] - other_book_feature[i], 2); 
+		}
+
+		dist_meas_values = Math.sqrt(dist_meas_values);
+		dist_meas_values = 1 / (1 + dist_meas_values);
+			
+		return dist_meas_values;
+  }
+  
+  //Search retrieval for BOW
+  private static TopKResults bagofwordsSearch(String query) throws IOException {
+  	TopKResults topKResults = new TopKResults();
+  	
+  	SortedMap<Double, String> sorted_results = new TreeMap<Double, String>(Collections.reverseOrder());
+  	
+  	pathToBOW = FRGeneralUtils.getPropertyVal(FRConstants.LUCENE_FEATURE_FILE);
+		
+  	try {
+			preprocessBOWfile();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("Cannot read the Lucene index file");
+			System.exit(1);
+		}
+  	
+		Map<String, Double[]> valueMap = bow_featuremap; //FRFileOperationUtils.readCsvForBOW();
+
+		// Calculate l2 similarity
+		for (String book : valueMap.keySet()) {
+			Double l2Similarity = calculateL2Similarity(valueMap.get(query), valueMap.get(book));
+			sorted_results.put(l2Similarity, book);
+		}
+
+		topKResults.setResults_topK(sorted_results);
+
+		//Printing the results
+		/*
+		topKResults.getResults_topK().entrySet().forEach(row->{
+          System.out.println(row.getKey() + " " + row.getValue());  
+       });
+       */
+  	
+  	return topKResults;
+  }
 }
+

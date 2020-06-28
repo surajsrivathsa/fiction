@@ -73,7 +73,7 @@ public class FictionRetrievalDriver extends SpringBootServletInitializer {
 
 		TopKResults topKResults = FictionRetrievalSearch.findRelevantBooks(qryBookNum, FEATURE_CSV_FILE,
 				FRConstants.SIMI_PENALISE_BY_CHUNK_NUMS, FRConstants.SIMI_ROLLUP_BY_ADDTN,
-				FRConstants.SIMI_INCLUDE_TTR_NUMCHARS, FRConstants.TOP_K_RESULTS, FRConstants.SIMILARITY_L2,FRConstants.CONFIGINDEX);
+				FRConstants.SIMI_INCLUDE_TTR_NUMCHARS, FRConstants.TOP_K_RESULTS, FRConstants.SIMILARITY_L2,FRConstants.SEARCH_ENGINE_TYPE_LUCENE,FRConstants.CONFIGINDEX);
 		System.out.println("Books from AI :" + topKResults.getResults_topK());
 	
 		/*
@@ -81,9 +81,9 @@ public class FictionRetrievalDriver extends SpringBootServletInitializer {
 		 * 
 		 */
 
-		InterpretSearchResults interp = new InterpretSearchResults();
+		//InterpretSearchResults interp = new InterpretSearchResults();
 		//interp.performStatiscalAnalysis(topKResults);
-		interp.performStatiscalAnalysisUsingRegression(topKResults,4, FRConstants.SIMI_INCLUDE_TTR_NUMCHARS);
+		//interp.performStatiscalAnalysisUsingRegression(topKResults,4, FRConstants.SIMI_INCLUDE_TTR_NUMCHARS);
 		// findLuceneRelevantBooks(qryBookNum);
 
 	}

@@ -35,10 +35,9 @@ public class SearchServices {
 
 	
 	
-	public BookList displayBook(String queryBookId, String topK) throws Exception {
+	public BookList displayBook(String queryBookId, String topK, String system) throws Exception {
 		List<BookUI> simBooks = new ArrayList<BookUI>();
 		BookList bookList = new BookList();
-	
 		TIME= System.currentTimeMillis();
 		if (queryBookId == null || queryBookId.trim().equals("")) {
 			return bookList;
@@ -58,7 +57,13 @@ public class SearchServices {
 			int TOP_K = Integer.parseInt(topK);
 			TopKResults topKResults = FictionRetrievalSearch.findRelevantBooks(queryBookId, FEATURE_CSV_FILE,
 						FRConstants.SIMI_PENALISE_BY_CHUNK_NUMS, FRConstants.SIMI_ROLLUP_BY_ADDTN,
-						FRConstants.SIMI_INCLUDE_TTR_NUMCHARS, TOP_K, similarity, FRConstants.CONFIGINDEX);
+						FRConstants.SIMI_INCLUDE_TTR_NUMCHARS, TOP_K, similarity,FRConstants.SEARCH_ENGINE_TYPE_SIMFIC, FRConstants.CONFIGINDEX);
+			
+			if(system.trim().equals("lucene"))
+			{
+				
+			}
+			else {
 
 			InterpretSearchResults interp = new InterpretSearchResults();
 
@@ -71,7 +76,7 @@ public class SearchServices {
 				} catch (Exception e) {
 					throw new Exception("analysis cannot be done!");
 				}
-
+			}
 				int rank = 0;
 				for (Map.Entry<Double, String> res : topKResults.getResults_topK().entrySet()) {
 
