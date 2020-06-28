@@ -71,8 +71,8 @@ public class InterpretSearchResults {
 		Map<String,Map<String,String>> stats = getStatistics(FRGeneralUtils.getPropertyVal("file.results.arff"));
 		//rankFeatures(FRGeneralUtils.getPropertyVal("file.results.arff"));
 		
-		//Regression r = new Regression();
-		//r.runLR();
+		Regression r = new Regression();
+		r.runLR();
 		
 		return stats;
 		

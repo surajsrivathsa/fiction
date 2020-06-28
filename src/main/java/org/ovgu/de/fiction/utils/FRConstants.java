@@ -18,8 +18,39 @@ public interface FRConstants {
 	public static final String CHUNK_SIZE_FOR_TTR = "chunk.ttr.size";
 	public static final String OUT_FOLDER_TOKENS = "folder.out.chunks";
 	public static final String STOPWORD_FICTION = "stopword.fiction";
+	public static final String LUCENE_FEATURE_FILE = "file.bagofwords.lucene.feature";
 
-	public static final String REP_FN = "/Users/surajshashidhar/git/fiction/Batch10/";
+	public static final String REP_FN = "C:\\OvGU_DKe\\Project\\GutenbergDataset\\testing_epubs_extracted\\";
+
+	// adding for python program feature3 emotion
+	// adding for python program
+	public static final String SCRIPT_TYPE = "script.type";
+	public static final String SCRIPT_NAME = "script.name";
+	public static final String PYTHON_ENVIRONMENT_NAME = "python.environment.name";
+	public static final String FEATURE_FILE_LOCATION = "feature_file_path";
+	public static final String BOOK_FILE_PATH = "book_file_path";
+	public static final String EMOTICON_FILE_PATH = "emoticon_file_path";
+	public static final String FEATURE_FIELDS = "feature_fields";
+	public static final String LANGUAGE = "language";
+	public static final String ENCODING = "encoding";
+	public static final String BOOK_START_PERCENTAGE = "book_start_percentage";
+	public static final String BOOK_END_PERCENTAGE = "book_end_percentage";
+	public static final String SIMILARITY_TYPE = "similarity_type";
+	public static final String NEW_FEATURE_FILE_LOCATION = "new_feature_file_path";
+	public static final String BOOK_LIST_FILE_PATH = "book_list_file_path";
+	public static final String LOGGING_FLAG = "logging_flag";
+	public static final String PYTHON_CODE_FILE_PATH = "python_code_file_path";
+	public static final String IS_WINDOWS = "is_windows";
+	
+	// adding for feature1 python program
+	public static final String FEATURE1_BASH_LOCATION = "feature1_bash_path";
+	public static final String FEATURE1_FILE_LOCATION = "feature1_file_path";
+	public static final String BOOK1_FILE_PATH = "book1_file_path";
+	public static final String ENCODING1 = "encoding1";
+	public static final String MASTER_FILE_PATH = "master_file_path";
+	public static final String NEW_FEATURE1_FILE_LOCATION = "new_feature1_file_path";
+	public static final String PYTHON_ENVIRON = "my_environ";
+	public static final String PYTHON_CODE_PATH = "my_code_path";
 
 	/* regex */
 	public static final String REGEX_ALL_PUNCTUATION = "[\\s\"\\.\\,\\?\\!\\:\\;\\'-]";
@@ -33,6 +64,7 @@ public interface FRConstants {
 	public static final String REGEX_TRAILING_SPACE = "^\\s+|\\s+$";
 	public static final String P_TAG = "<p>";
 	public static final String S_TAG = "<s>";
+
 
 	/* Stanford api related */
 	public static final String STNFRD_LEMMA_ANNOTATIONS_EN = "tokenize,ssplit,pos,lemma,ner"; // "tokenize,ssplit,pos,lemma,ner";
@@ -127,11 +159,9 @@ public interface FRConstants {
 
 	public static final String COMMA = ",";
 
-	public static final String FILE_HEADER = "bookId-chunkNo,F0,F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11,F12,F13,F14,F15,F16,F17,F18,F19,F20,F21,F22,F23";
-	//,F24,F25,F26,F27,F28,F29,F30,F31,F32,F33,F34,F35,F36,F37,F38,F39,F40,F41,F42,F43,F44,F45,F46,F47,F48,F49,F50";
+	public static final String FILE_HEADER = "bookId-chunkNo,F0,F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11,F12,F13,F14,F15,F16,F17,F18,F19,F20,F21,F22,F23, F24,F25,F26,F27,F28,F29,F30,F31,F32,F33,F34,F35,F36,F37,F38,F39,F40,F41,F42,F43,F44,F45,F46,F47,F48,F49,F50";
 
-	public static final String FILE_HEADER_RES_CSV = "bookId_RowNum,F0,F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11,F12,F13,F14,F15,F16,F17,F18,F19,F20,F21,F22,F23,Class";
-	//F24,F25,F26,F27,F28,F29,F30,F31,F32,F33,F34,F35,F36,F37,F38,F39,F40,F41,F42,F43,F44,F45,F46,F47,F48,F49,F50,Class";
+	public static final String FILE_HEADER_RES_CSV = "bookId_RowNum,F0,F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11,F12,F13,F14,F15,F16,F17,F18,F19,F20,F21,F22,F23, F24,F25,F26,F27,F28,F29,F30,F31,F32,F33,F34,F35,F36,F37,F38,F39,F40,F41,F42,F43,F44,F45,F46,F47,F48,F49,F50,Class";
 
 	public static final String COORD_CONJUNCTION = "CC";
 
@@ -215,6 +245,8 @@ public interface FRConstants {
 	public static final String SIMILARITY_L1 = "L1";
 
 	public static final String SIMILARITY_L2 = "L2";
+	public static final String SEARCH_ENGINE_TYPE_SIMFIC = "SIMFIC";
+	public static final String SEARCH_ENGINE_TYPE_LUCENE = "LUCENE";
 
 	public static final String SIMI_PENALISE_BY_CHUNK_NUMS = "LEN";
 	public static final String SIMI_PENALISE_BY_NOTHING = "NOT";

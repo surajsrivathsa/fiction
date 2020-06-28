@@ -25,4 +25,5 @@ Final_Booklist.numbers
 *.vscode
 *.csv
 *.zip
-
+*.pkl
+/archive.tar.gz
