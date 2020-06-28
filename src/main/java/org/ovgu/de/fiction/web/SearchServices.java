@@ -57,7 +57,7 @@ public class SearchServices {
 
 			int TOP_K = Integer.parseInt(topK);
 			TopKResults topKResults = FictionRetrievalSearch.findRelevantBooks(queryBookId, FEATURE_CSV_FILE,
-						FRConstants.SIMI_PENALISE_BY_NOTHING, FRConstants.SIMI_ROLLUP_BY_ADDTN,
+						FRConstants.SIMI_PENALISE_BY_CHUNK_NUMS, FRConstants.SIMI_ROLLUP_BY_ADDTN,
 						FRConstants.SIMI_INCLUDE_TTR_NUMCHARS, TOP_K, similarity, FRConstants.CONFIGINDEX);
 
 			InterpretSearchResults interp = new InterpretSearchResults();
