@@ -18,6 +18,7 @@ public interface FRConstants {
 	public static final String CHUNK_SIZE_FOR_TTR = "chunk.ttr.size";
 	public static final String OUT_FOLDER_TOKENS = "folder.out.chunks";
 	public static final String STOPWORD_FICTION = "stopword.fiction";
+	public static final String LUCENE_FEATURE_FILE = "file.bagofwords.lucene.feature";
 	
 	//@suraj: added below constants and linked to file path in config.properties
 	public static final String GERMAN_POLARITY_FILE = "file.german.polarity";
@@ -184,6 +185,8 @@ public interface FRConstants {
 	public static final String SIMILARITY_L1 = "L1";
 
 	public static final String SIMILARITY_L2 = "L2";
+	public static final String SEARCH_ENGINE_TYPE_SIMFIC = "SIMFIC";
+	public static final String SEARCH_ENGINE_TYPE_LUCENE = "LUCENE";
 	
 	public static final String SIMI_PENALISE_BY_CHUNK_NUMS="LEN";
 	public static final String SIMI_PENALISE_BY_NOTHING="NOT";

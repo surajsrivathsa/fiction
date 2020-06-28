@@ -29,7 +29,7 @@ class TopicUtils:
         self.german_nlp = None
         self.logging_flag = logging_flag
         self.log = log
-        self.mallet_path = "/usr/local/opt/mallet-2.0.8/bin/mallet"
+        self.mallet_path = constants.FILEPATH_MALLET_LIB
         self.stopwords = set()
         #update this path
         print(self.mallet_path) 
@@ -78,6 +78,10 @@ class TopicUtils:
         """
         return;
 
+    """
+    We extend the stopword list with our own set of stopwords that were extracted from character maps.
+    Without this topic models would give character names in topics.
+    """
 
     def extend_stopwords_list(self, misc=[]):
         spacy_english_stopwords = spacy.lang.en.stop_words.STOP_WORDS
@@ -91,17 +95,14 @@ class TopicUtils:
         return;
 
     """
-    fnc: get_sentencetokens_and_remove_stopwords
-    Input: book text (Ex: "It is cleared out. The steamer is ready now."), language string, book start and end percentages
-    Output: sentence dictionary Ex: {s1: ["clear", "out"], s2: ["steamer", "ready"]}
-
-    Description: Take a text of entire book and first sentence tokenize them. Select only first and last N percentage of the tokenized sentences
-    as per book_start and book_end percentage. remove stopwords and lemmatize each token. Return the final dictionary and also index where 
-    bookstart and bookend is partitioned. We will also filter out any texts that do not have some minimum number of start and end sentences according 
-    to MINIMUM_SENTENCE_LIMIT variable. Again while applying lemmatizer and stopword removal we use the corresponding NLP pipeline for
-    each language text using variable lang. 
-
-    Extension: In future, if more languages are added we can change this function and add to existing if/else code another language processing.
+    For each book do the following
+    a) Check if the book is empty or too small, if yes then discard it
+    b) Get appropriate slice of tokens from book start and end according to the percentage
+    c) Remove the stopwords from our extended stopwords set ---> remove_stopwords
+    d) Estimate the bigram/trigram threshold dynamically using length of tokens ---> get_dynamic_bigram_param
+    e) Find bigrams/trigrams ---> make_bigrams
+    f) Lemmatize the tokens and filter out all the tokens taht are NOT Nouns and Verbs. Including adverbs/adjectives etc would distort topic models ---> lemmatization
+    g) Return book start and end lemmatized tokens
     """
     # add book start and book end functionality here itself
 
@@ -305,9 +306,11 @@ class TopicUtils:
                     self.log.info("Length of book start and end bigrams: {} , {}".format(len(book_start_data_words_bigrams), len(book_end_data_words_bigrams)))
         
         return [book_start_data_lemmatized, book_end_data_lemmatized];
-    
+
+
     def remove_stopwords(self,texts):   
         return [[word for word in simple_preprocess(str(doc)) if word not in self.stopwords] for doc in texts]
+
 
     def make_bigrams(self,texts, bigram_mod):
         return [bigram_mod[doc] for doc in texts]
@@ -353,7 +356,9 @@ class TopicUtils:
             
         return bigram_threshold;
     
-
+    """
+    For every lemmatized list create the corpus and index(id2word) to be used in topic models
+    """
     def create_corpus_per_book(self, data_lemmatized):
         # Create Dictionary
         id2word = corpora.Dictionary(data_lemmatized)
@@ -366,16 +371,27 @@ class TopicUtils:
         
         return [id2word, texts, corpus]
 
+    """
+    Iterate over each books raw text and extract its corpus, index, lemmatized list which would be used in topic models
+    """
 
     def get_corpus_dict( self, books_text_dict): 
-        books_sentences_dict = {}      
+        books_sentences_dict = {}
+        counter = 0; 
         for pgid, lst in books_text_dict.items():
             text = lst[0]
             lang = lst[1]
             bname = lst[2]
+
+            print("Starting extraction for book number and id: {} and {}".format(counter, pgid))
+            if(self.logging_flag):
+                self.log.info("Starting extraction for book number and id: {} and {}".format(counter, pgid))
+
             book_start_lemmatized_token_list, book_stop_lemmatized_token_list = self.get_sentencetokens_and_remove_stopwords(text, lang)
             if(book_start_lemmatized_token_list and book_stop_lemmatized_token_list):
                 print("Sentences extracted for {} having language {}".format(pgid, lang))
+                if(self.logging_flag):
+                    self.log.info("Sentences extracted for {} having language {}".format(pgid, lang))
                 
                 
                 book_start_id2word, book_start_texts, book_start_corpus = self.create_corpus_per_book(book_start_lemmatized_token_list)
@@ -389,9 +405,11 @@ class TopicUtils:
             else:
                 print("Skipping book {} as it has less than minimum start or end sentences".format(pgid))
                 print( "========= ========== ============ ============= ")
+                if(self.logging_flag):
+                    self.log.info("Skipping bookid {}  and number {} as it has less than minimum start or end sentences".format(pgid, counter))
                 print()
             
-            
+            counter = counter + 1
         
         return books_sentences_dict;
         
@@ -409,10 +427,19 @@ class TopicUtils:
             self.log.info(df.head(20))
         return df;
 
-
+    """
+    For each book we will generate the topics twice separately(book start and end) . We do the following
+    a) iterate over each book and extract its indices to variables of corpus/index/lemmatized list
+    b) Even after so much cleaning sometimes the bigram counts are too low hence no topics would be formed, this results
+        in an error, to resolve this filter again using length of the bigram/trigram index id2word.
+    c) Call Mallet for topic modelling with appropriate parameters.
+    d) Process the generated topics appropriately and put them in another dict against their book id for later processing.
+    """
+    
     def generate_topics(self, books_sentences_dict):
         topics_dict = {}
         lst = []
+        counter = 0
         for key, val in books_sentences_dict.items():
             lst = []
             bname = val[0]
@@ -425,10 +452,29 @@ class TopicUtils:
             book_stop_texts = val[7]
             book_stop_corpus = val[8]
 
+            print("Generating topics for bookid and book number: {} and {}".format(key, counter))
+            if(self.logging_flag):
+                self.log.info("Generating topics for bookid and book number: {} and {}".format(key, counter))
+            
+            """
+            Sometimes even after filtering out empty books, some weird books seeps through which has no bigrams/trigrams.
+            It results in below error. So we ignore such books using continue and won't process them further
+            raise ValueError("cannot compute LDA over an empty collection (no terms)")
+            ValueError: cannot compute LDA over an empty collection (no terms)
+            """
+            if(len(book_stop_id2word) == 0 or len(book_start_id2word) == 0):
+                print("Ignoring bookid and number due to emptyness of its id2word bigram trigram: {} and {}".format(key, counter))
+                if(self.logging_flag):
+                    self.log.info("Ignoring bookid and number due to emptyness of its id2word bigram trigram: {} and {}".format(key, counter))
+                continue
+
             start = time.clock()
             
-            book_start_ldamallet = gensim.models.wrappers.LdaMallet(self.mallet_path, corpus=book_start_corpus, num_topics=5, id2word=book_start_id2word, alpha = 10)
-            book_stop_ldamallet = gensim.models.wrappers.LdaMallet(self.mallet_path, corpus=book_stop_corpus, num_topics=5, id2word=book_stop_id2word, alpha = 10)
+            """
+            We add random seed for reproducability, increase workers to 8 for more faster processing and do 2k iterations
+            """
+            book_start_ldamallet = gensim.models.wrappers.LdaMallet(self.mallet_path, corpus=book_start_corpus, num_topics= constants.NUM_TOPICS, id2word=book_start_id2word, alpha = constants.ALPHA, iterations = constants.ITERATIONS, random_seed = constants.RANDOM_SEED, workers = constants.WORKERS)
+            book_stop_ldamallet = gensim.models.wrappers.LdaMallet(self.mallet_path, corpus=book_stop_corpus, num_topics= constants.NUM_TOPICS, id2word=book_stop_id2word, alpha = constants.ALPHA, iterations = constants.ITERATIONS, random_seed=constants.RANDOM_SEED, workers = constants.WORKERS)
             
             # Show Topics
             pprint(book_start_ldamallet.show_topics(num_topics=1000, formatted=False))
@@ -459,6 +505,11 @@ class TopicUtils:
             elapsed = time.clock()
             elapsed = elapsed - start
             print("Time consumed is {}".format(elapsed))
+
+            if(self.logging_flag):
+                self.log.info("Time consumed is {}".format(elapsed))
+
+            counter = counter + 1
         
         return topics_dict;
 

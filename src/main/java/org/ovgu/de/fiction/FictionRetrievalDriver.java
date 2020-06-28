@@ -46,9 +46,14 @@ public class FictionRetrievalDriver {
 		//List<BookDetails> features = generateOtherFeatureForAll();
 		System.out.println("Time taken for feature extraction and chunk generation (min)-" + (System.currentTimeMillis() - start) / (1000 * 60));
 		start = System.currentTimeMillis();
-		/**/
+		/*
+		TopKResults topKResults = FictionRetrievalSearch.bagofwordsSearch("pg1155", 10);
 		
-
+		for (Double similarity : topKResults.getResults_topK().keySet()) {
+			System.out.println("Book id: " + topKResults.getResults_topK().get(similarity) + " similarity score: " + similarity);
+		}
+		*/
+		
 		/* 3> Write features to CSV - one time */
 	
 		/* Commenting below block as i needed to extract only html output. Un comment when required*/
@@ -100,11 +105,11 @@ public class FictionRetrievalDriver {
 				"pg2684Galsw4", "pg4765Galsw3", "pg2148EdgarPoe2", "pg2150EdgarPoe4", "pg2149EdgarPoe3"};
 		
 		
-		 
+		 */
 		
 		
 		
-		String[] query_books = {"pg108", "pg2701"};//, "pg2701", "pg766", "pg1342", "pg158","pg1155",  "pg1400", "pg730"};
+		String[] query_books = { "pg2701", "pg108", "pg98"};//, "pg2701", "pg766", "pg1342", "pg158","pg1155",  "pg1400", "pg730"};
 		
 		for(int i = 0; i < query_books.length; i++)
 		{
@@ -114,24 +119,35 @@ public class FictionRetrievalDriver {
 			
 			TopKResults topKResults = FictionRetrievalSearch.findRelevantBooks(qryBookNum, FEATURE_CSV_FILE, 
 					FRConstants.SIMI_PENALISE_BY_CHUNK_NUMS, FRConstants.SIMI_ROLLUP_BY_ADDTN, 
-					FRConstants.SIMI_INCLUDE_TTR_NUMCHARS,FRConstants.TOP_K_RESULTS,FRConstants.SIMILARITY_L2);
-					
+					FRConstants.SIMI_INCLUDE_TTR_NUMCHARS,FRConstants.TOP_K_RESULTS,FRConstants.SIMILARITY_L2, 
+					FRConstants.SEARCH_ENGINE_TYPE_LUCENE);
 			
-			InterpretSearchResults interp = new InterpretSearchResults();
+			int topk_results = 25;
+			System.out.println("Lucene search results for the book " + qryBookNum);
+			System.out.println(" ======== ====================== ============ ");
+			for (Double similarity : topKResults.getResults_topK().keySet()) {
+				topk_results--;
+				System.out.println("Rank: " + (topk_results-25) + " | Book id: " + topKResults.getResults_topK().get(similarity) + " | similarity score: " + similarity);
+				if(topk_results <= 0)
+					break;
+			}
+			System.out.println("");
+			
+			//InterpretSearchResults interp = new InterpretSearchResults();
 			//interp.performStatiscalAnalysis(topKResults, qryBookNum);
 			
-			//@suraj: InterpretSearchResults interp = new InterpretSearchResults();
+			//InterpretSearchResults interp = new InterpretSearchResults();
 			//interp.performStatiscalAnalysis(topKResults);
-			//@suraj: 
-			interp.performStatiscalAnalysisUsingRegression(topKResults, 0, FRConstants.SIMI_INCLUDE_TTR_NUMCHARS);
+			
+			//interp.performStatiscalAnalysisUsingRegression(topKResults, 0, FRConstants.SIMI_INCLUDE_TTR_NUMCHARS);
 			//findLuceneRelevantBooks(qryBookNum);
 			
 		}
 
-		*/
+		
 		
 		//findLuceneRelevantBooks(qryBookNum);
-		
+		/*
 		String[] query_books = {"crime", "hour", "business", "manner", "murder" , "reason" ,"theory" , "investigation", "side", "arrest"};//, "pg2701", "pg766", "pg1342", "pg158","pg1155",  "pg1400", "pg730"};
 		String[] result_books = {"crime", "hour", "business", "manner", "murder" , "reason" ,"theory" , "investigation", "side", "arrest", "beast", "reason"};
 		//String[] result_books = {"beast", "reason", "murderous", "hand", "finger", "bed", "game", "manners", "evidence", "protection"};
@@ -152,6 +168,7 @@ public class FictionRetrievalDriver {
 		//Palmetto.main(palmetto_aruments);
 		long end = System.currentTimeMillis();
 		System.out.println((end-start) * 1.0 /1000);
+		*/
 	}
 
 	public static List<BookDetails> generateOtherFeatureForAll() throws IOException {

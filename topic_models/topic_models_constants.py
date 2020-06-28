@@ -9,6 +9,11 @@ FILE_PATH_SIMILARITY = os.path.join(os.getcwd(), "simialrity_milestone3_english.
 FILE_PATH_LOG = os.path.join(os.getcwd(), 'SIMFIC_2.0_topic_models_Batch1_milestone4.log')
 FILE_MODE = "w"
 FILE_PATH_FEATURES = os.path.join(os.getcwd(), "feature3_vectors_milestone3_english.csv")
+FILE_PATH_SERIALIZED_SENTENCE_DICT = os.path.join(os.getcwd(), "books_sentences_dict.pkl")
+FILE_PATH_SERIALIZED_TOPICS_DICT = os.path.join(os.getcwd(), "topics_dict.pkl")
+FILE_PATH_JSON_TOPICS_DICT = os.path.join(os.getcwd(), "topics_dict.json")
+FILE_PATH_CSV_TOPICS_DF = os.path.join(os.getcwd(), "topics_df.csv")
+FILEPATH_MALLET_LIB = "/usr/local/opt/mallet-2.0.8/bin/mallet"
 
 # To change logging level(WARNING, ERROR, CRITICAL) to other than INFO use other integer values mentioned in https://www.loggly.com/ultimate-guide/python-logging-basics/
 LOGGING_LEVEL = 20
@@ -70,6 +75,15 @@ FEATURE_VECTOR_COLS = ["start_anger", "start_anticipation", "start_disgust", "st
         "end_sadness", "end_surprise", "end_trust", "bname"]
 
 # logging testing
+
+
+#TOPIC MODEL APP constants
+NUM_TOPICS=5 
+ALPHA = 5 
+ITERATIONS = 100 
+RANDOM_SEED = 1 
+WORKERS = 8
+TOPICS_DF_COLUMNS = ['bs_t0', 'bs_t1', 'bs_t2', 'bs_t3', 'bs_t4', 'be_t0', 'be_t1', 'be_t2', 'be_t3', 'be_t4']
 
 """
 logging.basicConfig(filename=os.path.join(os.getcwd(), 'SIMFIC_2.0_Feature3.log'), level = logging.INFO, filemode='w', format='%(asctime)s - s%(name)s - %(levelname)s - %(message)s')

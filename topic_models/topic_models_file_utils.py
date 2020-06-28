@@ -3,6 +3,8 @@ import re
 import errno
 import pandas as pd
 import topic_models_constants as constants
+import pickle
+import json
 
 class FileUtils:
     def __init__(self, feature_file_path, book_file_path, stopwords_file_path,  book_list_file_path,
@@ -20,6 +22,11 @@ class FileUtils:
         self.SHEETNAME=constants.SHEETNAME
         self.logging_flag = logging_flag
         self.log = log
+        self.serialized_sentence_file_path = constants.FILE_PATH_SERIALIZED_SENTENCE_DICT
+        self.serialized_topics_file_path = constants.FILE_PATH_SERIALIZED_TOPICS_DICT
+        self.json_topics_file_path = constants.FILE_PATH_JSON_TOPICS_DICT
+        self.csv_topics_file_path = constants.FILE_PATH_CSV_TOPICS_DF
+
 
     """
     fnc: read_bookpath_and_extract_pgid
@@ -249,3 +256,44 @@ class FileUtils:
             self.log.info("Saving the feature vectors to file ")
             self.log.info(df.head(20))
             self.log.info(df.describe())
+
+
+
+    def read_serialized_sentences_dict(self):
+        with open(self.serialized_sentence_file_path, 'rb') as f:
+            data = pickle.load(f)
+        
+        return data;
+    
+    def write_serialized_sentences_dict(self, books_sentences_dict):
+        with open(self.serialized_sentence_file_path, 'bw') as f:
+            pickle.dump(books_sentences_dict, f)
+        return
+
+    def read_serialized_topics_dict(self):
+        with open(self.serialized_topics_file_path, 'rb') as f:
+            data = pickle.load(f)
+        
+        return data;
+
+    
+    def write_serialized_topics_dict(self, topics_dict):
+        with open(self.serialized_topics_file_path, 'bw') as f:
+            pickle.dump(topics_dict, f)
+        return
+
+
+    def write_topics_json(self, topics_dict):
+        with open(self.json_topics_file_path, 'w') as fp:
+            json.dump(topics_dict, fp)
+
+    def write_csv_topics_df(self, pandas_dict):
+        topics_df = pd.DataFrame.from_dict(pandas_dict, orient=constants.INDEX,columns=constants.TOPICS_DF_COLUMNS)
+        print(topics_df.head(10))
+        if(self.logging_flag):
+            self.log.info(topics_df.head(10))
+            self.log.info(topics_df.describe())
+
+        topics_df.to_csv(self.csv_topics_file_path)
+
+
