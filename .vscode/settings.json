@@ -1,3 +1,9 @@
 {
-    "python.pythonPath": "/Users/surajshashidhar/anaconda3/envs/nlp_env/bin/python"
+    "python.pythonPath": "/Users/surajshashidhar/anaconda3/envs/nlp_env/bin/python",
+    "files.exclude": {
+        "**/.classpath": true,
+        "**/.project": true,
+        "**/.settings": true,
+        "**/.factorypath": true
+    }
 }

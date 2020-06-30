@@ -13,7 +13,9 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.Random;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.inference.ChiSquareTest;
 import org.ovgu.de.fiction.feature.extraction.FeatureExtractorUtility;
@@ -79,22 +81,23 @@ public class InterpretSearchResults {
 		
 	}
 	///////////////////////////////////////////////////////////
-	public Map<Integer,String> performStatiscalAnalysisUsingRegression(TopKResults topKResults,int i, String flag) throws Exception {
+	public Map<Integer,String> performStatiscalAnalysisUsingRegression(TopKResults topKResults,int i, String flag, String search_engine_type, String querybook) throws Exception {
 		Map<String, Map<String, double[]>> books = topKResults.getBooks();
 		SortedMap<Double, String> results_topK = topKResults.getResults_topK();
 		int features_to_be_considered = 0;
+		SortedMap<Integer, String> combined_explanations = new TreeMap<Integer, String>();
 		
-		if(flag == FRConstants.SIMI_INCLUDE_TTR_NUMCHARS) 
+		if(flag == FRConstants.SIMI_INCLUDE_TTR_NUMCHARS && search_engine_type.equals(FRConstants.SEARCH_ENGINE_TYPE_SIMFIC)) 
 			features_to_be_considered = 21;
 		else
 			features_to_be_considered = 51;
 		
-		if(flag == FRConstants.SIMI_EXCLUDE_TTR_NUMCHARS) {
+		if(flag == FRConstants.SIMI_EXCLUDE_TTR_NUMCHARS && search_engine_type.equals(FRConstants.SEARCH_ENGINE_TYPE_SIMFIC)) {
 			List<double []> searched_result_bins_regression = createBinsForRegressionLocal(books,results_topK, i, features_to_be_considered);
 			Instances regression_instances = loadDatasetLocal(searched_result_bins_regression);
 			return featureSelection_RegressionLocal(regression_instances);
 		}
-		else {
+		else if(flag == FRConstants.SIMI_INCLUDE_TTR_NUMCHARS && search_engine_type.equals(FRConstants.SEARCH_ENGINE_TYPE_SIMFIC)){
 			List<double []> searched_result_bins_regression = createBinsForRegression(books,results_topK, i, features_to_be_considered);
 			Instances regression_instances = loadDataset(searched_result_bins_regression);
 			SortedMap<Integer, String> global_explanations = featureSelection_Regression(regression_instances);
@@ -105,8 +108,6 @@ public class InterpretSearchResults {
 			List<double []> searched_result_bins_regression_local = createBinsForRegressionLocal(books,results_topK, i, features_to_be_considered);
 			Instances regression_instances_local = loadDatasetLocal(searched_result_bins_regression_local);
 			SortedMap<Integer, String> local_explanations =  featureSelection_RegressionLocal(regression_instances_local);
-			
-			SortedMap<Integer, String> combined_explanations = new TreeMap<Integer, String>();
 			
 			int local_feature_counter = 3;
 			for(Entry<Integer, String> item: local_explanations.entrySet() ) 
@@ -137,6 +138,20 @@ public class InterpretSearchResults {
 			{
 				System.out.println("Rank: " + item.getKey() + " Feature: " + item.getValue());
 		    }
+			return combined_explanations;
+		}
+		
+		else if(search_engine_type.equals(FRConstants.SEARCH_ENGINE_TYPE_LUCENE) || search_engine_type.equals(FRConstants.SEARCH_ENGINE_TYPE_RANDOM)) {
+			System.out.println("We are picking random explanation");
+			combined_explanations = (SortedMap<Integer, String>) getRandomExplatations(querybook);
+			System.out.println("======= ======= Printing combined explanations =========== ======");
+			for(Entry<Integer, String> item: combined_explanations.entrySet() ) 
+			{
+				System.out.println("Rank: " + item.getKey() + " Feature: " + item.getValue());
+		    }
+			return combined_explanations;
+		}
+		else {
 			return combined_explanations;
 		}
 		
@@ -352,6 +367,44 @@ public class InterpretSearchResults {
 	    return dataRaw;
 	}
 
+	/*
+	 * @suraj: Random stable explanations as part of Lucene and Random baseline model
+	 * As we have Lucene and Random search systems, where we cannot point out to a particular feature column as it 
+	 * is not as concrete as SIMFIC, moreover for random we are not even performing proper similarity based retrieval.
+	 * For user evaluation purpose it becomes relveant to produce some explanations in same format as done for SIMFIC
+	 * This can be a good baseline to check whether our explnations in SIMFIC is as good as random explnatations
+	 */
+	
+	public Map<Integer,String> getRandomExplatations(String query) throws Exception 
+	{
+		
+		//generate the random numbers in the range of local and global features
+		int book_random_seed = Integer.parseInt(query.replace("pg",""));
+		Random rnd = new Random();
+    	rnd.setSeed(book_random_seed);
+    	int[] random_local_explanations = rnd.ints(5, 0, FRConstants.FEATURE_NUMBER_LOCAL).toArray();
+    	int[] random_global_explanations = rnd.ints(5, FRConstants.FEATURE_NUMBER_LOCAL, FRConstants.FEATURE_NUMBER_GLOBAL).toArray();
+    	   	
+    	SortedMap<Integer, String> random_combined_explanations = new TreeMap<Integer, String>();
+		
+    	int cntr = 0;
+    	for (int key : new int[] {0, 1, 2}) {
+    		random_combined_explanations.put(cntr, "F" + random_local_explanations[key]);
+    		cntr++;
+    	}
+    	
+    	for (int key : new int[] {0, 1}) {
+    		random_combined_explanations.put(cntr, "F" + random_global_explanations[key]);
+    		cntr++;
+    	}
+    	
+    	Map<Object, Object> tmp_res = random_combined_explanations.entrySet().stream().collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+    	tmp_res.entrySet().forEach(row->{
+            System.out.println(row.getKey() + " " + row.getValue());  
+		});
+    	
+		return random_combined_explanations;
+	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	

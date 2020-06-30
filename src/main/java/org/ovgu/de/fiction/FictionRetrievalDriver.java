@@ -103,13 +103,32 @@ public class FictionRetrievalDriver {
 				"pg786DickensHardTimes", "pg766DickensDavidCopfld", "pg730DickensOliverTw", 
 				"pg158JaneAustenEmma", "pg161SJaneAusSensSensi", "pg1342JaneAustenPP",
 				"pg2684Galsw4", "pg4765Galsw3", "pg2148EdgarPoe2", "pg2150EdgarPoe4", "pg2149EdgarPoe3"};
-		
+		Rank: -1 | Book id: pg19259 | similarity score: 0.9996237730695676
+Rank: -2 | Book id: pg16677 | similarity score: 0.9995131531120408
+Rank: -3 | Book id: pg519 | similarity score: 0.9993102499974837
+Rank: -4 | Book id: pg6526 | similarity score: 0.9988214462010798
+Rank: -5 | Book id: pg3175 | similarity score: 0.998791538102938
+Rank: -6 | Book id: pg29902 | similarity score: 0.997704539373597
+
+We are picking random explanation
+0 F5
+1 F10
+2 F4
+3 F5
+4 F10
+======= ======= Printing combined explanations =========== ======
+Rank: 0 Feature: F5
+Rank: 1 Feature: F10
+Rank: 2 Feature: F4
+Rank: 3 Feature: F5
+Rank: 4 Feature: F10
 		
 		 */
 		
 		
 		
-		String[] query_books = { "pg2701", "pg108", "pg98"};//, "pg2701", "pg766", "pg1342", "pg158","pg1155",  "pg1400", "pg730"};
+		//String[] query_books = { "pg2701", "pg108", "pg1155", "pg46"};//, "pg2701", "pg766", "pg1342", "pg158","pg1155",  "pg1400", "pg730"};
+		String[] query_books = { "pg42462",  "pg2701", "pg108", "pg1155", "pg46"};
 		
 		for(int i = 0; i < query_books.length; i++)
 		{
@@ -117,10 +136,9 @@ public class FictionRetrievalDriver {
 			System.out.println("Querying for book : " + qryBookNum);
 			String FEATURE_CSV_FILE = FRGeneralUtils.getPropertyVal("file.feature");
 			
-			TopKResults topKResults = FictionRetrievalSearch.findRelevantBooks(qryBookNum, FEATURE_CSV_FILE, 
-					FRConstants.SIMI_PENALISE_BY_CHUNK_NUMS, FRConstants.SIMI_ROLLUP_BY_ADDTN, 
+			TopKResults topKResults = FictionRetrievalSearch.findRelevantBooks(qryBookNum, FRConstants.SIMI_PENALISE_BY_CHUNK_NUMS, FRConstants.SIMI_ROLLUP_BY_ADDTN, 
 					FRConstants.SIMI_INCLUDE_TTR_NUMCHARS,FRConstants.TOP_K_RESULTS,FRConstants.SIMILARITY_L2, 
-					FRConstants.SEARCH_ENGINE_TYPE_LUCENE);
+					FRConstants.SEARCH_ENGINE_TYPE_RANDOM, FRConstants.SEARCH_ENGINE_LANG_DE);
 			
 			int topk_results = 25;
 			System.out.println("Lucene search results for the book " + qryBookNum);
@@ -133,13 +151,14 @@ public class FictionRetrievalDriver {
 			}
 			System.out.println("");
 			
-			//InterpretSearchResults interp = new InterpretSearchResults();
-			//interp.performStatiscalAnalysis(topKResults, qryBookNum);
+			InterpretSearchResults interp = new InterpretSearchResults();
+			//interp.performStatiscalAnalysisUsingRegression(topKResults, qryBookNum);
 			
 			//InterpretSearchResults interp = new InterpretSearchResults();
 			//interp.performStatiscalAnalysis(topKResults);
-			
-			//interp.performStatiscalAnalysisUsingRegression(topKResults, 0, FRConstants.SIMI_INCLUDE_TTR_NUMCHARS);
+
+			interp.performStatiscalAnalysisUsingRegression(topKResults, 0, FRConstants.SIMI_INCLUDE_TTR_NUMCHARS, 
+					FRConstants.SEARCH_ENGINE_TYPE_RANDOM, qryBookNum);
 			//findLuceneRelevantBooks(qryBookNum);
 			
 		}

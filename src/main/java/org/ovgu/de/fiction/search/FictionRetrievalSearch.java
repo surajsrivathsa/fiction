@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.Random;
 
 import org.ovgu.de.fiction.model.TopKResults;
 import org.ovgu.de.fiction.utils.FRConstants;
@@ -23,12 +26,34 @@ public class FictionRetrievalSearch {
 	private static String pathToBOW =  "";
     private static HashMap<String, Double[]> bow_featuremap = new HashMap<String, Double[]>();
 
-	public static TopKResults findRelevantBooks(String qryBookNum, String featureCsvFile, String PENALISE, String ROLLUP, 
-			String TTR_CHARS,int topKRes,String similarity, String search_engine_type) throws IOException {
+	public static TopKResults findRelevantBooks(String qryBookNum, String PENALISE, String ROLLUP, 
+			String TTR_CHARS,int topKRes,String similarity, String search_engine_type, String search_engine_lang) throws IOException {
 		
 		TopKResults topK = new TopKResults();
+		String featureCsvFile = "";
 		
+		/*
+		 * @suraj: according to search engine type: choose simfic/lucene/random search type
+		 */
 		if(search_engine_type.equals(FRConstants.SEARCH_ENGINE_TYPE_SIMFIC)) {
+			
+			if(search_engine_lang.equals(FRConstants.SEARCH_ENGINE_LANG_COMBINED)) {
+				System.out.println("Using combined file of simfic");
+				featureCsvFile = FRGeneralUtils.getPropertyVal("file.feature"); //Use the default file.feature having combined explanations
+			}
+			else if(search_engine_lang.equals(FRConstants.SEARCH_ENGINE_LANG_DE)) {
+				System.out.println("Using german file of simfic");
+				featureCsvFile = FRGeneralUtils.getPropertyVal("file.feature.german");//Use german simfic feature file 
+			}
+			else if(search_engine_lang.equals(FRConstants.SEARCH_ENGINE_LANG_EN)) {
+				System.out.println("Using english file of simfic");
+				featureCsvFile = FRGeneralUtils.getPropertyVal("file.feature.english");//Use english simfic feature file 
+			}
+			else {
+				System.out.println("Using combined file of simfic");
+				featureCsvFile = FRGeneralUtils.getPropertyVal("file.feature");//Use default combined, if any other parameter is passed
+			}
+			
 			System.out.println("We are using simfic search system");
 			Map<String, Map<String, double[]>> books = getChunkFeatureMapForAllBooks(featureCsvFile);
 
@@ -38,9 +63,19 @@ public class FictionRetrievalSearch {
 			topK.setResults_topK(results_topK);
 		}
 		
-		else {
+		else if(search_engine_type.equals(FRConstants.SEARCH_ENGINE_TYPE_LUCENE)){
 			System.out.println("We are using lucene search system");
-			topK = bagofwordsSearch( qryBookNum);			
+			topK = bagofwordsSearch(qryBookNum, search_engine_lang);			
+		}
+		
+		else if(search_engine_type.equals(FRConstants.SEARCH_ENGINE_TYPE_RANDOM)){
+			System.out.println("We are using random search system");
+			topK = randomsearch(qryBookNum, search_engine_lang);
+		}
+		
+		else {
+			System.out.println("User has chosen no option, by default we will do random search");
+			topK = randomsearch(qryBookNum, search_engine_lang);
 		}
 		
 		return topK;
@@ -56,9 +91,7 @@ public class FictionRetrievalSearch {
 
 			while ((line = br.readLine()) != null) {
 				if (csvRow > 0) { // ignore headers
-					String[] csvElemArr = line.split(",");// array of 21 elements, 0th=
-															// book-chunkNum, 1-20 = feature vector
-															// elements
+					String[] csvElemArr = line.split(",");// array of 22 elements local and others global, 
 					books = generateChunkFeatureMapForAChunk(csvElemArr, books);
 				}
 				csvRow = 1;
@@ -440,6 +473,14 @@ public class FictionRetrievalSearch {
 		return bookFeatureMap;
 	}
 
+	/*
+     * @suraj: Lucene search
+     * Index BOW based feature file was precomputed using python script.
+     * We would be searching in the lucene file, which has all features at global/book level, hence one row per book.
+     * Top results are sorted in descending order and put into a map and returned
+     *
+     */
+	
 	//Read LUCENE File
 	private static void preprocessBOWfile() throws IOException {
     	BufferedReader br = new BufferedReader(new FileReader(pathToBOW));
@@ -493,12 +534,29 @@ public class FictionRetrievalSearch {
     }
     
     //Search retrieval for BOW
-    private static TopKResults bagofwordsSearch(String query) throws IOException {
+    private static TopKResults bagofwordsSearch(String query, String search_engine_lang) throws IOException {
     	TopKResults topKResults = new TopKResults();
     	
     	SortedMap<Double, String> sorted_results = new TreeMap<Double, String>(Collections.reverseOrder());
     	
-    	pathToBOW = FRGeneralUtils.getPropertyVal(FRConstants.LUCENE_FEATURE_FILE);
+    	//pathToBOW = FRGeneralUtils.getPropertyVal(FRConstants.LUCENE_FEATURE_FILE);
+    	
+    	if(search_engine_lang.equals(FRConstants.SEARCH_ENGINE_LANG_COMBINED)) {
+    		System.out.println("Using combined file of lucene");
+    		pathToBOW = FRGeneralUtils.getPropertyVal(FRConstants.LUCENE_FEATURE_COMBINED_FILE); //Use the default file.feature having combined explanations
+		}
+		else if(search_engine_lang.equals(FRConstants.SEARCH_ENGINE_LANG_DE)) {
+			System.out.println("Using german file of lucene");
+			pathToBOW = FRGeneralUtils.getPropertyVal(FRConstants.LUCENE_FEATURE_DE_FILE);//Use german simfic feature file 
+		}
+		else if(search_engine_lang.equals(FRConstants.SEARCH_ENGINE_LANG_EN)) {
+			System.out.println("Using english file of lucene");
+			pathToBOW = FRGeneralUtils.getPropertyVal(FRConstants.LUCENE_FEATURE_EN_FILE);//Use english simfic feature file 
+		}
+		else {
+			System.out.println("Using combined file of lucene");
+			pathToBOW = FRGeneralUtils.getPropertyVal(FRConstants.LUCENE_FEATURE_COMBINED_FILE);//Use default combined, if any other parameter is passed
+		}
 		
     	try {
 			preprocessBOWfile();
@@ -520,14 +578,84 @@ public class FictionRetrievalSearch {
 		topKResults.setResults_topK(sorted_results);
 
 		//Printing the results
+		Map<Object, Object> tmp_15_res = topKResults.getResults_topK().entrySet().stream().limit(15).collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+		tmp_15_res.entrySet().forEach(row->{
+            System.out.println(row.getKey() + " " + row.getValue());  
+		});
+    	
+    	return topKResults;
+    }
+      
+    /*
+     * @suraj: Random Baseline search
+     * Since results have to be stable across different users and sessions
+     * We would be picking the query book as usual from lucene index file.
+     * Later, we will generate random similarity values using query books pgid as seed so that results are consistent.
+     * This result is then offloaded to topk results
+     */ 
+    
+    private static TopKResults randomsearch(String query, String search_engine_lang) throws IOException {
+    	
+    	TopKResults topKResults = new TopKResults();
+    	
+    	SortedMap<Double, String> sorted_results = new TreeMap<Double, String>(Collections.reverseOrder());
+    	
+    	if(search_engine_lang.equals(FRConstants.SEARCH_ENGINE_LANG_COMBINED)) {
+    		System.out.println("Using combined file of random");
+    		pathToBOW = FRGeneralUtils.getPropertyVal(FRConstants.LUCENE_FEATURE_COMBINED_FILE); //Use the default file.feature having combined explanations
+		}
+		else if(search_engine_lang.equals(FRConstants.SEARCH_ENGINE_LANG_DE)) {
+			System.out.println("Using german file of random");
+			pathToBOW = FRGeneralUtils.getPropertyVal(FRConstants.LUCENE_FEATURE_DE_FILE);//Use german simfic feature file 
+		}
+		else if(search_engine_lang.equals(FRConstants.SEARCH_ENGINE_LANG_EN)) {
+			System.out.println("Using english file of random");
+			pathToBOW = FRGeneralUtils.getPropertyVal(FRConstants.LUCENE_FEATURE_EN_FILE);//Use english simfic feature file 
+		}
+		else {
+			System.out.println("Using combined file of random");
+			pathToBOW = FRGeneralUtils.getPropertyVal(FRConstants.LUCENE_FEATURE_COMBINED_FILE);//Use default combined, if any other parameter is passed
+		}
+    	
+    	int book_random_seed = Integer.parseInt(query.replace("pg",""));
+    	
+    	Random rnd = new Random();
+    	rnd.setSeed(book_random_seed);
+    	double randNum = rnd.nextDouble();
+		
+    	try {
+			preprocessBOWfile();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("Cannot read the Lucene index file");
+			System.exit(1);
+		}
+    	
+		Map<String, Double[]> valueMap = bow_featuremap; //FRFileOperationUtils.readCsvForBOW();
+
+		// Calculate l2 similarity
+		for (String book : valueMap.keySet()) {
+			Double book_similarity = rnd.nextDouble();
+			sorted_results.put(book_similarity, book);
+		}
+
+		topKResults.setResults_topK(sorted_results);
+
+		//Printing the results
 		/*
 		topKResults.getResults_topK().entrySet().forEach(row->{
             System.out.println(row.getKey() + " " + row.getValue());  
          });
          */
+		
+		Map<Object, Object> tmp_15_res = topKResults.getResults_topK().entrySet().stream().limit(15).collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+		tmp_15_res.entrySet().forEach(row->{
+            System.out.println(row.getKey() + " " + row.getValue());  
+		});
     	
     	return topKResults;
-    }
-    
+	}
+
 
 }
