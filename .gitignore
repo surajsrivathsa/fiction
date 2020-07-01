@@ -3,6 +3,7 @@
 *.html
 *.log
 .DS_Store
+*.class
 
 *.classpath
 *.js
@@ -21,11 +22,13 @@ Final_Booklist.numbers
 
 
 *.pyc
-
+*.json
+*.numbers
 *.vscode
-
+*.csv
 *.zip
 *.pkl
 *.tar.gz
+*.xlsx
 *.gz
 /Features_extracted_milestone4.csv

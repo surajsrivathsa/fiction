@@ -38,7 +38,7 @@ public class FictionRetrievalDriver {
 		long start = System.currentTimeMillis();
 
 		/* 1> Extract content from Gutenberg corpus - one time */
-		ContentExtractor.generateContentFromAllEpubs();
+		//ContentExtractor.generateContentFromAllEpubs();
 		System.out.println("Time taken for generating content (min)-" + (System.currentTimeMillis() - start) / (1000 * 60));
 
 		start = System.currentTimeMillis();
@@ -59,6 +59,7 @@ public class FictionRetrievalDriver {
 		//extract_Feature3_linux();
 
 		// 4> Query 
+		/*
 		String query_book = "pg16";
 		int len = FRConstants.EMO_WEIGHT.length;
 		
@@ -87,6 +88,7 @@ public class FictionRetrievalDriver {
 			//findLuceneRelevantBooks(qryBookNum);
 			
 		}
+		*/
 		
 		/* * 5> Perform some machine learning over the results
 		 

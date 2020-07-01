@@ -138,14 +138,14 @@ public class ChunkDetailsGenerator {
 
 		});
 		
-		/*for (Entry<String,String> c : bigcharMap.entrySet()) {
+		for (Entry<String,String> c : bigcharMap.entrySet()) {
 			LOG.info(c.getKey()+" "+c.getValue());
 			
 		}
 		
 		String eol = System.getProperty("line.separator");
 
-		try (Writer writer = new FileWriter("C:\\OvGU_DKe\\Project\\GutenbergDataset\\Short_tokens\\charmap.csv")) {
+		try (Writer writer = new FileWriter("/Users/surajshashidhar/git/fiction/charmap_german_m4_b1.csv")) {
 		  for (Map.Entry<String, String> entry : bigcharMap.entrySet()) {
 		    writer.append(entry.getKey())
 		          .append(',')
@@ -155,7 +155,7 @@ public class ChunkDetailsGenerator {
 		} catch (IOException ex) {
 		  ex.printStackTrace(System.err);
 		}
-		*/
+		
 		return books;
 	}
 

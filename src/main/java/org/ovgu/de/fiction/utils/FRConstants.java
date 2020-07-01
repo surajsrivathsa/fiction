@@ -20,7 +20,7 @@ public interface FRConstants {
 	public static final String STOPWORD_FICTION = "stopword.fiction";
 	public static final String LUCENE_FEATURE_FILE = "file.bagofwords.lucene.feature";
 
-	public static final String REP_FN = "/Users/surajshashidhar/git/fiction/Short_epubs_extracted/";
+	public static final String REP_FN = "/Users/surajshashidhar/git/fiction/German_B1_extracted/";
 
 	// adding for python program feature3 emotion
 	// adding for python program

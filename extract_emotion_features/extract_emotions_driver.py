@@ -80,8 +80,7 @@ class Driver:
 
         similarity_df = emotionutils_obj.create_and_save_similarity_dataframe(books_similarity_dict, self.similarity_file_path)
         
-        fileutils_obj.read_feature_and_similarity_file_and_preprocess(self.feature_file_path, self.similarity_file_path, 
-                                                                      self.feature_fields, self.new_feature_file_path)
+        #fileutils_obj.read_feature_and_similarity_file_and_preprocess(self.feature_file_path, self.similarity_file_path, self.feature_fields, self.new_feature_file_path)
         
 #
 
@@ -90,8 +89,8 @@ if __name__ == "__main__":
 
     # Add the arguments to the parser and parse the arguments from command line
     ap.add_argument( "--feature_file_path", nargs= "?", required=False, help=" feature_file_path", default = "/Users/surajshashidhar/git/fiction/Features_extracted_milestone3.csv")
-    ap.add_argument("--book_file_path", nargs= "?", required=False, help="book_file_path", default = "/Users/surajshashidhar/git/fiction/Milestone3_html")
-    ap.add_argument( "--emoticon_file_path", nargs= "?", required=False, help=" emoticon_file_path", default="/Users/surajshashidhar/Desktop/ovgu/semester_2/XAI_project/reasearched_code_and_data/all_language_emotions.csv")
+    ap.add_argument("--book_file_path", nargs= "?", required=False, help="book_file_path", default = "/Users/surajshashidhar/git/fiction/German_B1_extracted")
+    ap.add_argument( "--emoticon_file_path", nargs= "?", required=False, help=" emoticon_file_path", default="/Users/surajshashidhar/git/fiction/extract_emotion_features/all_language_emotions.csv")
     ap.add_argument("--feature_fields", nargs= "?", required=False, help="feature_fields", default = constants.FEATURE_FIELD)
     ap.add_argument( "--language", nargs= "?", required=False, help=" language", default = constants.ENGLISH)
     ap.add_argument("--encoding", nargs= "?", required=False, help="encoding", default = "utf-8")
@@ -99,7 +98,7 @@ if __name__ == "__main__":
     ap.add_argument("--book_end_percentage", nargs= "?", required=False, help="book_end_percentage", default = constants.DEFAULT_BOOK_END_PERCENTAGE)
     ap.add_argument( "--similarity_type", nargs= "?", required=False, help=" similarity_type", default = constants.L2)
     ap.add_argument("--new_feature_file_path", nargs= "?", required=False, help="new_feature_file_path", default = "/Users/surajshashidhar/git/fiction/Features_Extracted_milestone3_withf3.csv")
-    ap.add_argument("--book_list_file_path", nargs= "?", required=False, help="book_list_file_path", default = "/Users/surajshashidhar/git/fiction/Final_Booklist.xlsx")
+    ap.add_argument("--book_list_file_path", nargs= "?", required=False, help="book_list_file_path", default = "/Users/surajshashidhar/git/fiction/miscellaneous_python/Final_Booklist.xlsx")
     ap.add_argument("--logging_flag", nargs= "?", required=False, help="logging_flag", default = "True")
 
     args = vars(ap.parse_args())
