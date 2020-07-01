@@ -242,11 +242,12 @@ public interface FRConstants {
 	public static final int PARAGRAPH_COUNT_0 = 0;
 	
 	// web
-
 	public static final String TOP_K = "topk.count";
 	public static final String GENRE_CSV = "genre.csv.loc";
 	public static final String EPUB_PATH ="web.ctx.path"; 
+	public static final String SUMMARY_PATH = "file.summary.path";
 	public static final String EVENT_HEADER = "Genre,Book-ID,SelectedBook-ID";
+	public static final String TXT_EXT =".txt";
 	
    //Lucene
 	public static final String SEARCH_ENGINE_TYPE_SIMFIC = "SIMFIC";

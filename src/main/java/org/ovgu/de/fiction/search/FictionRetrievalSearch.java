@@ -32,6 +32,7 @@ public class FictionRetrievalSearch {
 		if(search_engine_type.equals(FRConstants.SEARCH_ENGINE_TYPE_SIMFIC)) {
 			System.out.println("We are using simfic search system");
 			Map<String, Map<String, double[]>> books = getChunkFeatureMapForAllBooks(featureCsvFile);
+			System.out.println("CsvFilePath :"+featureCsvFile);
 
 			SortedMap<Double, String> results_topK = compareQueryBookWithCorpus(qryBookNum, books, PENALISE, ROLLUP, TTR_CHARS,topKRes,similarity,configindex);
 			

@@ -27,7 +27,7 @@ public class ServiceController {
     @Autowired
 	private SearchServices searchService;
 	
-	@RequestMapping(path = "/simbooks/{queryBookId}/{topK}", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(path = "/simbooks/{queryBookId}/{topK}/{system}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	//@GetMapping(produces = "application/json")
 	public BookList simbooks(@PathVariable String queryBookId, @PathVariable String topK, @PathVariable String system) throws Exception {

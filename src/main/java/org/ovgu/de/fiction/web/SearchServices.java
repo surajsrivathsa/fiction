@@ -45,7 +45,6 @@ public class SearchServices {
 
 		if (queryBookId != null) {
 
-			String similarity = "L2";
 
 			FRWebUtils utils = new FRWebUtils();
 			Map<String, String> book_master = utils.getAllMasterBooks(); // key = bookId, Value = Book_Name
@@ -57,7 +56,7 @@ public class SearchServices {
 			int TOP_K = Integer.parseInt(topK);
 			TopKResults topKResults = FictionRetrievalSearch.findRelevantBooks(queryBookId, FEATURE_CSV_FILE,
 						FRConstants.SIMI_PENALISE_BY_CHUNK_NUMS, FRConstants.SIMI_ROLLUP_BY_ADDTN,
-						FRConstants.SIMI_INCLUDE_TTR_NUMCHARS, TOP_K, similarity,FRConstants.SEARCH_ENGINE_TYPE_SIMFIC, FRConstants.CONFIGINDEX);
+						FRConstants.SIMI_INCLUDE_TTR_NUMCHARS, FRConstants.TOP_K_RESULTS, FRConstants.SIMILARITY_L2,FRConstants.SEARCH_ENGINE_TYPE_SIMFIC, FRConstants.CONFIGINDEX);
 			
 			if(system.trim().equals("lucene"))
 			{
@@ -103,10 +102,10 @@ public class SearchServices {
 					String language = (metadata.getLanguage()).toString().equals("en") ? "English" :"Deutsch" ;
 					String publisheddate = (metadata.getDates().subList(0, 1)).toString().replace("[publication:", "").replace("]", "");
 					if((metadata.getContributors()).size() == 0) {
-					summary = "Language: "+language +". It is written by " + authName + ". Published in the year: " + publisheddate ;
+					summary = "Language: "+language +". It is written by " + authName + ". Digitized in the year: " + publisheddate ;
 					}
 					else{
-					summary = "Language: "+language +". It is written by " + authName + ". Contributors of this book are " + (metadata.getContributors().toString().replace("[","").replace("]","")) + ". Published in the year:" + publisheddate ;
+					summary = "Language: "+language +". It is written by " + authName + ". Contributors of this book are " + (metadata.getContributors().toString().replace("[","").replace("]","")) + ". Digitized in the year:" + publisheddate ;
 					}
 					BookUI book = new BookUI();
 					book.setId(bookId);
@@ -117,7 +116,8 @@ public class SearchServices {
 					sbf.append(bookId).append(".epub");
 					book.setEpubPath(sbf.toString());
 					book.setScore(String.valueOf(res.getKey()));
-					book.setSummary(summary);					
+					book.setSummary(summary);
+					book.setHtmlPath(FRWebUtils.Summary(bookId));
 					simBooks.add(book);
 				}
 				bookList.setbookUI(simBooks);

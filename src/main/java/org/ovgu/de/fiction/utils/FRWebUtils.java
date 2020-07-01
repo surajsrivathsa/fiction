@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -242,6 +243,7 @@ public class FRWebUtils {
 			featureName.append(BOOK_END_SURPRISE);
 		if (featureId.equals("F50"))
 			featureName.append(BOOK_END_TRUST);
+		System.out.println("GBExplain :"+ featureName);
 		return featureName.toString();
 	}
 
@@ -362,5 +364,22 @@ public class FRWebUtils {
 		}
 		return "";
 	}
+	
+	/**
+	 * @author Nishitha
+	 */
+	/**
+	 * @param filename
+	 * @return
+	 * @throws IOException
+	 */
+	public static String Summary(String filename)  throws IOException {
+		 String st;
+		 String SUMMARY_FOLDER = FRGeneralUtils.getPropertyVal(FRConstants.SUMMARY_PATH);
+		 String file = SUMMARY_FOLDER + "/" + filename + FRConstants.TXT_EXT ; 
+		 st = new String(Files.readAllBytes(Paths.get(file))); 
+		 return st;
+		  } 
+	
 
 }
