@@ -20,7 +20,7 @@ Text
 
 Final_Booklist.numbers
 
-
+*.ipynb_checkpoints
 *.pyc
 *.json
 *.numbers

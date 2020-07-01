@@ -89,7 +89,7 @@ if __name__ == "__main__":
 
     # Add the arguments to the parser and parse the arguments from command line
     ap.add_argument( "--feature_file_path", nargs= "?", required=False, help=" feature_file_path", default = "/Users/surajshashidhar/git/fiction/Features_extracted_milestone3.csv")
-    ap.add_argument("--book_file_path", nargs= "?", required=False, help="book_file_path", default = "/Users/surajshashidhar/git/fiction/German_B1_extracted")
+    ap.add_argument("--book_file_path", nargs= "?", required=False, help="book_file_path", default = "/Users/surajshashidhar/git/fiction/German_B2_extracted")
     ap.add_argument( "--emoticon_file_path", nargs= "?", required=False, help=" emoticon_file_path", default="/Users/surajshashidhar/git/fiction/extract_emotion_features/all_language_emotions.csv")
     ap.add_argument("--feature_fields", nargs= "?", required=False, help="feature_fields", default = constants.FEATURE_FIELD)
     ap.add_argument( "--language", nargs= "?", required=False, help=" language", default = constants.ENGLISH)
