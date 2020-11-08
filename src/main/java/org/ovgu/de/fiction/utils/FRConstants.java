@@ -171,9 +171,9 @@ public interface FRConstants {
 	
 	public static final int CONFIGINDEX = 7;
 	public static final double[] CHUNK_WEIGHT = {0.3,.65,.5,0,.2,.4,0,3.0};
-	public static final double[] EMO_WEIGHT = {0.5/17,.1/17,.1/17,.4/17,.3/17,.2/17,0,17/17};
+	public static final double[] EMO_WEIGHT = {0.5/17,.1/17,.1/17,.4/17,.3/17,.2/17,0,34/17};
 	public static final double[] CHAR_WEIGHT = {0.1,.05,.2,.2,.2,.2,0,2.0};
-	public static final double[] GENRE_WEIGHT = {0/10,.1/10,.1/10,.4/10,.3/10,.2/10,1.0,10/10};
+	public static final double[] GENRE_WEIGHT = {0/10,.1/10,.1/10,.4/10,.3/10,.2/10,1.0,100/10};
 	public static final double[] NUMCHAR_WEIGHT = {0.05,.05,.05,0.1,0,0,0,0.2};
 	public static final double[] TTR_WEIGHT = {0.05,.05,.05,0.1,0,0,0,0.2};
 	
@@ -248,9 +248,22 @@ public interface FRConstants {
 	public static final String SUMMARY_PATH = "file.summary.path";
 	public static final String EVENT_HEADER = "Genre,Book-ID,SelectedBook-ID";
 	public static final String TXT_EXT =".txt";
+	public static final String QEN = "en";
+	public static final String QDE = "de";
 	
    //Lucene
 	public static final String SEARCH_ENGINE_TYPE_SIMFIC = "SIMFIC";
 	public static final String SEARCH_ENGINE_TYPE_LUCENE = "LUCENE";
-	public static final String LUCENE_FEATURE_FILE = "file.bagofwords.lucene.feature";
+	public static final String SEARCH_ENGINE_TYPE_RANDOM = "RANDOM";
+	
+	//FRconstant file changes
+	public static final String LUCENE_FEATURE_COMBINED_FILE = "file.bagofwords.lucene.feature";
+	public static final String LUCENE_FEATURE_EN_FILE = "file.bagofwords.lucene.en.feature";
+	public static final String LUCENE_FEATURE_DE_FILE = "file.bagofwords.lucene.de.feature";
+	
+	public static final String SEARCH_ENGINE_LANG_EN = "ENGLISH";
+	public static final String SEARCH_ENGINE_LANG_DE = "GERMAN";
+	public static final String SEARCH_ENGINE_LANG_COMBINED = "COMBINED";
+
+
 }

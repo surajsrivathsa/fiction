@@ -1,0 +1,1 @@
+Language: German + - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - + | | | Der Originaltext ist in Fraktur gesetzt. Textauszeichnungen | | wurden folgendermaÃen gekennzeichnet: | | | | Sperrung: #gesperrter Text# | | Antiquaschrift: Antiquatext | | | + - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - + Der Widerspenstigen ZÃ¤hmung 

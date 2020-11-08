@@ -27,13 +27,13 @@ public class ServiceController {
     @Autowired
 	private SearchServices searchService;
 	
-	@RequestMapping(path = "/simbooks/{queryBookId}/{topK}/{system}", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(path = "/simbooks/{queryBookId}/{topK}/{language}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	//@GetMapping(produces = "application/json")
-	public BookList simbooks(@PathVariable String queryBookId, @PathVariable String topK, @PathVariable String system) throws Exception {
+	public BookList simbooks(@PathVariable String queryBookId, @PathVariable String topK, @PathVariable String language) throws Exception {
     	System.out.println("topK:" + topK );
     	BookList data = new BookList();
-		data = searchService.displayBook(queryBookId,topK, system);
+		data = searchService.displayBook(queryBookId,topK, language);
 		return data;
 	}
 	

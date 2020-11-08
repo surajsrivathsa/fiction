@@ -74,7 +74,8 @@ bid;bname;blang;auth_name;sub
 2911;Justice;en;Galsworthy| John;Literary
 2919;The Little Man;en;Galsworthy| John;Literary
 4045;Omoo Adventures in the South Seas;en;Melville| Herman;Sea and Adventure
-4356;"Sky Island Being the further exciting adventures of Trot and Cap'n Bill after their visit to the sea fairies";en;Baum, L. Frank (Lyman Frank);Fantasy 
+4356;"Sky Island
+Being the further exciting adventures of Trot and Cap'n Bill after their visit to the sea fairies";en;Baum, L. Frank (Lyman Frank);Fantasy 
 4358;The Sea Fairies;en;Baum, L. Frank (Lyman Frank);Fantasy 
 5151;The Exploits of Elaine;en;Reeve| Arthur B.;Detective and Mystery
 5165;Innocent : her fancy and his fact;en;Corelli| Marie;Love and Romance
@@ -113,7 +114,7 @@ bid;bname;blang;auth_name;sub
 11970;Wife in Name Only;en;Brame| Charlotte M.;Literary
 14605;The Devil's Garden;en;Maxwell| W. B.;Literary
 15117;"Sea and Shore - A Sequel to ""Miriam's Memoirs""";en;Warfield| Catherine A.;Literary
-15123;David Lockwinï¿½The People's Idol;en;McGovern| John;Literary
+15123;David Lockwin—The People's Idol;en;McGovern| John;Literary
 15143;Famous Modern Ghost Stories;en;Bierce, Ambrose;Horror
 15179;The Inner Sisterhood - A Social Study in High Colors;en;Sherley| Douglass;Literary
 15181;My Mother's Rival - Everyday Life Library No. 4;en;Brame| Charlotte M.;Literary
@@ -121,7 +122,8 @@ bid;bname;blang;auth_name;sub
 15183;The Tragedy of the Chain Pier - Everyday Life Library No. 3;en;Brame| Charlotte M.;Literary
 19337;A Christmas Carol;en;Dickens, Charles;Horror
 21816;The Confidence-Man;en;Melville| Herman;Literary
-22465;"Der Weihnachtsabend Eine Geistergeschichte";de;Dickens, Charles;Horror
+22465;"Der Weihnachtsabend
+Eine Geistergeschichte";de;Dickens, Charles;Horror
 26828;A Red Wallflower;en;Harrison| S. Frances;Literary
 30165;Die Abenteuer Tom Sawyers;de;Twain, Mark;Adventure
 30628;Das rasende Leben: Zwei Novellen;de;Edschmid, Kasimir;Fiction
@@ -212,21 +214,24 @@ bid;bname;blang;auth_name;sub
 19790;Der Schimmelreiter;de;Storm, Theodor;History
 19791;Der Struwwelpeter;de;Hoffmann, Heinrich;Literature
 19971;Hansi;de;Frohnmeyer, Ida;Literature
-21115;"Die Stufe Fragment einer Liebe";de;Mann, Franziska;Romance
+21115;"Die Stufe
+Fragment einer Liebe";de;Mann, Franziska;Romance
 24266;Das SchÃ¶nste von Max Dauthendey;de;Dauthendey, Max;Romance
 25530;Die Nymphe des Brunnens;de;Fraungruber, Hans;Fantasy
 28863;Der Dichter und das Phantasieren;de;Freud, Sigmund;Fantasy
 18551;Der Wendekreis - Erste Folge: Novellen;de;Wassermann, Jakob;Fiction
 18552;Der Wendekreis - Zweite Folge : Oberlins drei Stufen, Sturreganz;de;Wassermann, Jakob;Fiction
-24213;"Marthe und ihre Uhr Novelle";de;Storm, Theodor;Fiction
-24214;"Im Brauerhause Novelle";de;Storm, Theodor;Fiction
+24213;"Marthe und ihre Uhr
+Novelle";de;Storm, Theodor;Fiction
+24214;"Im Brauerhause
+Novelle";de;Storm, Theodor;Fiction
 46488;Emilia Gal;de;Blom,E.J.;Tragedies
-2407;Die Leiden des jungen Werthers - 1;de;none;
-2408;Die Leiden des jungen Werthers - 2;de;none;
-5072;Dantons Tod;de;none;none
-6079;Deutschland Ein Wintermarchen;de;none;none
-6498;Kabale unde Liebe;de;none;none
-47804;Die Rauber;de;none;none
+2407;Die Leiden des jungen Werthers - 1;de;;
+2408;Die Leiden des jungen Werthers - 2;de;;
+5072;Dantons Tod;de;;
+6079;Deutschland Ein Wintermarchen;de;;
+6498;Kabale unde Liebe;de;;
+47804;Die Rauber;de;;
 
 
 

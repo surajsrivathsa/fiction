@@ -35,7 +35,7 @@ public class SearchServices {
 
 	
 	
-	public BookList displayBook(String queryBookId, String topK, String system) throws Exception {
+	public BookList displayBook(String queryBookId, String topK, String Qlanguage) throws Exception {
 		List<BookUI> simBooks = new ArrayList<BookUI>();
 		BookList bookList = new BookList();
 		TIME= System.currentTimeMillis();
@@ -44,7 +44,7 @@ public class SearchServices {
 		}
 
 		if (queryBookId != null) {
-
+			String querylanguage = "";
 
 			FRWebUtils utils = new FRWebUtils();
 			Map<String, String> book_master = utils.getAllMasterBooks(); // key = bookId, Value = Book_Name
@@ -52,22 +52,29 @@ public class SearchServices {
 
 			Map<Integer,String> stats_Of_results =new TreeMap<Integer,String>(); 
 			Map<String,String> final_results =new TreeMap<String,String>();
+			System.out.println("Sel Lang :"+ Qlanguage.trim());
 
 			int TOP_K = Integer.parseInt(topK);
-			TopKResults topKResults = FictionRetrievalSearch.findRelevantBooks(queryBookId, FEATURE_CSV_FILE,
-						FRConstants.SIMI_PENALISE_BY_CHUNK_NUMS, FRConstants.SIMI_ROLLUP_BY_ADDTN,
-						FRConstants.SIMI_INCLUDE_TTR_NUMCHARS, FRConstants.TOP_K_RESULTS, FRConstants.SIMILARITY_L2,FRConstants.SEARCH_ENGINE_TYPE_SIMFIC, FRConstants.CONFIGINDEX);
 			
-			if(system.trim().equals("lucene"))
-			{
+			if(Qlanguage.equals(FRConstants.QDE)) {
+				querylanguage = FRConstants.SEARCH_ENGINE_LANG_DE ;
+			}else if(Qlanguage.equals(FRConstants.QEN)) {
+				querylanguage = FRConstants.SEARCH_ENGINE_LANG_EN ;
 				
+			} else {
+				querylanguage = FRConstants.SEARCH_ENGINE_LANG_COMBINED ;
 			}
-			else {
-
+			
+			TopKResults topKResults = FictionRetrievalSearch.findRelevantBooks(queryBookId, FRConstants.SIMI_PENALISE_BY_CHUNK_NUMS, FRConstants.SIMI_ROLLUP_BY_ADDTN, 
+					FRConstants.SIMI_INCLUDE_TTR_NUMCHARS,FRConstants.TOP_K_RESULTS,FRConstants.SIMILARITY_L2, 
+					FRConstants.SEARCH_ENGINE_TYPE_SIMFIC, querylanguage, FRConstants.CONFIGINDEX);
+			
+            System.out.println("Query Language :"+ querylanguage);
 			InterpretSearchResults interp = new InterpretSearchResults();
 
 				try {
-					stats_Of_results = interp.performStatiscalAnalysisUsingRegression(topKResults,4, FRConstants.SIMI_INCLUDE_TTR_NUMCHARS);
+					stats_Of_results = interp.performStatiscalAnalysisUsingRegression(topKResults, FRConstants.CONFIGINDEX, FRConstants.SIMI_INCLUDE_TTR_NUMCHARS,
+							FRConstants.SEARCH_ENGINE_TYPE_SIMFIC, queryBookId);
 					for(Entry<Integer, String> item: stats_Of_results.entrySet() ) 
 					{
 						final_results.put("Feature"+item.getKey(),item.getValue());
@@ -75,11 +82,12 @@ public class SearchServices {
 				} catch (Exception e) {
 					throw new Exception("analysis cannot be done!");
 				}
-			}
+			
 				int rank = 0;
 				for (Map.Entry<Double, String> res : topKResults.getResults_topK().entrySet()) {
 
 					String[] bookArr = utils.getMasterBookName(book_master, String.valueOf(res.getValue())).split("#");
+					System.out.println("Length of array" + bookArr.length);
 					if (bookArr.length < 2)
 						continue;
 
@@ -87,7 +95,7 @@ public class SearchServices {
 					bookName = bookName.contains("|") ? bookName.substring(bookName.indexOf("#") + 1).replace("|", ",")
 							: bookName.substring(bookName.indexOf("#") + 1);
 					String bookId = utils.getMasterBookId(book_master, bookName);
-					Metadata metadata = FRGeneralUtils.getMetadata(bookId);
+					// Metadata metadata = FRGeneralUtils.getMetadata(bookId);
 
 				if (bookId.equals(queryBookId))
 						continue;
@@ -99,14 +107,15 @@ public class SearchServices {
 					
 					String summary = "";
 					String authName = bookArr[1].contains("|") ? bookArr[1].replace("|", ",") : bookArr[1];
-					String language = (metadata.getLanguage()).toString().equals("en") ? "English" :"Deutsch" ;
-					String publisheddate = (metadata.getDates().subList(0, 1)).toString().replace("[publication:", "").replace("]", "");
-					if((metadata.getContributors()).size() == 0) {
-					summary = "Language: "+language +". It is written by " + authName + ". Digitized in the year: " + publisheddate ;
-					}
-					else{
-					summary = "Language: "+language +". It is written by " + authName + ". Contributors of this book are " + (metadata.getContributors().toString().replace("[","").replace("]","")) + ". Digitized in the year:" + publisheddate ;
-					}
+//					String language = (metadata.getLanguage()).toString().equals("en") ? "English" :"Deutsch" ;
+//					String publisheddate = (metadata.getDates().subList(0, 1)).toString().replace("[publication:", "").replace("]", "");
+//					if((metadata.getContributors()).size() == 0) {
+//					summary = "Language: "+language +". It is written by " + authName + ". Digitized in the year: " + publisheddate ;
+//					}
+//					else{
+//					summary = "Language: "+language +". It is written by " + authName + ". Contributors of this book are " + (metadata.getContributors().toString().replace("[","").replace("]","")) + ". Digitized in the year:" + publisheddate ;
+//					}
+					summary = "Written By : " + authName;
 					BookUI book = new BookUI();
 					book.setId(bookId);
 					book.setName(bookName);
