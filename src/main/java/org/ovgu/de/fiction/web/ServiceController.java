@@ -51,11 +51,23 @@ public class ServiceController {
 		}
 	}
 	
-	@RequestMapping(path = "/hello", method = RequestMethod.GET, produces = "application/json")
-	public String Hello() {
-		String text = "Hello Java";
-		return text;
+	
+	//@PostMapping("/userEvaluationData")
+	@RequestMapping(value="/userEvaluationData", method=RequestMethod.POST)
+	public ResponseEntity <String> UpdateUserEvaluationData(@RequestBody String userValue) {
+		try {
+		
+		searchService.saveUserEvaluation(userValue);
+		
+		return new ResponseEntity<String>(HttpStatus.CREATED);
+		}
+		catch( Exception e)
+		{
+			throw e;
+		}
 	}
+	
+	
 	
 
 }

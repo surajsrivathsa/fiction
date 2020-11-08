@@ -28,6 +28,7 @@ public class SearchServices {
 	
 	private static final String WEB_CONTEXT_PATH = "web.ctx.path";
 	private static final String USER_CLICK_EVENT_PATH = "user.event.path";
+	private static final String USER_EVALUATION_PATH = "user.evaluation.path";
 	private static long TIME;
 	//final static Logger LOG = Logger.getLogger(ContentExtractor.class);
 	private Map<String, List<String>> data = new HashMap<String, List<String>>();
@@ -163,6 +164,20 @@ public class SearchServices {
 			writer.append('\n');
 		    writer.append(userevent);
 		    writer.flush();
+			
+		}
+		catch(Exception e)
+		{
+			System.out.print(e);
+		}
+	}
+	
+	public void saveUserEvaluation(String userValue) {
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(FRGeneralUtils.getPropertyVal(USER_EVALUATION_PATH), true))){
+			writer.append('\n');
+		    writer.append(userValue);
+		    writer.flush();
+		  
 			
 		}
 		catch(Exception e)
